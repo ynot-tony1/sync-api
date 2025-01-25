@@ -26,7 +26,27 @@ class TestAnalysisUtils(unittest.TestCase):
         pairs = [(10, 2.5)]
         expected = {10: 2.5}
         result = AnalysisUtils.aggregate_confidence(pairs)
-        self.assertEqual(result, expected, "Expected a dictionary with a single pair.")
+        self.assertEqual(result, expected, "Expects a dictionary with a single pair in it.")
+
+    # testing aggregate_confidence with a zero confidence
+    def test_aggregate_confidence_zero_confidence(self):
+        """
+        Testing aggregate_confidence with pairs with zero confidences.
+        """
+        pairs = [(1, 0.0), (2, 0.0), (3, 0.0)]
+        expected = {1: 0.0, 2: 0.0, 3: 0.0}
+        result = AnalysisUtils.aggregate_confidence(pairs)
+        self.assertEqual(result, expected, "Expecting zero confidence for all of the offsets.")
+
+    # testing aggregate_confidence with negative confidence
+    def test_aggregate_confidence_negative_confidence(self):
+        """
+        Testing aggregate_confidence with pairs that have negative confidence values in them.
+        """
+        pairs = [(10, -1.0), (10, 2.0), (20, -3.5), (20, 3.5)]
+        expected = {10: 1.0, 20: 0.0}
+        result = AnalysisUtils.aggregate_confidence(pairs)
+        self.assertEqual(result, expected, "Expected correct aggregation with negative confidences.")
 
 
     # ------------------ analyze_syncnet_log unit tests --------------------- #
