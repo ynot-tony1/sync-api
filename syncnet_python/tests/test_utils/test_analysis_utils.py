@@ -41,5 +41,25 @@ class TestAnalysisUtils(unittest.TestCase):
         finally:
             os.remove(tmp_log_path)
 
+    def test_analyze_syncnet_log_invalid_log_content(self):
+        """
+        Testing analyze_syncnet_log with log content that has no valid offset and confidence pairs.
+        Expecting the function to return 0 and to log a warning.
+        """
+        invalid_log_content = """\
+        AV offset:   tryh5e6d/hg
+        Confidence:  rdhrtht.546
+        """
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp_log:
+            tmp_log.write(invalid_log_content)
+            tmp_log_path = tmp_log.name
+        try:
+            log_filename = tmp_log_path
+            fps = 30.0
+            result = AnalysisUtils.analyze_syncnet_log(log_filename, fps)
+            self.assertEqual(result, 0, "was expecting 0 ms when no valid pairs are found.")
+        finally:
+            os.remove(tmp_log_path)
+    
 if __name__ == '__main__':
     unittest.main()
