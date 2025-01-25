@@ -5,7 +5,33 @@ from utils.analysis_utils import AnalysisUtils
 
 class TestAnalysisUtils(unittest.TestCase):
 
-    # testing for valid contents
+    # ------------------ aggregate_confidence unit tests ------------------ #
+
+    # testing aggregate_confidence with empty pairs
+    def test_aggregate_confidence_empty_pairs(self):
+        """
+        Testing the aggregate_confidence with an empty list of pairs.
+        Expecting an empty dictionary as a result.
+        """
+        pairs = []
+        expected = {}
+        result = AnalysisUtils.aggregate_confidence(pairs)
+        self.assertEqual(result, expected, "Expects an empty dictionary for an empty input.")
+        
+	# testing aggregate_confidence with a single pair
+    def test_aggregate_confidence_single_pair(self):
+        """
+        Testing the aggregate_confidence function with a single offset and confidence pair.
+        """
+        pairs = [(10, 2.5)]
+        expected = {10: 2.5}
+        result = AnalysisUtils.aggregate_confidence(pairs)
+        self.assertEqual(result, expected, "Expected a dictionary with a single pair.")
+
+
+    # ------------------ analyze_syncnet_log unit tests --------------------- #
+
+    # testing analyze_syncnet_log with valid contents
     def test_analyze_syncnet_log_valid_log_content(self):
         """
         Testing analyze_syncnet_log with valid log contents.
@@ -40,7 +66,7 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, expected_offset_ms, "Was expecting the correct offset in ms.")
         finally:
             os.remove(tmp_log_path)
-    # testing for invalid contents
+    # testing analyze_syncnet_log with invalid contents
     def test_analyze_syncnet_log_invalid_log_content(self):
         """
         Testing analyze_syncnet_log with log content that has no valid offset and confidence pairs.
@@ -60,7 +86,7 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, 0, "was expecting 0 ms when no valid pairs are found.")
         finally:
             os.remove(tmp_log_path)
-    # testing for empty log content
+    # testing analyze_syncnet_log with empty log content
     def test_analyze_syncnet_log_empty_log_content(self):
         """
         Testing analyze_syncnet_log with no contents.
@@ -76,6 +102,8 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, 0, "Expected 0 ms for empty log content.")
         finally:
             os.remove(tmp_log_path)
+
+            
 
     
     
