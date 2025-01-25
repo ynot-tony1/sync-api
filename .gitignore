@@ -2,7 +2,7 @@
 .env
 
 # ===== python 3.7 venv =====
-syncnet_python/venv/
+venv/
 
 # ===== log files =====
 syncnet_python/logs
