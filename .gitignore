@@ -1,0 +1,12 @@
+# ===== env variables =====
+.env
+
+# ===== python 3.7 venv =====
+syncnet_python/venv/
+
+# ===== log files =====
+syncnet_python/logs
+
+# ===== python cache files =====
+__pycache__/
+*.pyc

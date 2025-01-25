@@ -1,0 +1,133 @@
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  standard:
+    format: '[%(asctime)s] [%(levelname)s] %(name)s.%(funcName)s: %(message)s'
+  
+  console_format:
+    format: '[%(asctime)s] [%(levelname)s] %(funcName)s: %(message)s'
+
+handlers:
+  # ------------------ SHARED HANDLERS ------------------ #
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: console_format
+    stream: ext://sys.stdout
+
+  # This captures fairly general logs at level INFO+
+  app_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: standard
+    filename: logs/logs/app.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  # ------------------ EXISTING CUSTOM HANDLERS ------------------ #
+  postline_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/postline.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  ffmpeg_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/ffmpeg.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  pipeline_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/pipeline.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  analysis_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/analysis.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  file_utils_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/file_utils.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  api_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: standard
+    filename: logs/logs/api.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+# ------------------ LOGGERS ------------------ #
+loggers:
+
+  # 1) We want run_postline in console
+  run_postline:
+    handlers: [postline_file_handler, console]  # attach console here
+    level: DEBUG
+    propagate: false  # do NOT bubble to root
+
+  # 2) We do NOT want multipart in console
+  multipart:
+    handlers: [app_file_handler]
+    level: WARNING
+    propagate: false  # keep console out
+
+  # 3) We do NOT want ffmpeg_logger in console
+  ffmpeg_logger:
+    handlers: [ffmpeg_file_handler]
+    level: DEBUG
+    propagate: false
+
+  # 4) We WANT pipeline_logger in console
+  pipeline_logger:
+    handlers: [pipeline_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  # 5) We WANT analysis_logger in console
+  analysis_logger:
+    handlers: [analysis_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  # 6) We WANT file_utils_logger in console
+  file_utils_logger:
+    handlers: [file_utils_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  # 7) We WANT api_logger in console
+  api_logger:
+    handlers: [api_file_handler, console]
+    level: INFO
+    propagate: false
+
+# ------------------ ROOT LOGGER ------------------ #
+root:
+  # We remove the console handler from root so that only selected loggers appear in console
+  handlers: [app_file_handler]
+  level: WARNING
