@@ -124,8 +124,9 @@ class TestAnalysisUtils(unittest.TestCase):
             os.remove(tmp_log_path)
 
 
-    # ------------------ extract_offset_confidence_pairs unit tests ------------------ #
+            # ------------------ extract_offset_confidence_pairs unit tests ------------------ #
 
+    # testing extract_offset_confidence_pairs with valid log content
     def test_extract_offset_confidence_pairs_valid_log_content(self):
         """
         Testing the extract_offset_confidence_pairs function with valid log contents.
@@ -149,6 +150,7 @@ class TestAnalysisUtils(unittest.TestCase):
         AV offset:   -7
         Confidence:  7.931
         """
+
         expected_pairs = [
             (15, 0.116),
             (14, 0.661),
@@ -163,30 +165,41 @@ class TestAnalysisUtils(unittest.TestCase):
         result = AnalysisUtils.extract_offset_confidence_pairs(valid_log)
         self.assertEqual(result, expected_pairs, "The function should properly extract all valid offset and confidence pairs.")
 
+    # testing extract_offset_confidence_pairs with valid log content
     def test_extract_offset_confidence_pairs_invalid_log_content(self):
         """
         Testing the extract_offset_confidence_pairs function with invalid log contents.
         Expecting the function to return an empty list because no valid pairs are there.
         """
-        invalid_log = """\
+        invalid_log= """\
         AV offset:   tryh5e6d/hg
         Confidence:  rdhrtht.546
         ghdtrdhfrdthfdhndhrtdjtr
         gt878dg7fdgd78ddf87hfd8h
         """
+
         expected_pairs = []
+
         result = AnalysisUtils.extract_offset_confidence_pairs(invalid_log)
         self.assertEqual(result, expected_pairs, "The function should return an empty list when no valid pairs are found.")
 
+    # testing extract_offset_confidence_pairs with valid log content
     def test_extract_offset_confidence_pairs_empty_log_content(self):
         """
         Testing the extract_offset_confidence_pairs function with empty log content.
         Expecting the function to return an empty list.
         """
         empty_log = ""
+
         expected_pairs = []
+
         result = AnalysisUtils.extract_offset_confidence_pairs(empty_log)
         self.assertEqual(result, expected_pairs, "The function should return an empty list for empty log content.")
 
+
+            
+
+    
+    
 if __name__ == '__main__':
     unittest.main()
