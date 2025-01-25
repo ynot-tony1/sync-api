@@ -80,4 +80,4 @@ def download_file(filename):
  
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the SyncNet Video Synchronization API"}
+    return {"message": "Welcome to sync-api"}

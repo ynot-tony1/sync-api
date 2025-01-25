@@ -40,7 +40,7 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, expected_offset_ms, "Was expecting the correct offset in ms.")
         finally:
             os.remove(tmp_log_path)
-
+    # testing for invalid contents
     def test_analyze_syncnet_log_invalid_log_content(self):
         """
         Testing analyze_syncnet_log with log content that has no valid offset and confidence pairs.
@@ -60,6 +60,24 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, 0, "was expecting 0 ms when no valid pairs are found.")
         finally:
             os.remove(tmp_log_path)
+    # testing for empty log content
+    def test_analyze_syncnet_log_empty_log_content(self):
+        """
+        Testing analyze_syncnet_log with no contents.
+        Expecting it to return 0 and a warning log.
+        """
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as tmp_log:
+            tmp_log.write("")
+            tmp_log_path = tmp_log.name
+        try:
+            log_filename = tmp_log_path
+            fps = 25.0
+            result = AnalysisUtils.analyze_syncnet_log(log_filename, fps)
+            self.assertEqual(result, 0, "Expected 0 ms for empty log content.")
+        finally:
+            os.remove(tmp_log_path)
+
+    
     
 if __name__ == '__main__':
     unittest.main()
