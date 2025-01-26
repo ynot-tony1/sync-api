@@ -1,0 +1,1121 @@
+import os
+import logging
+from utils.file_utils import FileUtils
+from utils.ffmpeg_utils import FFmpegUtils
+from utils.syncnet_utils import SyncNetUtils
+from utils.analysis_utils import AnalysisUtils
+from settings import (
+    RUN_LOGS_DIR, LOGS_DIR, FINAL_LOGS_DIR, DEFAULT_MAX_ITERATIONS,
+    DEFAULT_TOLERANCE_MS, TEMP_PROCESSING_DIR, DATA_WORK_PYAVI_DIR,
+    FINAL_OUTPUT_DIR
+)
+
+logger = logging.getLogger('run_postline')
+
+def process_video(input_file, original_filename):
+    """
+    Synchronizes a video file using ffmpeg and the CNN 'SyncNet'.
+
+    Args:
+        input_file (str): The path to the input video file.
+        original_filename (str): The original name of the input video file.
+
+    Returns:
+        str or None: Path to the synchronized video file if successful; otherwise, None.
+    """
+    try:
+        logger.info("Starting video synchronization process...")
+
+        # making a list of directories for intermediate files and logs
+        directories = [
+            LOGS_DIR, RUN_LOGS_DIR, FINAL_LOGS_DIR, TEMP_PROCESSING_DIR,
+            DATA_WORK_PYAVI_DIR, FINAL_OUTPUT_DIR
+        ]
+
+        # making sure all directories exist and creating them if not
+        FileUtils.prepare_directories(directories)
+
+        # getting the next directory number from the pipeline's data dir to make sure it all runs in ascending order 
+        reference_number = int(FileUtils.get_next_directory_number())
+
+        # copying the input file to the temp directory 
+        temp_copy_path = FileUtils.copy_input_to_temp(input_file, original_filename)
+
+        # moving the copied file to the data directory to start off the pipeline processing
+        destination_path = FileUtils.move_to_data_work(temp_copy_path, reference_number)
+
+        # making sure the file has been moved to the data directory by checking the existence of its path with os.path
+        if not os.path.exists(destination_path):
+            logger.error(f"Destination file {destination_path} does not exist. Aborting process.")
+            return None
+
+        # get fps (frames per second) of the video
+        fps = FFmpegUtils.get_video_fps(input_file)
+
+        # if fps retrieval fails
+        if fps is None:
+            logger.error("Could not retrieve FPS from the video. Aborting process.")
+            return None
+        
+        # initialize a variable to count the total needed for the final cumulative shift
+        total_shift_ms = 0
+
+        # current file path to be processed
+        current_file_path = destination_path
+
+        # sync the video and audio streams from input file across multiple iterations using syncnet for analysis and ffmpeg with apad and atrim
+        for iteration in range(DEFAULT_MAX_ITERATIONS):
+            logger.info(f"\n--- Synchronization Iteration {iteration + 1} ---")
+            ref_str = f"{reference_number:05d}"
+
+            # run the SyncNet pipeline
+            SyncNetUtils.run_pipeline(current_file_path, ref_str)
+
+            # run the syncnet model and get the log file path
+            log_file = SyncNetUtils.run_syncnet(ref_str)
+
+            # pass the log file path and the fps into the  my analysis function to get the offset in ms
+            offset_ms = AnalysisUtils.analyze_syncnet_log(log_file, fps)
+
+            # add the amount to the total_shift variable for the final cumulative shift
+            total_shift_ms += offset_ms
+
+            # loggin the amount shifted and the number of the iteration
+            logger.info(f"Total shift after iteration {iteration + 1}: {total_shift_ms} ms")
+
+            # checking if the offset is within the acceptable tolerance
+            if abs(offset_ms) <= DEFAULT_TOLERANCE_MS:
+                logger.info("Synchronization offset is within the acceptable tolerance.")
+                break
+
+            # defining the path and file name for the corrected file
+            corrected_file = os.path.join(
+                TEMP_PROCESSING_DIR,
+                f"corrected_iter{iteration + 1}_{original_filename}"
+            )
+
+            # applying the calculated shift to the audio with ffmpeg for the next iteration
+            FFmpegUtils.shift_audio(current_file_path, corrected_file, offset_ms)
+
+            # checking if the corrected file was successfully created
+            if not os.path.exists(corrected_file):
+                logger.error(f"Corrected file {corrected_file} was not created. Aborting process.")
+                return None
+
+            # updating the current file path for the next iteration
+            current_file_path = corrected_file
+
+            # increment the reference number to ensure ascending order in the directorys for the logs and general order
+            reference_number += 1
+
+        # defining the path for the final output file
+        final_output_path = os.path.join(FINAL_OUTPUT_DIR, f"corrected_{original_filename}")
+
+        # finalizing the synchronization by applying the total shift
+        FFmpegUtils.apply_cumulative_shift(input_file, final_output_path, total_shift_ms)
+
+        # running the final file through the pipeline and SyncNet once more to ensure 0 offset
+        AnalysisUtils.verify_synchronization(
+            final_output_path,                 # path to the final synchronized video
+            f"{reference_number:05d}",         # formatted reference string
+            fps,                               # frames per second
+            DEFAULT_TOLERANCE_MS               # tolerance in milliseconds
+        )
+
+        # returning the path of the final synchronized video file
+        return final_output_path
+
+    except Exception as e:
+        logger.error(f"An error occurred during video processing: {e}")
+        return None
+import os 
+from fastapi import FastAPI, File, HTTPException
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from utils.log_utils import LogUtils
+from utils.api_utils import ApiUtils
+from settings import FINAL_OUTPUT_DIR
+
+
+
+from run_postline import process_video
+import logging
+
+# Initialize Logging
+logger = logging.getLogger('api_logger')
+
+app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.post("/process")
+def process_endpoint(file = File(...)):
+    """
+    Processes the uploaded video file using the synchronization pipeline.
+    Returns a JSON response with the output filename and a download URL.
+    """
+    # copying the file into the temp folder with an UUID4 name
+    input_file_path = ApiUtils.save_temp_file(file)
+    try:
+        # calling the the process_video function from run_postline module and passing the copied temp file into it
+        # which returns the path to the final shifted output
+        final_shifted_output = process_video(input_file_path, file.filename)
+        # uses os's path.exists method to check if the final path / final file exists
+        if not os.path.exists(final_shifted_output):
+            logger.error("Processing wasn't completed, final file hasn't been found.")
+            raise HTTPException(status_code=500, detail="Processing failed.")
+        logger.info(f"Fully processed file available at: {final_shifted_output}")
+    except Exception as e:
+        logger.error(f"The processing failed: {e}")
+        raise HTTPException(status_code=500, detail="Processing failed.") from e
+    # delete the temporary file 
+    os.remove(input_file_path)
+
+    corrected_filename = f"corrected_{file.filename}"
+    download_url = f"/download/{corrected_filename}"
+    # append the filename and download url to the json response and return it
+    return JSONResponse(content={
+        "filename": corrected_filename,
+        "url": download_url
+    })
+
+@app.get("/download/{filename}")
+def download_file(filename):
+    # create the path to the final output file
+    file_path = os.path.join(FINAL_OUTPUT_DIR, filename)
+    # confirm that the path actually exists and is a file
+    if not os.path.isfile(file_path):
+        logger.error(f"file not found: {file_path}")
+        raise HTTPException(status_code=404, detail="file not found.")
+    # append the file_path, file name and content disposition header to to the file response and return it
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+ 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to sync-api"}
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  standard:
+    format: '[%(asctime)s] [%(levelname)s] %(name)s.%(funcName)s: %(message)s'
+  
+  console_format:
+    format: '[%(asctime)s] [%(levelname)s] %(funcName)s: %(message)s'
+
+handlers:
+  # ------------------ SHARED HANDLERS ------------------ #
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: console_format
+    stream: ext://sys.stdout
+
+  # This captures fairly general logs at level INFO+
+  app_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: standard
+    filename: logs/logs/app.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  # ------------------ EXISTING CUSTOM HANDLERS ------------------ #
+  postline_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/postline.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  ffmpeg_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/ffmpeg.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  pipeline_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/pipeline.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  analysis_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/analysis.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  file_utils_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: logs/logs/file_utils.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  api_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: standard
+    filename: logs/logs/api.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+# ------------------ LOGGERS ------------------ #
+loggers:
+
+  # 1) We want run_postline in console
+  run_postline:
+    handlers: [postline_file_handler, console]  # attach console here
+    level: DEBUG
+    propagate: false  # do NOT bubble to root
+
+  # 2) We do NOT want multipart in console
+  multipart:
+    handlers: [app_file_handler]
+    level: WARNING
+    propagate: false  # keep console out
+
+  # 3) We do NOT want ffmpeg_logger in console
+  ffmpeg_logger:
+    handlers: [ffmpeg_file_handler]
+    level: DEBUG
+    propagate: false
+
+  # 4) We WANT pipeline_logger in console
+  pipeline_logger:
+    handlers: [pipeline_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  # 5) We WANT analysis_logger in console
+  analysis_logger:
+    handlers: [analysis_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  # 6) We WANT file_utils_logger in console
+  file_utils_logger:
+    handlers: [file_utils_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  # 7) We WANT api_logger in console
+  api_logger:
+    handlers: [api_file_handler, console]
+    level: INFO
+    propagate: false
+
+# ------------------ ROOT LOGGER ------------------ #
+root:
+  # We remove the console handler from root so that only selected loggers appear in console
+  handlers: [app_file_handler]
+  level: WARNINGimport os
+import re
+import logging
+from utils.file_utils import FileUtils
+from utils.syncnet_utils import SyncNetUtils
+from utils.log_utils import LogUtils
+from settings import FINAL_LOGS_DIR
+
+
+LogUtils.configure_logging()
+logger = logging.getLogger('analysis_logger')
+
+class AnalysisUtils:
+    """Utility class for analyzing SyncNet's output logs. """
+
+    @staticmethod
+    def analyze_syncnet_log(log_filename, fps):
+
+        """
+        Analyzes the SyncNet log file to determine the synchronization offset.
+
+        Args:
+            log_filename (path) : the path to the SyncNet log file.
+            fps (int) : frames per second of the video.
+
+        Returns:
+            offset_ms (int): Offset in milliseconds.
+        """
+
+        # passing the filename of the log into my file utility function and storing the output in the new variable 'log_content'
+        log_content = FileUtils.read_log_file(log_filename)
+        
+        # checks if log content has been successfully read in
+        if not log_content:
+
+            # sending a warning to the logger with the full path of the log file if not found
+            logger.warning(f"No content inside this log file: {log_filename}")
+
+            # returns a 0 offset if there is no content found
+            return 0
+
+        # passing the log content into the regex finder function to parse the pairs, 
+        # containing the offset and their corresponding condfidence scores, from the log into a new list 'pairs'
+        pairs = AnalysisUtils.extract_offset_confidence_pairs(log_content)
+
+
+        # if no pairs are shown, log that info and return 0 for the offset
+        if not pairs:
+            logger.warning("Couldn't find any pairs in the SyncNet log.")
+            return 0
+
+        # pass list of pairs into aggregate confidence function and store the values in a new defaultDict called offset_conf
+        offset_conf = AnalysisUtils.aggregate_confidence(pairs)
+
+        # if no offset_conf is created or it is empty, log that fact and return 0 for the offset
+        if not offset_conf:
+            logger.warning("Couldnt add up confidence scores.")
+            return 0
+
+        # using the max method on offset_conf dictionary to find the offset with the highest aggregated confidence score     
+        best_offset = max(offset_conf, key=offset_conf.get)
+
+        # passing the best_offset int and the fps into my conversion function and store the output in ms inside an new variable called offset_ms
+        offset_ms = AnalysisUtils.convert_frames_to_ms(best_offset, fps) 
+
+        # logging the best offset in frames and ms
+        logger.info(f"The best offset would be: {best_offset} frames ({offset_ms} ms)")
+
+        # returs the offset in ms
+        return offset_ms
+
+
+    @staticmethod
+    def extract_offset_confidence_pairs(log_text):
+        """
+        Extracts offset and confidence pairs from the log text.
+
+        Args:
+            log_text (str): content of the SyncNet log file.
+
+        Returns:
+            pairs (list): list of tuples containing offset and confidence.
+        """
+        # declares a regex pattern that matches "AV offset:" followed by an optional sign and integer,
+        # then non-greedily matches any characters until "Confidence:" followed by a floating-point number.
+        pattern = r'AV offset:\s*([-+]?\d+).*?Confidence:\s*([\d.]+)'
+
+        # using re.findall to retrieve all matching (offset, confidence) tuples.
+        # The re.DOTALL flag allows '.' to match newline characters, enabling multi-line pattern matching, pretty handy considering the two values are on different lines within the log files.
+        matches = re.findall(pattern, log_text, re.DOTALL)
+
+        # initialize an empty list to store the tuples
+        pairs = []
+
+        # iterate throgh each pair in 'matches'
+        for offset, confidence in matches:
+            # cast 'offset' to an integer and 'confidence' to a float
+            converted_offset = int(offset)
+            converted_confidence = float(confidence)
+            
+            # making a new tuple for each of the values
+            converted_pair = (converted_offset, converted_confidence)
+            
+            # appending the converted tuple to the 'pairs' list
+            pairs.append(converted_pair)
+        # Returns the list of tuples
+        logger.debug(f"Extracted pairs: {pairs}")
+        return pairs
+
+    @staticmethod
+    def aggregate_confidence(pairs):
+        """
+        Aggregates confidence scores for each synchronization offset.
+
+        Args:
+            pairs (list of tuples): A list where each tuple contains: offset (int) and confidence (float):
+
+
+        Returns:
+            dict: A dictionary mapping each offset (int) to its aggregated confidence score (float).
+
+        """
+        # initialize a dictionary to accumulate confidence scores for each offset
+        confidence_map = {}
+
+        # iterate through each pair
+        for offset, confidence in pairs:
+            if offset in confidence_map:
+                # if the offset already exists, adds the confidence score to the existing total
+                confidence_map[offset] += confidence
+            else:
+                # if the offset doesn't exist, it gets initialized with the current confidence score
+                confidence_map[offset] = confidence
+
+        # Return the aggregated confidence map
+        return confidence_map
+    
+    @staticmethod
+    def convert_frames_to_ms(frames, fps):
+        """
+        Converts frame counts to milliseconds.
+
+        Args:
+            frames (int): Number of frames.
+            fps (float): Frames per second.
+
+        Returns:
+            int: Time in ms.
+
+        Raises:
+            ValueError: If `fps` is missing or invalid.
+        """
+        # checking if fps is provided
+        if fps:
+            # calculate duration per frame in ms
+            duration_per_frame_ms = 1000 / fps
+        else:
+            logger.error("fps value is missing. Can't convert frames to milliseconds.")
+            raise ValueError("fps must be provided and can't be None.")
+
+        # calculate total time in milliseconds, cast it as an int and return it
+        return int(frames * duration_per_frame_ms)
+    
+    @staticmethod
+    def verify_synchronization(final_path, ref_str, fps, tol_ms):
+        """
+        Verifies that the final synchronized video is within the tolerance.
+
+        Args:
+            final_path (str): Path to the final synchronized video.
+            ref_str (str): Reference string identifier.
+            fps (float): Frames per second of the video.
+            tol_ms (int): Tolerance in milliseconds.
+        """
+        logger.info("Starting final synchronization verification...")
+
+        # runs the file through the pipeline using its path and reference string
+        SyncNetUtils.run_pipeline(final_path, ref_str)
+
+        # define the path of the final log and store in a new variable
+        final_log = os.path.join(FINAL_LOGS_DIR, f"final_output_{ref_str}.log")
+
+
+        # passing the reference and the path of the final log dir into my run_syncnet function which builds a command to run the model with them
+        SyncNetUtils.run_syncnet(ref_str, final_log)
+
+        # shows the final verified offset by passing the final log and the fps into the helper function for analysis
+        final_offset = AnalysisUtils.analyze_syncnet_log(final_log, fps)
+
+        logger.info(f"Final offset: {final_offset} ms")
+
+        # ensures the final offset is within 10ms tolerance (anything below 20ms is invisible to the human eye)
+        if abs(final_offset) <= tol_ms:
+            logger.info("Final synchronization is within the acceptable tolerance!")
+            logger.info("It's done!!")
+
+        else:
+        # if its still out of sync, log the offset
+            logger.info(f"Final synchronization has exceeded the tolerance by {final_offset} ms.")
+    import json
+import os
+import logging
+import shutil
+import subprocess
+from utils.log_utils import LogUtils  
+from settings import FINAL_OUTPUT_DIR
+
+LogUtils.configure_logging()
+logger = logging.getLogger('ffmpeg_logger')  
+
+class FFmpegUtils:
+    """utility class for handling ffmpeg operations."""
+
+    @staticmethod
+    def shift_audio(input_file, output_file, offset_ms):
+        """
+        shifts the audio of the input video by a given millisecond offset,
+        preserving original video properties and using the original audio codec.
+
+        args:
+            input_file (str): the path to the input video file.
+            output_file (str): the path for the shifted output file.
+            offset_ms (int): milliseconds to shift the audio. positive => forward, negative => backward.
+
+        raises:
+            RuntimeError: if the ffmpeg command fails.
+        """
+        # make sure the input file exists by checking with os's path.exists method
+        if not os.path.exists(input_file):
+            # if not, log the error and return
+            logger.error(f"input file not found: {input_file}")
+            return
+
+        # passing the path of the input file into one of the ffprobe functions and store the dict in 'audio_props'
+        audio_props = FFmpegUtils.get_audio_properties(input_file)
+
+        # if the audio_props string dict is not returned or empty, log an error and return
+        if audio_props is None:
+            logger.error(f"failed to retrieve audio properties from {input_file}")
+            return
+
+        # defining these three variables, casting the sample rate and channels as ints
+        sample_rate = int(audio_props.get('sample_rate'))
+        channels = int(audio_props.get('channels'))
+        codec_name = audio_props.get('codec_name')
+
+        # if the offset is greater than 0, the audio is behind the video, so the audio stream needs to be shifted forward by that many ms
+        if offset_ms > 0:
+            # defining a filter complex that delays the audio by the offset in ms for both channels and pads the start with whatever offset ms of silence
+            filter_complex = f"adelay={offset_ms}|{offset_ms},apad"
+            # log the shift direction and amount
+            logger.info(f"shifting audio forward by {offset_ms} ms.")
+        else:
+            shift_abs = abs(offset_ms)
+            # defines a filter complex that trims the beginning of the audio again by whatever ms the offset is and and pads the end with silence, the 1000 here is 
+            # divides the shift by 1000 to convert from ms, as ffmpeg expects time values in seconds 
+            filter_complex = f"atrim=start={shift_abs / 1000},apad"
+            logger.info(f"shifting audio backward by {shift_abs} ms.")
+        
+        # build the ffmpeg command to shift the audio precisely
+        cmd = [
+            'ffmpeg', '-y',          # overwrites output files without prompting for confirmation
+            '-i', input_file,        # specifies the input video file
+            '-c:v', 'copy',          # copies the video stream exactly without re-encoding it
+            '-af', filter_complex,   # applies the audio filter complex that was defined above
+            '-c:a', codec_name,      # re-encodes the audio stream using the original audio codec from audio_props
+            '-ar', str(sample_rate), # sets the audio sample rate to match the original video's sample rate
+            '-ac', str(channels),    # sets the number of audio channels to match the original video's channel count
+            '-threads', '4',         # utilizes 4 threads for encoding, enhancing performance by parallelizing processing
+            '-shortest',             # ensures the output duration matches the shortest stream (typically the video stream)
+            output_file              # specifies the output file path as ffmpeg can't modify files in place
+        ]
+
+        logger.debug(f"audio shift command string is : {cmd}")
+
+        try:
+            # runs the ffmpeg command using subprocess.run which captures its standard output and stderr so they can be redirected to to my ffmpeg.log 
+            result = subprocess.run(
+                cmd,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+
+            # logging FFmpeg's stdout and stderr to ffmpeg.log
+            if result.stdout:
+                logger.debug(f"FFmpeg stdout: {result.stdout}")
+            if result.stderr:
+                logger.debug(f"FFmpeg stderr: {result.stderr}")
+            logger.info(f"Audio successfully shifted. Output saved to {output_file}")
+        except subprocess.CalledProcessError as exc:
+            # logs ffmpegs standard error output to ffmpeg.log
+            logger.error(f"FFmpeg error stderr: {exc.stderr}")
+            # raises a runtime error if the ffmpeg command returns a non-zero exit status
+            # The error message includes stderr from ffmpeg for debugging
+            raise RuntimeError(f"Error shifting audio for {input_file}: {exc.stderr}") from exc
+
+
+    @staticmethod
+    def apply_cumulative_shift(input_file, final_output, total_shift_ms):
+        """
+        Applies the total audio shift to the original input file.
+
+        Args:
+            input_file (str): Path to the original input video.
+            final_output (str): Path where the final synchronized video will be saved.
+            total_shift_ms (int): Total audio shift in milliseconds.
+        """
+        # creating the path for the copied file
+        copied_file = os.path.join(FINAL_OUTPUT_DIR, os.path.basename(input_file))
+        
+        # copying the original input file to the final output directory
+        shutil.copy(input_file, copied_file)
+
+
+        # applying the cumulative audio shift with the total amount of ms
+        try:
+            FFmpegUtils.shift_audio(copied_file, final_output, total_shift_ms)
+            logger.info(f"Applied cumulative audio shift. Final output saved to {final_output}")
+        except Exception as e:
+            logger.error(f"Failed to apply cumulative shift: {e}")
+            raise RuntimeError(f"Could not apply cumulative shift: {e}")
+        
+        # remove the temporary file
+        os.remove(copied_file)
+
+
+    @staticmethod
+    def get_video_fps(file_path):
+        """
+        Retrieves the frames per second (fps) of a video file using ffprobe with JSON output.
+
+        Args:
+            file_path (str): Path to the video file.
+
+        Returns:
+            float or None: FPS of the video if successful; otherwise, None.
+        """
+
+        # ffprobe command to extract the frame rate of the first video stream in JSON format
+        cmd = [
+            'ffprobe',
+            '-v', 'error',                           # suppresses all logs except errors
+            '-select_streams', 'v:0',                # selects the first video stream
+            '-show_entries', 'stream=r_frame_rate',  # show only the r_frame_rate entry
+            '-of', 'json',                           # output format as JSON
+            file_path                                # path to the file thats being probed
+        ]
+        
+        try:
+            # run the ffprobe command and capture the output
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+            # loging ffprobe's standard outputt and standard errors to ffmpeg.log
+            if result.stdout:
+                logger.debug(f"FFprobe stdout: {result.stdout}")
+            if result.stderr:
+                logger.debug(f"FFprobe stderr: {result.stderr}")
+
+            # parses the JSON output from ffprobe
+            data = json.loads(result.stdout)
+
+            # extracting value of the frame rate from the first video stream
+            fps_str = data['streams'][0].get('r_frame_rate')
+
+            # They're expressed as fractions (numerator/denominator) to allow precise representation of variable or non-integer frame rates,
+            # so split them from the division operator to work with them
+            num, den = map(int, fps_str.split('/'))
+
+            # calculate the fps by dividing the numerator (number of frames) by the denominator (seconds)      
+            fps = num / den
+
+            logger.info(f"Got the fps for {file_path}: {fps}")
+            return fps
+        
+        except subprocess.CalledProcessError as e:
+            # log the error details if ffprobe fails to run properly
+            logger.error(f"FFprobe error standard error: {e.stderr}")
+            logger.error(f"ffprobe has failed for {file_path}")
+            return None
+        except Exception as e:
+            # catch any other exceptions and log them
+            logger.error(f"FFprobe had an unexpected error: {e}")
+            logger.error(f"An unexpected error has occurred while getting the fps for {file_path}: {e}")
+            return None
+
+
+    @staticmethod
+    def get_audio_properties(file_path):
+        """
+        retrieves audio properties of a video file using ffprobe.
+
+        args:
+            file_path (str): path to the video file.
+
+        returns:
+            dict or None: dictionary containing audio properties; otherwise, None.
+        """
+
+        # building the ffprobe command to retrieve the sample rate, codec, and number of channels from a file and store it in a json
+        cmd = [
+            'ffprobe', '-v', 'error', '-select_streams', 'a:0',
+            '-show_entries', 'stream=sample_rate,channels,codec_name',
+            '-of', 'json', file_path
+        ]
+        try:
+            # executing the ffprobe command and capturing the output in 'result'
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+
+            # logging ffprobe's stdout and stderr to ffmpeg.log
+            if result.stdout:
+                logger.debug(f"FFprobe stdout: {result.stdout}")
+            if result.stderr:
+                logger.debug(f"FFprobe stderr: {result.stderr}")
+
+            # parsing the JSON output from ffprobe
+            data = json.loads(result.stdout)
+
+            # getting the first audio stream from the data
+            stream = data['streams'][0]
+
+            # extracting the sample_rate, channels and the codec_name 
+            audio_props = {
+                'sample_rate': stream.get('sample_rate'),
+                'channels': stream.get('channels'),
+                'codec_name': stream.get('codec_name')
+            }
+
+            logger.info(f"retrieved audio properties for {file_path}: {audio_props}")
+            return audio_props
+        
+        except subprocess.CalledProcessError as e:
+            # logging ffprobe's stderr to ffmpeg.log
+            logger.error(f"FFprobe error stderr: {e.stderr}")
+            # logging the error and return None if the command fails
+            logger.error(f"failed to get audio properties for {file_path}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"FFprobe unexpected error: {e}")
+            logger.error(f"failed to get audio properties for {file_path}: {e}")
+            return None
+import os
+import shutil
+import logging
+from utils.log_utils import LogUtils 
+from settings import TEMP_PROCESSING_DIR, DATA_DIR, DATA_WORK_PYAVI_DIR
+
+LogUtils.configure_logging()
+logger = logging.getLogger('file_utils_logger')
+
+class FileUtils:
+    """Utility class for handling file operations."""
+
+    @staticmethod
+    def move_to_data_work(initial_path, dir_num):
+        """
+        Moves a file to the data work directory, prefixing the filename with the directory number.
+
+        Args:
+            initial_path (str): Path to the file to be moved.
+            dir_num (str or int): Reference number for the filename prefix.
+
+        Returns:
+            str: Destination path after moving.
+
+        Raises:
+            FileNotFoundError: If the destination file does not exist after moving.
+            IOError: If the file cannot be moved.
+        """
+
+
+        # extract the original filename
+        original_filename = os.path.basename(initial_path)
+
+        # create the path for the moved file
+        dest_file_path = os.path.join(DATA_DIR, f"{dir_num}_{original_filename}")
+
+        try:
+             # use shutil to move it the file from initial to the destination path
+            shutil.move(initial_path, dest_file_path)
+        except Exception as e:
+            error_msg = f"Couldnt move the file to {dest_file_path}: {e}"
+            logger.error(error_msg)
+            raise IOError(f"File cant be moved to {dest_file_path}: {e}")
+        logger.debug(f"Copied file successfully moved from temp directory to: {dest_file_path}")
+        return dest_file_path
+
+    @staticmethod
+    def copy_input_to_temp(input_file, original_name):
+        """
+        Copies the input file to a temporary processing directory.
+
+        Args:
+            input_file (str): Path to the input video file.
+            original_name (str): Original filename of the video.
+
+        Returns:
+            str: Path to the copied file in the temporary directory.
+        """
+        # create the path for the new temp file
+        temp_file = os.path.join(TEMP_PROCESSING_DIR, f"corrected_{original_name}")
+        # use shutil to copy it
+        shutil.copy(input_file, temp_file)
+        logger.debug(f"copied file to: {temp_file}")
+        
+        return temp_file
+
+    @staticmethod
+    def prepare_directories(directories):
+        """
+        Ensures that all specified directories exist.
+
+        Args:
+            directories (list of str): List of directory paths to create.
+        """
+        for directory in directories:
+            os.makedirs(directory, exist_ok=True)
+
+
+    @staticmethod
+    def read_log_file(file_path):
+        """
+        Reads the content of a log file.
+
+        Args:
+            file_path (str): Path to the log file.
+
+        Returns:
+            str or None: Content of the log file if successful; otherwise, None.
+        """
+        try:
+            with open(file_path, 'r') as file:
+                content = file.read()
+            logger.debug(f"successfully read log file: {file_path}")
+            return content
+        except FileNotFoundError:
+            logger.warning(f"log file not found: {file_path}")
+            return None
+        except Exception as e:
+            logger.error(f"failed to read log file {file_path}: {e}")
+            return None
+
+    @staticmethod
+    def cleanup_file(file_path):
+        """
+        Removes a specified file.
+
+        Args:
+            file_path (str): Path to the file to remove.
+        """
+        try:
+            os.remove(file_path)
+            logger.debug(f"file successfully removed: {file_path}")
+        except FileNotFoundError:
+            logger.warning(f"file already removed: {file_path}")
+        except Exception as e:
+            logger.error(f"failed to remove file {file_path}: {e}")
+            raise IOError(f"could not remove file {file_path}: {e}")
+
+    @staticmethod
+    def copy_video_file(source, destination):
+        """
+        Copies a video file from source to destination.
+
+        Args:
+            source (str): Path to the source video file.
+            destination (str): Path to the destination.
+
+        Returns:
+            str: Path to the copied video file.
+        """
+        try:
+            # use shitl to copy the file from the source to destination
+            shutil.copy(source, destination)
+            logger.info(f"video file copied from {source} to {destination}")
+            return destination
+        except Exception as e:
+            logger.error(f"failed to copy video file from {source} to {destination}: {e}")
+            raise IOError(f"could not copy video file: {e}")
+
+    @staticmethod
+    def get_next_directory_number():
+        """
+        Returns the next directory number as a zero-padded string, eg. 00001.
+        If no numeric subdirectories exist, it starts at 1.
+        """
+        # create an empty list to store the numbers
+        existing_numbers = []
+
+        # using os's listdir function here to return the names of each directory as a list of strings
+        all_items = os.listdir(DATA_WORK_PYAVI_DIR)
+
+        # iterating through each name and if it is a digit, cast it as an int and then appends it to the existing numbers list
+        for item in all_items:
+            if item.isdigit():
+                number = int(item)
+                existing_numbers.append(number)
+            else:
+                logger.debug(f"Going to ignore this non-numeric directory: {item}")
+
+        # if there's no numeric folder, initialize at 1
+        if not existing_numbers:
+            logger.info("Couldn't see any numeric directories. Starting it off at 00001.")
+            next_number = 1
+        else:   
+        # using the max function to find the highest number and adding 1 to it to get the next directory number
+            next_number = max(existing_numbers) + 1
+        # format the number with 5 padded zeros to remain consistent with the syncnet pipeline implementation
+        formatted_number = f"{next_number:05d}"
+        logger.debug(f"The next number in the directory is: {formatted_number}")
+        return formatted_number
+import logging
+import logging.config
+from settings import LOG_CONFIG_PATH
+import yaml
+
+class LogUtils:
+    """
+    Utilities for configuring and retrieving loggers using YAML configurations.
+    """
+
+    @staticmethod
+    def configure_logging():
+        """
+        Configure logging using a YAML configuration file.
+        
+        Does not return any specific named logger—once the config is applied, 
+        you can call `logging.getLogger('name')` anywhere in your code.
+        """
+        try:
+            with open(LOG_CONFIG_PATH, 'r') as file:
+                config = yaml.safe_load(file)
+            logging.debug(f"Loaded logging configuration from {LOG_CONFIG_PATH}")
+        except FileNotFoundError:
+            logging.error(f"Couldn't find the logging configuration file at: {LOG_CONFIG_PATH}")
+            raise
+
+        # Apply the logging configuration to configure all loggers from the YAML
+        logging.config.dictConfig(config)
+
+# utils/syncnet_utils.py
+
+import os
+import subprocess
+import logging
+from utils.log_utils import LogUtils 
+from settings import LOGS_DIR, RUN_LOGS_DIR, DATA_WORK_DIR
+
+LogUtils.configure_logging()
+logger = logging.getLogger('pipeline_logger')
+
+class SyncNetUtils:
+    """Utility class for handling SyncNet operations."""
+
+class SyncNetUtils:
+    """Utility class for handling SyncNet operations."""
+
+    @staticmethod
+    def run_syncnet(ref_str, log_file=None):
+        """
+        Executes the SyncNet model and logs the output.
+
+        Args:
+            ref_str (str): Reference string identifier.
+            log_file (str, optional): Custom path to the log file.
+                                       If not provided, a default path based on ref_str is used.
+
+        Returns:
+            str: Path to the SyncNet log file.
+
+        Raises:
+            RuntimeError: If SyncNet execution fails.
+        """
+        # if log_file path is not provided, create it using the ref_str
+        if log_file is None:
+            log_file = os.path.join(RUN_LOGS_DIR, f"run_{ref_str}.log")
+        
+        # building the run syncnet command
+        cmd = [
+            "python",
+            "run_syncnet.py",
+            "--data_dir", DATA_WORK_DIR,
+            "--reference", ref_str
+        ]
+
+        try:
+            # opening the log file in write mode to capture syncnets output
+            with open(log_file, 'w') as log:
+                # running the syncnet command, redirecting both stdout and stderr to the log file
+                subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
+            logger.info(f"SyncNet model completed successfully. Log saved to: {log_file}")
+        
+        except subprocess.CalledProcessError as e:
+            error_msg = f"SyncNet failed while processing reference {ref_str}: {e}"
+            logger.error(error_msg)
+            raise RuntimeError(error_msg) from e
+
+        return log_file
+
+
+    @staticmethod
+    def run_pipeline(video_file, ref):
+        """
+        Runs the SyncNet pipeline on a given video file.
+
+        Args:
+            video_file (str): Path to the video file.
+            ref (str): Reference string identifier.
+
+        Raises:
+            RuntimeError: If the pipeline execution fails.
+        """
+        # building the command to run the syncnet pipeline
+        cmd = ["python", "run_pipeline.py", "--videofile", video_file, "--reference", ref]
+        log_file = os.path.join(LOGS_DIR, 'pipeline.log')
+        try:
+            # opening the pipeline.log file in write mode to store the pipelines output
+            with open(log_file, 'w') as log:
+                # running the syncnet pipeline command and redirecting stdout and stderr to the log file
+                subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
+            logger.info(f"SyncNet pipeline successfully executed for video: {video_file} with reference: {ref}")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"SyncNet pipeline failed for video {video_file} (ref={ref}): {e}")
+            # raising a runtime error with the error message in it
+            raise RuntimeError(f"SyncNet pipeline failed for video {video_file} (ref={ref}): {e}") from e
+
+    import os
+import shutil
+import uuid
+import logging
+from utils.log_utils import LogUtils
+from settings import TEMP_PROCESSING_DIR
+
+
+
+LogUtils.configure_logging()
+logger = logging.getLogger(__name__)
+
+class ApiUtils:
+    """Utility class for handling Api operations."""
+
+
+    @staticmethod
+    def save_temp_file(uploaded_file):
+        """
+        Saves an uploaded file to a temporary directory with a unique UUID4 name.
+
+        Args:
+            uploaded_file (UploadFile): The uploaded file to save.
+            directory (str): Directory where the file will be saved.
+
+        Returns:
+            str: Path to the saved temporary file.
+
+        Raises:
+            IOError: If there is an error saving the file.
+
+            
+        """
+        # split the file path to get the extension out of it
+        file_extension = os.path.splitext(uploaded_file.filename)[1] 
+        # create the file path with the temp directory, the UUID4 name and the file
+        unique_filename = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
+        try:
+            # open the file in binary write mode
+            temp_file = open(unique_filename, "wb")
+            # copy over the content of the uploaded file to the temporary file safely
+            shutil.copyfileobj(uploaded_file.file, temp_file)
+            # close the file after writing
+            temp_file.close()
+            logger.info(f"Temporary file saved: {unique_filename}")
+        except Exception as e:
+            logger.error(f"Failed to save temporary file '{unique_filename}': {e}")
+            raise IOError(f"Could not save temporary file: {e}")
+        return unique_filename
