@@ -47,5 +47,19 @@ class TestFFmpegUtils(unittest.TestCase):
             f"Expected 'codec_name' to be {self.expected_audio_props['codec_name']}, got {audio_props['codec_name']}."
         )
 
+    def test_get_audio_properties_no_audio_stream(self):
+        """
+        Test that FFmpegUtils.get_audio_properties returns None for a file without an audio stream.
+        """
+        # path to the file with no audio stream
+        video_no_audio = os.path.join(TEST_DATA_DIR, 'video_no_audio.avi')
+    
+        # calling the method
+        audio_props = FFmpegUtils.get_audio_properties(video_no_audio)
+        
+        # asserting that audio_props is None
+        self.assertIsNone(audio_props, "Audio properties should be None for a video without an audio stream.")
+
 if __name__ == '__main__':
     unittest.main()
+
