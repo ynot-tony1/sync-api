@@ -1,17 +1,16 @@
 import unittest
 import os
-import subprocess
 from utils.ffmpeg_utils import FFmpegUtils 
 from settings import TEST_DATA_DIR
 import logging
 
-# Configure logging to display debug information during tests
+# configure logging to display debug information during tests
 logging.basicConfig(level=logging.DEBUG)
 
 class TestFFmpegUtils(unittest.TestCase):
 
     # ------------------ set up class for unit tests ------------------ #
-
+    # setting up paths and variables for test data to be used class wide with self.
     @classmethod
     def setUpClass(cls):
         """
