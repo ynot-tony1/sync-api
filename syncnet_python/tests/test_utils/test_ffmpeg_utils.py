@@ -2,10 +2,6 @@ import unittest
 import os
 from utils.ffmpeg_utils import FFmpegUtils 
 from settings import TEST_DATA_DIR
-import logging
-
-# configure logging to display debug information during tests
-logging.basicConfig(level=logging.DEBUG)
 
 class TestFFmpegUtils(unittest.TestCase):
 
