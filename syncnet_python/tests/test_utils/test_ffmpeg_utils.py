@@ -24,7 +24,7 @@ class TestFFmpegUtils(unittest.TestCase):
     # testing get_audio_properties with the test file
     def test_get_audio_properties_success(self):
         """
-        Testing that FFmpegUtils.get_audio_properties returns correct properties for a valid audio file.
+        Testing that FFmpegUtils.get_audio_properties returns the correct properties for a valid audio file.
         """
         # calling the method to get audio properties
         audio_props = FFmpegUtils.get_audio_properties(self.input_file)
@@ -49,7 +49,7 @@ class TestFFmpegUtils(unittest.TestCase):
 
     def test_get_audio_properties_no_audio_stream(self):
         """
-        Test that FFmpegUtils.get_audio_properties returns None for a file without an audio stream.
+        Testing that FFmpegUtils.get_audio_properties returns None for a file without an audio stream.
         """
         # path to the file with no audio stream
         video_no_audio = os.path.join(TEST_DATA_DIR, 'video_no_audio.avi')
@@ -58,7 +58,7 @@ class TestFFmpegUtils(unittest.TestCase):
         audio_props = FFmpegUtils.get_audio_properties(video_no_audio)
         
         # asserting that audio_props is None
-        self.assertIsNone(audio_props, "Audio properties should be None for a video without an audio stream.")
+        self.assertIsNone(audio_props, "Audio properties should be None for a video without any audio stream inside it.")
 
 if __name__ == '__main__':
     unittest.main()
