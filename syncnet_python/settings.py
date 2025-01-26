@@ -27,3 +27,5 @@ FINAL_OUTPUT_DIR = os.getenv('FINAL_OUTPUT_DIR')
 # processing onstants
 DEFAULT_MAX_ITERATIONS = int(os.getenv('DEFAULT_MAX_ITERATIONS'))
 DEFAULT_TOLERANCE_MS = int(os.getenv('DEFAULT_TOLERANCE_MS'))
+
+TEST_DATA_DIR = os.getenv('TEST_DATA_DIR')
