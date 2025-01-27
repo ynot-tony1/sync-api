@@ -77,7 +77,8 @@ jobs:
     - name: Test SyncNet Execution
       run: |
         echo "=== Testing SyncNet Execution ==="
-        python syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00000
+        python syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00001
+        python syncnet_python/run_syncnet.py --videofile syncnet_python/data/example.avi --reference 00001
       continue-on-error: true  # Allows the workflow to proceed even if this step fails
 
     # List Log Files After SyncNet Test
