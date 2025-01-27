@@ -5,7 +5,13 @@
 venv/
 
 # ===== log files =====
-api/logs
+api/logs/final_logs
+api/logs/logs
+api/logs/run_logs
+
+# ===== file handling dirs =====
+syncnet_python/file_handling/final_output
+syncnet_python/file_handling/temp_input
 
 # ===== python cache files =====
 __pycache__/

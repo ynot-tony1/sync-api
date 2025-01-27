@@ -94,12 +94,12 @@ handlers:
 loggers:
 
   run_postline:
-    handlers: [postline_file_handler, console, app_file_handler]  # Include app_file_handler
+    handlers: [postline_file_handler, console, app_file_handler]  
     level: DEBUG
     propagate: false
 
   multipart:
-    handlers: [app_file_handler]  # Ensure all logs go to app.log
+    handlers: [app_file_handler]  
     level: WARNING
     propagate: false
 

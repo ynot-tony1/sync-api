@@ -66,7 +66,7 @@ def process_video(input_file, original_filename):
 
         # sync the video and audio streams from input file across multiple iterations using syncnet for analysis and ffmpeg with apad and atrim
         for iteration in range(DEFAULT_MAX_ITERATIONS):
-            logger.info(f"\n--- Synchronization Iteration {iteration + 1} ---")
+            logger.info(f"--- Synchronization Iteration {iteration + 1} ---")
             ref_str = f"{reference_number:05d}"
 
             # run the SyncNet pipeline
