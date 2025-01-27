@@ -51,7 +51,7 @@ jobs:
         ./download_model.sh
         echo "=== Finished executing download_model.sh ==="
 
-    # List the contents of important directories for verification
+    # Verify Downloads and Directory Structures
     - name: Verify Downloads and Directory Structures
       run: |
         echo "=== Verifying Downloads ==="
@@ -70,6 +70,21 @@ jobs:
         echo "Contents of syncnet_python/file_handling/final_output/:"
         ls -la syncnet_python/file_handling/final_output/
 
+    # Test SyncNet Execution Independently
+    - name: Test SyncNet Execution
+      run: |
+        echo "=== Testing SyncNet Execution ==="
+        python syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00000
+      continue-on-error: true  # Allows the workflow to proceed even if this step fails
+
+    # List Log Files After SyncNet Test
+    - name: List Log Files After SyncNet Test
+      run: |
+        echo "=== Listing Log Files After SyncNet Test ==="
+        ls -la api/logs/logs/
+        ls -la syncnet_python/logs/
+      continue-on-error: true
+
     # Run unit tests
     - name: Run unit tests
       run: |
@@ -78,12 +93,13 @@ jobs:
         python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
         echo "=== Completed unit tests ==="
 
-    # Upload logs if tests fail
+    # Upload Logs if Tests Fail
     - name: Upload Logs on Failure
       if: failure()
       uses: actions/upload-artifact@v3
       with:
         name: syncnet-logs
         path: |
+          api/logs/logs/app.log
           api/logs/logs/*.log
-          syncnet_python/logs/*.log
+
