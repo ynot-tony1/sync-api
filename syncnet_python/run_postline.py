@@ -1,14 +1,15 @@
 import os
 import logging
-from utils.file_utils import FileUtils
-from utils.ffmpeg_utils import FFmpegUtils
-from utils.syncnet_utils import SyncNetUtils
-from utils.analysis_utils import AnalysisUtils
-from settings import (
+from syncnet_python.utils.file_utils import FileUtils
+from syncnet_python.utils.ffmpeg_utils import FFmpegUtils
+from syncnet_python.utils.syncnet_utils import SyncNetUtils
+from syncnet_python.utils.analysis_utils import AnalysisUtils
+from api.config.settings import (
     RUN_LOGS_DIR, LOGS_DIR, FINAL_LOGS_DIR, DEFAULT_MAX_ITERATIONS,
     DEFAULT_TOLERANCE_MS, TEMP_PROCESSING_DIR, DATA_WORK_PYAVI_DIR,
     FINAL_OUTPUT_DIR
 )
+
 
 logger = logging.getLogger('run_postline')
 

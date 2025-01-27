@@ -5,7 +5,7 @@
 venv/
 
 # ===== log files =====
-syncnet_python/logs
+api/logs
 
 # ===== python cache files =====
 __pycache__/

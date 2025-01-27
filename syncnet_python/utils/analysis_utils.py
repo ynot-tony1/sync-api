@@ -1,10 +1,11 @@
 import os
 import re
 import logging
-from utils.file_utils import FileUtils
-from utils.syncnet_utils import SyncNetUtils
-from utils.log_utils import LogUtils
-from settings import FINAL_LOGS_DIR
+from syncnet_python.utils.file_utils import FileUtils
+from syncnet_python.utils.syncnet_utils import SyncNetUtils
+from syncnet_python.utils.log_utils import LogUtils
+from api.config.settings import FINAL_LOGS_DIR
+
 
 
 LogUtils.configure_logging()
