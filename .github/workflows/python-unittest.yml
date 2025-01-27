@@ -28,7 +28,7 @@ jobs:
         cache: 'pip'
 
     # Install system dependencies
-    - name: Install system dependencies
+    - name: Install System Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg libsm6 libxext6 libxrender-dev
@@ -44,32 +44,46 @@ jobs:
       run: |
         chmod +x ./download_model.sh
 
-    # Run download_model.sh script
+    # Run download_model.sh script with verbose output
     - name: Run download_model.sh
       run: |
-        echo "Starting download_model.sh"
+        echo "=== Executing download_model.sh ==="
         ./download_model.sh
-        echo "Completed download_model.sh"
+        echo "=== Finished executing download_model.sh ==="
 
-    # List downloaded models for verification
-    - name: Verify model files
+    # List the contents of important directories for verification
+    - name: Verify Downloads and Directory Structures
       run: |
+        echo "=== Verifying Downloads ==="
+        echo "Contents of syncnet_python/data/:"
         ls -la syncnet_python/data/
+
+        echo "Contents of syncnet_python/detectors/s3fd/weights/:"
+        ls -la syncnet_python/detectors/s3fd/weights/
+
+        echo "Contents of api/logs/logs/:"
+        ls -la api/logs/logs/
+
+        echo "Contents of syncnet_python/file_handling/temp_input/:"
+        ls -la syncnet_python/file_handling/temp_input/
+
+        echo "Contents of syncnet_python/file_handling/final_output/:"
+        ls -la syncnet_python/file_handling/final_output/
 
     # Run unit tests
     - name: Run unit tests
       run: |
-        echo "Starting unit tests"
+        echo "=== Starting unit tests ==="
         python3.7 -m unittest discover -s syncnet_python/tests/test_utils -p "*.py" -v
         python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
-        echo "Completed unit tests"
+        echo "=== Completed unit tests ==="
 
-    # Upload logs on failure
+    # Upload logs if tests fail
     - name: Upload Logs on Failure
       if: failure()
       uses: actions/upload-artifact@v3
       with:
         name: syncnet-logs
         path: |
-          api/logs/logs/app.log
-
+          api/logs/logs/*.log
+          syncnet_python/logs/*.log
