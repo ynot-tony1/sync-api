@@ -12,6 +12,11 @@ logs/
 syncnet_python/file_handling/final_output/
 syncnet_python/file_handling/temp_input/
 
+
+# ===== ignore model and weights =====
+syncnet_python/data/syncnet_v2.model
+syncnet_python/detectors/s3fd/weights/sfd_face.pth
+
 # ===== python cache files =====
 __pycache__/
 *.pyc
