@@ -38,7 +38,7 @@ setattr(opt,'crop_dir',os.path.join(opt.data_dir,'pycrop'))
 setattr(opt,'frames_dir',os.path.join(opt.data_dir,'pyframes'))
 
 # ========== ========== ========== ==========
-# # IOU FUNCTION
+#  IOU FUNCTION
 # ========== ========== ========== ==========
 
 def bb_intersection_over_union(boxA, boxB):

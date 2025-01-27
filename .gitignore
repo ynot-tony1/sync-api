@@ -20,3 +20,5 @@ syncnet_python/detectors/s3fd/weights/sfd_face.pth
 # ===== python cache files =====
 __pycache__/
 *.pyc
+
+ #
