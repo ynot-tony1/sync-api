@@ -12,10 +12,10 @@ img_mean = np.array([104., 117., 123.])[:, np.newaxis, np.newaxis].astype('float
 
 class S3FD():
 
-    def __init__(self, device='cpu'):
-
+    def __init__(self, device):
+        DEVICE = torch.device('cpu')
         tstamp = time.time()
-        self.device = device
+        self.device = DEVICE
 
         print('[S3FD] loading with', self.device)
         self.net = S3FDNet(device=self.device).to(self.device)
