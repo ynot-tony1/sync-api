@@ -15,16 +15,13 @@ jobs:
       matrix:
         python-version: [3.7]
 
-    env:
-      SYNCNET_DEVICE: cpu  # Set SyncNet to use CPU
-
     steps:
     # Checkout repository
     - name: Checkout repo
       uses: actions/checkout@v3
 
     # Set up Python
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: CI run ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
@@ -54,40 +51,13 @@ jobs:
         ./download_model.sh
         echo "=== Finished executing download_model.sh ==="
 
-    # Verify Downloads and Directory Structures
-    - name: Verify Downloads and Directory Structures
-      run: |
-        echo "=== Verifying Downloads ==="
-        echo "Contents of syncnet_python/data/:"
-        ls -la syncnet_python/data/
-
-        echo "Contents of syncnet_python/detectors/s3fd/weights/:"
-        ls -la syncnet_python/detectors/s3fd/weights/
-
-        echo "Contents of api/logs/logs/:"
-        ls -la api/logs/logs/
-
-        echo "Contents of syncnet_python/file_handling/temp_input/:"
-        ls -la syncnet_python/file_handling/temp_input/
-
-        echo "Contents of syncnet_python/file_handling/final_output/:"
-        ls -la syncnet_python/file_handling/final_output/
-
     # Test SyncNet Execution Independently
     - name: Test SyncNet Execution
       run: |
         echo "=== Testing SyncNet Execution ==="
         python syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00001
         python syncnet_python/run_syncnet.py --videofile syncnet_python/data/example.avi --reference 00001
-      continue-on-error: true  # Allows the workflow to proceed even if this step fails
-
-    # List Log Files After SyncNet Test
-    - name: List Log Files After SyncNet Test
-      run: |
-        echo "=== Listing Log Files After SyncNet Test ==="
-        ls -la api/logs/logs/
-        ls -la syncnet_python/logs/
-      continue-on-error: true
+      continue-on-error: true 
 
     # Run unit tests
     - name: Run unit tests
@@ -97,13 +67,3 @@ jobs:
         python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
         echo "=== Completed unit tests ==="
 
-    # Upload Logs if Tests Fail
-    - name: Upload Logs on Failure
-      if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: syncnet-logs
-        path: |
-          api/logs/logs/*.log
-          syncnet_python/logs/*.log
-          syncnet_python/data/*.log

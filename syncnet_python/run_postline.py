@@ -124,7 +124,7 @@ def process_video(input_file, original_filename):
         )
 
         # returning the path of the final synchronized video file
-        return final_output_path, abs(total_shift_ms)
+        return final_output_path
 
     except Exception as e:
         logger.error(f"An error occurred during video processing: {e}")
