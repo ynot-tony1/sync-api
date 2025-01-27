@@ -54,15 +54,14 @@ jobs:
     # List downloaded models for verification
     - name: Verify model files
       run: |
-        ls -la syncnet_python/models/
+        ls -la syncnet_python/data/
 
     # Run unit tests
     - name: Run unit tests
       run: |
         echo "Starting unit tests"
-        python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
         python3.7 -m unittest discover -s syncnet_python/tests/test_utils -p "*.py" -v
-
+        python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
         echo "Completed unit tests"
 
     # Upload logs on failure
@@ -72,7 +71,5 @@ jobs:
       with:
         name: syncnet-logs
         path: |
-          api/logs/logs/pipeline.log
-          syncnet_python/run_pipeline.log
-          syncnet_python/run_syncnet.log
-          # Add any other relevant log files
+          api/logs/logs/app.log
+
