@@ -27,15 +27,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
 
-    # cache Python packages
-    - name: Cache Python packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('syncnet_python/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
     # install system dependencies
     - name: Install system dependencies
       run: |
@@ -79,5 +70,5 @@ jobs:
     - name: Run Integration Tests
       run: |
         echo "=== Starting Integration Tests ==="
-        python3.7 -m unittest discover -s syncnet_python/tests/integration_tests -p "*.py" -v
+        python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
         echo "=== Completed Integration Tests ==="
