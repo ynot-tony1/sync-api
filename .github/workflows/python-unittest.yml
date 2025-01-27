@@ -1,4 +1,4 @@
-name: Python Unit Tests
+name: Build Unit tests and Teardown
 
 on:
   push:
@@ -16,8 +16,8 @@ jobs:
         python-version: [3.7]
 
     steps:
-    # checkout repository
-    - name: Checkout repository
+    # checkout repo
+    - name: Checkout repo
       uses: actions/checkout@v3
 
     # set up Python
