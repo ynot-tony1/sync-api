@@ -47,10 +47,19 @@ class TestRunPostline(unittest.TestCase):
         self.assertGreater(os.path.getsize(result), 0, "Processed file is empty.")
         os.remove(result)
 
+    @classmethod
     def tearDownClass(cls):
         """Clean up after all tests."""
-        # Optionally, remove any remaining temporary files or directories
-        pass
+        processed_files = [
+            os.path.join(cls.final_output_dir, f)
+            for f in os.listdir(cls.final_output_dir)
+            if f.startswith('corrected_')
+        ]
+        for file_path in processed_files:
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                print(f"Error removing file {file_path}: {e}")
 
 if __name__ == '__main__':
     unittest.main()
