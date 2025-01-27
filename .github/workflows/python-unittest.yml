@@ -58,3 +58,4 @@ jobs:
         python3.7 -m unittest discover -s syncnet_python/tests/test_utils -p "*.py" -v
         echo "Completed unit tests"
 
+ 
