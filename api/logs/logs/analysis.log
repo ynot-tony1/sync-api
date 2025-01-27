@@ -1,0 +1,10 @@
+[2025-01-27 15:59:06,545] [DEBUG] analysis_logger.extract_offset_confidence_pairs: Extracted pairs: [(3, 8.293)]
+[2025-01-27 15:59:06,545] [INFO] analysis_logger.analyze_syncnet_log: The best offset would be: 3 frames (120 ms)
+[2025-01-27 15:59:25,482] [DEBUG] analysis_logger.extract_offset_confidence_pairs: Extracted pairs: [(0, 8.38)]
+[2025-01-27 15:59:25,483] [INFO] analysis_logger.analyze_syncnet_log: The best offset would be: 0 frames (0 ms)
+[2025-01-27 15:59:25,636] [INFO] analysis_logger.verify_synchronization: Starting final synchronization verification...
+[2025-01-27 15:59:45,017] [DEBUG] analysis_logger.extract_offset_confidence_pairs: Extracted pairs: [(0, 8.38)]
+[2025-01-27 15:59:45,017] [INFO] analysis_logger.analyze_syncnet_log: The best offset would be: 0 frames (0 ms)
+[2025-01-27 15:59:45,018] [INFO] analysis_logger.verify_synchronization: Final offset: 0 ms
+[2025-01-27 15:59:45,018] [INFO] analysis_logger.verify_synchronization: Final synchronization is within the acceptable tolerance!
+[2025-01-27 15:59:45,018] [INFO] analysis_logger.verify_synchronization: It's done!!

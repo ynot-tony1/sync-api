@@ -1,0 +1,115 @@
+[2025-01-27 15:58:49,024] [DEBUG] ffmpeg_logger.get_video_fps: FFprobe stdout: {
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "r_frame_rate": "25/1"
+        }
+    ]
+}
+
+[2025-01-27 15:58:49,024] [INFO] ffmpeg_logger.get_video_fps: Got the fps for syncnet_python/file_handling/temp_input/ac587115-4498-4a00-9001-f3f6c225539f.avi: 25.0
+[2025-01-27 15:59:06,609] [DEBUG] ffmpeg_logger.get_audio_properties: FFprobe stdout: {
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "pcm_s16le",
+            "sample_rate": "16000",
+            "channels": 1
+        }
+    ]
+}
+
+[2025-01-27 15:59:06,609] [INFO] ffmpeg_logger.get_audio_properties: retrieved audio properties for syncnet_python/data/1_corrected_example.avi: {'sample_rate': '16000', 'channels': 1, 'codec_name': 'pcm_s16le'}
+[2025-01-27 15:59:06,610] [INFO] ffmpeg_logger.shift_audio: shifting audio forward by 120 ms.
+[2025-01-27 15:59:06,610] [DEBUG] ffmpeg_logger.shift_audio: audio shift command string is : ['ffmpeg', '-y', '-i', 'syncnet_python/data/1_corrected_example.avi', '-c:v', 'copy', '-af', 'adelay=120|120,apad', '-c:a', 'pcm_s16le', '-ar', '16000', '-ac', '1', '-threads', '4', '-shortest', 'syncnet_python/file_handling/temp_input/corrected_iter1_example.avi']
+[2025-01-27 15:59:06,686] [DEBUG] ffmpeg_logger.shift_audio: FFmpeg stderr: ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Guessed Channel Layout for Input Stream #0.1 : mono
+Input #0, avi, from 'syncnet_python/data/1_corrected_example.avi':
+  Metadata:
+    software        : Lavf57.83.100
+  Duration: 00:00:12.68, start: 0.000000, bitrate: 701 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 430 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (copy)
+  Stream #0:1 -> #0:1 (pcm_s16le (native) -> pcm_s16le (native))
+Press [q] to stop, [?] for help
+Output #0, avi, to 'syncnet_python/file_handling/temp_input/corrected_iter1_example.avi':
+  Metadata:
+    software        : Lavf57.83.100
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], q=2-31, 430 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+    Metadata:
+      encoder         : Lavc58.134.100 pcm_s16le
+frame=    1 fps=0.0 q=-1.0 size=      16kB time=00:00:00.04 bitrate=3268.4kbits/s speed=4e+03x    
+frame=  317 fps=0.0 q=-1.0 Lsize=    1089kB time=00:00:12.76 bitrate= 699.4kbits/s speed=1.19e+03x    
+video:665kB audio:400kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 2.332263%
+
+[2025-01-27 15:59:06,686] [INFO] ffmpeg_logger.shift_audio: Audio successfully shifted. Output saved to syncnet_python/file_handling/temp_input/corrected_iter1_example.avi
+[2025-01-27 15:59:25,555] [DEBUG] ffmpeg_logger.get_audio_properties: FFprobe stdout: {
+    "programs": [
+
+    ],
+    "streams": [
+        {
+            "codec_name": "pcm_s16le",
+            "sample_rate": "16000",
+            "channels": 1
+        }
+    ]
+}
+
+[2025-01-27 15:59:25,556] [INFO] ffmpeg_logger.get_audio_properties: retrieved audio properties for syncnet_python/file_handling/final_output/ac587115-4498-4a00-9001-f3f6c225539f.avi: {'sample_rate': '16000', 'channels': 1, 'codec_name': 'pcm_s16le'}
+[2025-01-27 15:59:25,557] [INFO] ffmpeg_logger.shift_audio: shifting audio forward by 120 ms.
+[2025-01-27 15:59:25,557] [DEBUG] ffmpeg_logger.shift_audio: audio shift command string is : ['ffmpeg', '-y', '-i', 'syncnet_python/file_handling/final_output/ac587115-4498-4a00-9001-f3f6c225539f.avi', '-c:v', 'copy', '-af', 'adelay=120|120,apad', '-c:a', 'pcm_s16le', '-ar', '16000', '-ac', '1', '-threads', '4', '-shortest', 'syncnet_python/file_handling/final_output/corrected_example.avi']
+[2025-01-27 15:59:25,634] [DEBUG] ffmpeg_logger.shift_audio: FFmpeg stderr: ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Guessed Channel Layout for Input Stream #0.1 : mono
+Input #0, avi, from 'syncnet_python/file_handling/final_output/ac587115-4498-4a00-9001-f3f6c225539f.avi':
+  Metadata:
+    software        : Lavf57.83.100
+  Duration: 00:00:12.68, start: 0.000000, bitrate: 701 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 430 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (copy)
+  Stream #0:1 -> #0:1 (pcm_s16le (native) -> pcm_s16le (native))
+Press [q] to stop, [?] for help
+Output #0, avi, to 'syncnet_python/file_handling/final_output/corrected_example.avi':
+  Metadata:
+    software        : Lavf57.83.100
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], q=2-31, 430 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+    Metadata:
+      encoder         : Lavc58.134.100 pcm_s16le
+frame=    1 fps=0.0 q=-1.0 size=      16kB time=00:00:00.04 bitrate=3268.4kbits/s speed=4e+03x    
+frame=  317 fps=0.0 q=-1.0 Lsize=    1089kB time=00:00:12.76 bitrate= 699.4kbits/s speed=1.32e+03x    
+video:665kB audio:400kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 2.332263%
+
+[2025-01-27 15:59:25,635] [INFO] ffmpeg_logger.shift_audio: Audio successfully shifted. Output saved to syncnet_python/file_handling/final_output/corrected_example.avi
+[2025-01-27 15:59:25,635] [INFO] ffmpeg_logger.apply_cumulative_shift: Applied cumulative audio shift. Final output saved to syncnet_python/file_handling/final_output/corrected_example.avi

@@ -1,0 +1,32 @@
+[2025-01-27 15:58:48,944] [INFO] api.utils.api_utils.save_temp_file: Temporary file saved: syncnet_python/file_handling/temp_input/ac587115-4498-4a00-9001-f3f6c225539f.avi
+[2025-01-27 15:58:48,944] [INFO] run_postline.process_video: Starting video synchronization process...
+[2025-01-27 15:58:48,944] [INFO] file_utils_logger.get_next_directory_number: Couldn't see any numeric directories. Starting it off at 00001.
+[2025-01-27 15:58:48,944] [DEBUG] file_utils_logger.get_next_directory_number: The next number in the directory is: 00001
+[2025-01-27 15:58:48,946] [DEBUG] file_utils_logger.copy_input_to_temp: copied file to: syncnet_python/file_handling/temp_input/corrected_example.avi
+[2025-01-27 15:58:48,946] [DEBUG] file_utils_logger.move_to_data_work: Copied file successfully moved from temp directory to: syncnet_python/data/1_corrected_example.avi
+[2025-01-27 15:58:49,025] [INFO] run_postline.process_video: --- Synchronization Iteration 1 ---
+[2025-01-27 15:58:59,355] [INFO] pipeline_logger.run_pipeline: SyncNet pipeline successfully executed for video: syncnet_python/data/1_corrected_example.avi with reference: 00001
+[2025-01-27 15:59:06,543] [INFO] pipeline_logger.run_syncnet: SyncNet model completed successfully. Log saved to: api/logs/run_logs/run_00001.log
+[2025-01-27 15:59:06,544] [DEBUG] file_utils_logger.read_log_file: successfully read log file: api/logs/run_logs/run_00001.log
+[2025-01-27 15:59:06,545] [DEBUG] analysis_logger.extract_offset_confidence_pairs: Extracted pairs: [(3, 8.293)]
+[2025-01-27 15:59:06,545] [INFO] analysis_logger.analyze_syncnet_log: The best offset would be: 3 frames (120 ms)
+[2025-01-27 15:59:06,545] [INFO] run_postline.process_video: Total shift after iteration 1: 120 ms
+[2025-01-27 15:59:06,687] [INFO] run_postline.process_video: --- Synchronization Iteration 2 ---
+[2025-01-27 15:59:17,717] [INFO] pipeline_logger.run_pipeline: SyncNet pipeline successfully executed for video: syncnet_python/file_handling/temp_input/corrected_iter1_example.avi with reference: 00002
+[2025-01-27 15:59:25,481] [INFO] pipeline_logger.run_syncnet: SyncNet model completed successfully. Log saved to: api/logs/run_logs/run_00002.log
+[2025-01-27 15:59:25,482] [DEBUG] file_utils_logger.read_log_file: successfully read log file: api/logs/run_logs/run_00002.log
+[2025-01-27 15:59:25,482] [DEBUG] analysis_logger.extract_offset_confidence_pairs: Extracted pairs: [(0, 8.38)]
+[2025-01-27 15:59:25,483] [INFO] analysis_logger.analyze_syncnet_log: The best offset would be: 0 frames (0 ms)
+[2025-01-27 15:59:25,483] [INFO] run_postline.process_video: Total shift after iteration 2: 120 ms
+[2025-01-27 15:59:25,483] [INFO] run_postline.process_video: Synchronization offset is within the acceptable tolerance.
+[2025-01-27 15:59:25,636] [INFO] analysis_logger.verify_synchronization: Starting final synchronization verification...
+[2025-01-27 15:59:36,739] [INFO] pipeline_logger.run_pipeline: SyncNet pipeline successfully executed for video: syncnet_python/file_handling/final_output/corrected_example.avi with reference: 00002
+[2025-01-27 15:59:45,016] [INFO] pipeline_logger.run_syncnet: SyncNet model completed successfully. Log saved to: api/logs/final_logs/final_output_00002.log
+[2025-01-27 15:59:45,017] [DEBUG] file_utils_logger.read_log_file: successfully read log file: api/logs/final_logs/final_output_00002.log
+[2025-01-27 15:59:45,017] [DEBUG] analysis_logger.extract_offset_confidence_pairs: Extracted pairs: [(0, 8.38)]
+[2025-01-27 15:59:45,017] [INFO] analysis_logger.analyze_syncnet_log: The best offset would be: 0 frames (0 ms)
+[2025-01-27 15:59:45,018] [INFO] analysis_logger.verify_synchronization: Final offset: 0 ms
+[2025-01-27 15:59:45,018] [INFO] analysis_logger.verify_synchronization: Final synchronization is within the acceptable tolerance!
+[2025-01-27 15:59:45,018] [INFO] analysis_logger.verify_synchronization: It's done!!
+[2025-01-27 15:59:45,019] [INFO] fastapi.process_endpoint: fully processed file available at: syncnet_python/file_handling/final_output/corrected_example.avi
+[2025-01-27 15:59:45,020] [INFO] uvicorn.access.send: 127.0.0.1:51706 - "POST /process HTTP/1.1" 200

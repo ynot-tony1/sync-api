@@ -1,0 +1,6 @@
+[2025-01-27 15:58:48,944] [INFO] run_postline.process_video: Starting video synchronization process...
+[2025-01-27 15:58:49,025] [INFO] run_postline.process_video: --- Synchronization Iteration 1 ---
+[2025-01-27 15:59:06,545] [INFO] run_postline.process_video: Total shift after iteration 1: 120 ms
+[2025-01-27 15:59:06,687] [INFO] run_postline.process_video: --- Synchronization Iteration 2 ---
+[2025-01-27 15:59:25,483] [INFO] run_postline.process_video: Total shift after iteration 2: 120 ms
+[2025-01-27 15:59:25,483] [INFO] run_postline.process_video: Synchronization offset is within the acceptable tolerance.

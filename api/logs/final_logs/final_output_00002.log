@@ -1,0 +1,104 @@
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Guessed Channel Layout for Input Stream #0.1 : mono
+Input #0, avi, from 'syncnet_python/data/work/pycrop/00002/00000.avi':
+  Metadata:
+    software        : Lavf58.76.100
+  Duration: 00:00:12.68, start: 0.000000, bitrate: 682 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (XVID / 0x44495658), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 415 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (mpeg4 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x563a720ec000] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to 'syncnet_python/data/work/pytmp/00002/%06d.jpg':
+  Metadata:
+    software        : Lavf58.76.100
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: mjpeg, yuvj420p(pc, progressive), 224x224 [SAR 1:1 DAR 1:1], q=2-31, 200 kb/s, 25 fps, 25 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: N/A
+frame=    1 fps=0.0 q=4.2 size=N/A time=00:00:00.04 bitrate=N/A speed=9.18x    frame=  317 fps=0.0 q=24.8 Lsize=N/A time=00:00:12.68 bitrate=N/A speed=64.6x    
+video:800kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Guessed Channel Layout for Input Stream #0.1 : mono
+Input #0, avi, from 'syncnet_python/data/work/pycrop/00002/00000.avi':
+  Metadata:
+    software        : Lavf58.76.100
+  Duration: 00:00:12.68, start: 0.000000, bitrate: 682 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (XVID / 0x44495658), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 415 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:1 -> #0:0 (pcm_s16le (native) -> pcm_s16le (native))
+Press [q] to stop, [?] for help
+-async is forwarded to lavfi similarly to -af aresample=async=1:min_hard_comp=0.100000:first_pts=0.
+Output #0, wav, to 'syncnet_python/data/work/pytmp/00002/audio.wav':
+  Metadata:
+    software        : Lavf58.76.100
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+    Metadata:
+      encoder         : Lavc58.134.100 pcm_s16le
+size=       2kB time=00:00:00.00 bitrate=N/A speed=   0x    size=     396kB time=00:00:12.67 bitrate= 256.2kbits/s speed=2.55e+03x    
+video:0kB audio:396kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.019223%
+Model syncnet_python/data/syncnet_v2.model loaded.
+Compute time 1.476 sec.
+Framewise conf: 
+[ 7.167  8.340  8.340  8.340  8.340  7.677  7.677  10.149  10.149  10.149
+  10.149  10.180  10.180  10.180  10.180  10.149  9.993  8.363  8.150
+  8.060  5.593  4.931  4.087  4.931  5.593  8.150  8.150  5.113  8.235
+  8.346  8.415  8.910  8.415  8.346  8.235  7.514  7.514  7.514  7.514
+  7.514  7.514  7.528  7.528  7.528  7.528  7.528  7.528  7.528  7.528
+  7.528  10.958  11.456  11.456  11.881  12.056  12.059  12.059  12.206
+  12.301  12.301  12.301  12.301  12.301  11.122  10.553  9.760  9.760
+  9.760  9.517  8.777  9.760  9.974  10.553  9.974  9.974  9.826  8.831
+  8.831  9.826  9.294  9.079  8.831  7.729  7.011  6.542  6.363  6.187
+  6.102  5.801  5.801  5.801  6.187  6.363  7.309  7.590  8.292  8.565
+  8.565  8.661  8.661  9.603  8.661  8.661  9.603  10.479  9.603  9.603
+  8.702  8.273  7.765  6.507  6.317  5.471  5.471  5.471  5.344  5.344
+  5.344  5.716  8.146  8.235  8.918  10.074  10.465  10.557  10.624
+  10.624  10.683  10.683  10.683  10.683  10.683  10.658  10.683  10.855
+  10.986  11.250  11.136  11.250  11.136  11.136  11.136  10.986  10.986
+  11.136  10.589  9.671  8.833  8.833  8.833  9.671  9.780  8.274  8.077
+  8.036  8.036  8.036  8.077  8.553  8.553  8.553  8.553  8.553  8.553
+  8.553  7.450  4.485  4.485  4.485  4.485  4.794  7.181  7.450  7.906
+  7.906  7.970  8.042  8.356  9.102  10.188  10.188  9.512  9.512  9.512
+  9.230  9.230  6.423  6.073  5.254  5.254  5.254  5.254  5.254  8.293
+  9.781  10.428  10.428  10.428  10.428  10.428  9.793  10.428  10.428
+  9.793  9.389  9.389  9.390  9.390  9.389  9.389  9.389  9.110  9.110
+  9.110  9.110  9.055  8.713  7.292  6.869  6.588  2.899  2.899  2.899
+  2.899  2.899  4.721  5.820  5.820  5.820  5.820  5.820  5.820  7.029
+  7.063  8.395  9.218  9.218  9.218  9.218  8.395  8.126  6.625  6.625
+  6.197  6.197  6.197  6.197  6.197  4.976  5.675  5.675  5.675  6.033
+  6.033  6.231  6.231  10.054  10.615  10.849  10.992  11.854  11.854
+  10.992  10.849  10.849  10.483  10.483  10.483  9.744  9.744  7.528
+  7.528  9.722  9.744  9.754  9.744  9.722  6.892  6.873  6.892  9.722
+  10.076  10.076  8.289  8.289  8.289  10.076  10.076  10.354  10.354
+  10.354  9.670  10.403  10.403  10.403  9.879  9.879  8.897  8.897  8.897
+  8.642  8.341  8.127  8.341  8.127  8.341  8.550  8.550  8.341  7.391
+  7.391  7.391]
+AV offset: 	0 
+Min dist: 	6.538
+Confidence: 	8.380
+Offsets saved to syncnet_python/data/work/pywork/00002/activesd.pckl

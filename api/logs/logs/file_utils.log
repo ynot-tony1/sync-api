@@ -1,0 +1,7 @@
+[2025-01-27 15:58:48,944] [INFO] file_utils_logger.get_next_directory_number: Couldn't see any numeric directories. Starting it off at 00001.
+[2025-01-27 15:58:48,944] [DEBUG] file_utils_logger.get_next_directory_number: The next number in the directory is: 00001
+[2025-01-27 15:58:48,946] [DEBUG] file_utils_logger.copy_input_to_temp: copied file to: syncnet_python/file_handling/temp_input/corrected_example.avi
+[2025-01-27 15:58:48,946] [DEBUG] file_utils_logger.move_to_data_work: Copied file successfully moved from temp directory to: syncnet_python/data/1_corrected_example.avi
+[2025-01-27 15:59:06,544] [DEBUG] file_utils_logger.read_log_file: successfully read log file: api/logs/run_logs/run_00001.log
+[2025-01-27 15:59:25,482] [DEBUG] file_utils_logger.read_log_file: successfully read log file: api/logs/run_logs/run_00002.log
+[2025-01-27 15:59:45,017] [DEBUG] file_utils_logger.read_log_file: successfully read log file: api/logs/final_logs/final_output_00002.log

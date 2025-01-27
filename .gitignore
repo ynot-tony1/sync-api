@@ -5,7 +5,8 @@
 venv/
 
 # ===== log files =====
-api/logs
+*/api/logs/
+
 
 
 # ===== file handling dirs =====

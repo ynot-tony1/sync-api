@@ -1,0 +1,1 @@
+[2025-01-27 15:59:45,020] [INFO] uvicorn.access.send: 127.0.0.1:51706 - "POST /process HTTP/1.1" 200

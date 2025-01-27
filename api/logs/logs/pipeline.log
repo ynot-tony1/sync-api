@@ -1,0 +1,488 @@
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Guessed Channel Layout for Input Stream #0.1 : mono
+Input #0, avi, from 'syncnet_python/file_handling/final_output/corrected_example.avi':
+  Metadata:
+    software        : Lavf58.76.100
+  Duration: 00:00:12.68, start: 0.000000, bitrate: 703 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 430 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (mpeg4 (native) -> mpeg4 (native))
+  Stream #0:1 -> #0:1 (pcm_s16le (native) -> mp3 (libmp3lame))
+Press [q] to stop, [?] for help
+-async is forwarded to lavfi similarly to -af aresample=async=1:min_hard_comp=0.100000:first_pts=0.
+Output #0, avi, to 'syncnet_python/data/work/pyavi/00002/video.avi':
+  Metadata:
+    software        : Lavf58.76.100
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Video: mpeg4 (FMP4 / 0x34504D46), yuv420p(progressive), 224x224 [SAR 1:1 DAR 1:1], q=2-31, 200 kb/s, 25 fps, 25 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 mpeg4
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: mp3 (U[0][0][0] / 0x0055), 16000 Hz, mono, s16p
+    Metadata:
+      encoder         : Lavc58.134.100 libmp3lame
+frame=    1 fps=0.0 q=2.0 size=      18kB time=00:00:00.21 bitrate= 691.4kbits/s speed=29.2x    frame=  317 fps=0.0 q=2.0 Lsize=    1073kB time=00:00:12.78 bitrate= 687.6kbits/s speed=  56x    
+video:1009kB audio:38kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 2.463491%
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Input #0, avi, from 'syncnet_python/data/work/pyavi/00002/video.avi':
+  Metadata:
+    software        : Lavf58.76.100
+  Duration: 00:00:12.89, start: 0.000000, bitrate: 681 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 649 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: mp3 (U[0][0][0] / 0x0055), 16000 Hz, mono, fltp, 24 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (mpeg4 (native) -> mjpeg (native))
+Press [q] to stop, [?] for help
+[swscaler @ 0x567369a94f40] deprecated pixel format used, make sure you did set range correctly
+Output #0, image2, to 'syncnet_python/data/work/pyframes/00002/%06d.jpg':
+  Metadata:
+    software        : Lavf58.76.100
+    encoder         : Lavf58.76.100
+  Stream #0:0: Video: mjpeg, yuvj420p(pc, progressive), 224x224 [SAR 1:1 DAR 1:1], q=2-31, 200 kb/s, 25 fps, 25 tbn
+    Metadata:
+      encoder         : Lavc58.134.100 mjpeg
+    Side data:
+      cpb: bitrate max/min/avg: 0/0/200000 buffer size: 0 vbv_delay: N/A
+frame=    1 fps=0.0 q=2.0 size=N/A time=00:00:00.04 bitrate=N/A speed=5.74x    frame=  319 fps=0.0 q=2.0 Lsize=N/A time=00:00:12.76 bitrate=N/A dup=2 drop=0 speed=43.1x    
+video:2784kB audio:0kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: unknown
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Input #0, avi, from 'syncnet_python/data/work/pyavi/00002/video.avi':
+  Metadata:
+    software        : Lavf58.76.100
+  Duration: 00:00:12.89, start: 0.000000, bitrate: 681 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (FMP4 / 0x34504D46), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 649 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: mp3 (U[0][0][0] / 0x0055), 16000 Hz, mono, fltp, 24 kb/s
+Stream mapping:
+  Stream #0:1 -> #0:0 (mp3 (mp3float) -> pcm_s16le (native))
+Press [q] to stop, [?] for help
+Output #0, wav, to 'syncnet_python/data/work/pyavi/00002/audio.wav':
+  Metadata:
+    software        : Lavf58.76.100
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+    Metadata:
+      encoder         : Lavc58.134.100 pcm_s16le
+size=       1kB time=00:00:00.00 bitrate=N/A speed=N/A    size=     403kB time=00:00:12.85 bitrate= 256.8kbits/s speed=1.4e+03x    
+video:0kB audio:403kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.018913%
+[S3FD] loading with cuda
+[S3FD] finished loading (4.1041 sec)
+syncnet_python/data/work/pyavi/00002/video.avi-00000; 1 dets; 40.00 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00001; 1 dets; 75.61 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00002; 1 dets; 80.80 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00003; 1 dets; 75.79 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00004; 1 dets; 80.89 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00005; 1 dets; 82.42 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00006; 1 dets; 82.15 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00007; 1 dets; 71.20 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00008; 1 dets; 81.06 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00009; 1 dets; 81.43 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00010; 1 dets; 77.13 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00011; 1 dets; 75.93 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00012; 1 dets; 70.90 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00013; 1 dets; 80.10 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00014; 1 dets; 75.85 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00015; 1 dets; 72.91 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00016; 1 dets; 73.14 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00017; 1 dets; 68.93 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00018; 1 dets; 71.48 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00019; 1 dets; 71.03 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00020; 1 dets; 73.09 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00021; 1 dets; 72.67 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00022; 1 dets; 71.52 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00023; 1 dets; 68.96 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00024; 1 dets; 78.54 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00025; 1 dets; 80.94 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00026; 1 dets; 78.47 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00027; 1 dets; 77.52 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00028; 1 dets; 79.82 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00029; 1 dets; 78.21 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00030; 1 dets; 79.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00031; 1 dets; 77.29 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00032; 1 dets; 74.09 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00033; 1 dets; 82.04 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00034; 1 dets; 79.03 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00035; 1 dets; 75.71 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00036; 1 dets; 75.46 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00037; 1 dets; 80.13 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00038; 1 dets; 87.77 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00039; 1 dets; 83.13 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00040; 1 dets; 81.72 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00041; 1 dets; 88.78 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00042; 1 dets; 80.55 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00043; 1 dets; 84.89 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00044; 1 dets; 82.44 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00045; 1 dets; 82.35 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00046; 1 dets; 80.38 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00047; 1 dets; 79.40 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00048; 1 dets; 92.38 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00049; 1 dets; 93.22 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00050; 1 dets; 87.49 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00051; 1 dets; 85.49 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00052; 1 dets; 93.80 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00053; 1 dets; 83.40 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00054; 1 dets; 89.63 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00055; 1 dets; 87.41 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00056; 1 dets; 89.13 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00057; 1 dets; 82.61 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00058; 1 dets; 90.35 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00059; 1 dets; 82.34 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00060; 1 dets; 86.54 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00061; 1 dets; 90.06 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00062; 1 dets; 90.48 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00063; 1 dets; 88.93 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00064; 1 dets; 89.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00065; 1 dets; 86.87 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00066; 1 dets; 85.83 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00067; 1 dets; 89.81 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00068; 1 dets; 81.67 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00069; 1 dets; 75.37 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00070; 1 dets; 73.92 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00071; 1 dets; 76.96 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00072; 1 dets; 81.82 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00073; 1 dets; 77.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00074; 1 dets; 79.41 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00075; 1 dets; 71.87 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00076; 1 dets; 83.14 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00077; 1 dets; 76.04 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00078; 1 dets; 74.49 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00079; 1 dets; 76.65 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00080; 1 dets; 74.84 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00081; 1 dets; 74.79 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00082; 1 dets; 75.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00083; 1 dets; 79.35 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00084; 1 dets; 70.69 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00085; 1 dets; 77.47 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00086; 1 dets; 81.02 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00087; 1 dets; 76.62 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00088; 1 dets; 75.50 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00089; 1 dets; 75.16 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00090; 1 dets; 76.82 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00091; 1 dets; 81.23 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00092; 1 dets; 79.34 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00093; 1 dets; 73.90 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00094; 1 dets; 77.97 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00095; 1 dets; 83.34 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00096; 1 dets; 79.45 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00097; 1 dets; 77.23 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00098; 1 dets; 81.26 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00099; 1 dets; 82.76 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00100; 1 dets; 80.93 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00101; 1 dets; 81.70 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00102; 1 dets; 77.37 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00103; 1 dets; 89.43 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00104; 1 dets; 96.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00105; 1 dets; 100.00 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00106; 1 dets; 100.01 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00107; 1 dets; 100.44 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00108; 1 dets; 102.53 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00109; 1 dets; 101.69 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00110; 1 dets; 107.07 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00111; 1 dets; 107.67 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00112; 1 dets; 82.95 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00113; 1 dets; 88.02 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00114; 1 dets; 99.08 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00115; 1 dets; 106.09 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00116; 1 dets; 100.26 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00117; 1 dets; 100.25 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00118; 1 dets; 105.26 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00119; 1 dets; 103.02 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00120; 1 dets; 105.74 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00121; 1 dets; 107.08 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00122; 1 dets; 96.17 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00123; 1 dets; 95.12 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00124; 1 dets; 106.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00125; 1 dets; 107.91 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00126; 1 dets; 106.47 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00127; 1 dets; 106.99 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00128; 1 dets; 105.68 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00129; 1 dets; 105.98 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00130; 1 dets; 107.35 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00131; 1 dets; 106.72 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00132; 1 dets; 107.43 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00133; 1 dets; 108.05 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00134; 1 dets; 107.41 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00135; 1 dets; 106.09 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00136; 1 dets; 106.72 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00137; 1 dets; 105.74 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00138; 1 dets; 105.90 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00139; 1 dets; 104.90 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00140; 1 dets; 105.51 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00141; 1 dets; 99.37 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00142; 1 dets; 99.31 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00143; 1 dets; 99.45 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00144; 1 dets; 89.98 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00145; 1 dets; 84.80 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00146; 1 dets; 88.16 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00147; 1 dets; 92.92 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00148; 1 dets; 90.48 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00149; 1 dets; 100.69 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00150; 1 dets; 100.19 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00151; 1 dets; 107.18 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00152; 1 dets; 93.34 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00153; 1 dets; 77.52 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00154; 1 dets; 108.50 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00155; 1 dets; 112.99 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00156; 1 dets; 107.96 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00157; 1 dets; 102.75 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00158; 1 dets; 107.54 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00159; 1 dets; 105.69 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00160; 1 dets; 107.57 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00161; 1 dets; 105.09 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00162; 1 dets; 104.32 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00163; 1 dets; 108.57 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00164; 1 dets; 105.74 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00165; 1 dets; 98.42 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00166; 1 dets; 103.48 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00167; 1 dets; 96.14 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00168; 1 dets; 99.65 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00169; 1 dets; 94.93 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00170; 1 dets; 100.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00171; 1 dets; 96.11 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00172; 1 dets; 98.62 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00173; 1 dets; 96.81 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00174; 1 dets; 90.62 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00175; 1 dets; 97.15 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00176; 1 dets; 103.07 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00177; 1 dets; 99.06 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00178; 1 dets; 100.64 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00179; 1 dets; 103.03 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00180; 1 dets; 104.12 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00181; 1 dets; 108.71 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00182; 1 dets; 109.24 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00183; 1 dets; 104.64 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00184; 1 dets; 106.04 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00185; 1 dets; 106.19 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00186; 1 dets; 107.82 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00187; 1 dets; 106.34 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00188; 1 dets; 107.01 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00189; 1 dets; 107.33 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00190; 1 dets; 106.63 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00191; 1 dets; 107.39 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00192; 1 dets; 107.76 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00193; 1 dets; 107.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00194; 1 dets; 108.20 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00195; 1 dets; 106.22 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00196; 1 dets; 108.49 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00197; 1 dets; 105.53 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00198; 1 dets; 106.89 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00199; 1 dets; 103.55 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00200; 1 dets; 105.17 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00201; 1 dets; 92.16 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00202; 1 dets; 90.91 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00203; 1 dets; 97.63 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00204; 1 dets; 102.53 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00205; 1 dets; 101.58 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00206; 1 dets; 101.10 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00207; 1 dets; 100.84 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00208; 1 dets; 98.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00209; 1 dets; 96.85 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00210; 1 dets; 99.34 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00211; 1 dets; 103.36 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00212; 1 dets; 101.68 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00213; 1 dets; 97.86 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00214; 1 dets; 98.46 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00215; 1 dets; 89.76 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00216; 1 dets; 93.62 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00217; 1 dets; 94.83 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00218; 1 dets; 93.95 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00219; 1 dets; 98.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00220; 1 dets; 101.96 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00221; 1 dets; 102.02 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00222; 1 dets; 104.96 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00223; 1 dets; 99.47 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00224; 1 dets; 95.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00225; 1 dets; 103.40 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00226; 1 dets; 104.64 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00227; 1 dets; 104.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00228; 1 dets; 102.16 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00229; 1 dets; 102.71 HzVideoManager is deprecated and will be removed.
+`base_timecode` argument is deprecated and has no effect.
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Guessed Channel Layout for Input Stream #0.0 : mono
+Input #0, wav, from 'syncnet_python/data/work/pyavi/00002/audio.wav':
+  Metadata:
+    encoder         : Lavf58.76.100
+  Duration: 00:00:12.89, bitrate: 256 kb/s
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (pcm_s16le (native) -> pcm_s16le (native))
+Press [q] to stop, [?] for help
+Output #0, wav, to 'syncnet_python/data/work/pytmp/00002/audio.wav':
+  Metadata:
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+    Metadata:
+      encoder         : Lavc58.134.100 pcm_s16le
+size=       4kB time=00:00:00.00 bitrate=N/A speed=N/A    size=     396kB time=00:00:12.67 bitrate= 256.2kbits/s speed=3.46e+03x    
+video:0kB audio:396kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 0.019223%
+ffmpeg version 4.4.2-0ubuntu0.22.04.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11 (Ubuntu 11.2.0-19ubuntu1)
+  configuration: --prefix=/usr --extra-version=0ubuntu0.22.04.1 --toolchain=hardened --libdir=/usr/lib/x86_64-linux-gnu --incdir=/usr/include/x86_64-linux-gnu --arch=amd64 --enable-gpl --disable-stripping --enable-gnutls --enable-ladspa --enable-libaom --enable-libass --enable-libbluray --enable-libbs2b --enable-libcaca --enable-libcdio --enable-libcodec2 --enable-libdav1d --enable-libflite --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-libgme --enable-libgsm --enable-libjack --enable-libmp3lame --enable-libmysofa --enable-libopenjpeg --enable-libopenmpt --enable-libopus --enable-libpulse --enable-librabbitmq --enable-librubberband --enable-libshine --enable-libsnappy --enable-libsoxr --enable-libspeex --enable-libsrt --enable-libssh --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx265 --enable-libxml2 --enable-libxvid --enable-libzimg --enable-libzmq --enable-libzvbi --enable-lv2 --enable-omx --enable-openal --enable-opencl --enable-opengl --enable-sdl2 --enable-pocketsphinx --enable-librsvg --enable-libmfx --enable-libdc1394 --enable-libdrm --enable-libiec61883 --enable-chromaprint --enable-frei0r --enable-libx264 --enable-shared
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+Input #0, avi, from 'syncnet_python/data/work/pycrop/00002/00000t.avi':
+  Metadata:
+    software        : Lavf59.27.100
+  Duration: 00:00:12.68, start: 0.000000, bitrate: 422 kb/s
+  Stream #0:0: Video: mpeg4 (Simple Profile) (XVID / 0x44495658), yuv420p, 224x224 [SAR 1:1 DAR 1:1], 415 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+Guessed Channel Layout for Input Stream #1.0 : mono
+Input #1, wav, from 'syncnet_python/data/work/pytmp/00002/audio.wav':
+  Metadata:
+    encoder         : Lavf58.76.100
+  Duration: 00:00:12.68, bitrate: 256 kb/s
+  Stream #1:0: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Output #0, avi, to 'syncnet_python/data/work/pycrop/00002/00000.avi':
+  Metadata:
+    software        : Lavf59.27.100
+    ISFT            : Lavf58.76.100
+  Stream #0:0: Video: mpeg4 (Simple Profile) (XVID / 0x44495658), yuv420p, 224x224 [SAR 1:1 DAR 1:1], q=2-31, 415 kb/s, 25 fps, 25 tbr, 25 tbn, 25 tbc
+  Stream #0:1: Audio: pcm_s16le ([1][0][0][0] / 0x0001), 16000 Hz, mono, s16, 256 kb/s
+Stream mapping:
+  Stream #0:0 -> #0:0 (copy)
+  Stream #1:0 -> #0:1 (copy)
+Press [q] to stop, [?] for help
+frame=    1 fps=0.0 q=-1.0 size=      10kB time=00:00:00.04 bitrate=2006.0kbits/s speed= 230x    frame=  317 fps=0.0 q=-1.0 Lsize=    1057kB time=00:00:12.68 bitrate= 682.7kbits/s speed=3.39e+03x    
+video:641kB audio:396kB subtitle:0kB other streams:0kB global headers:0kB muxing overhead: 1.902994%
+
+syncnet_python/data/work/pyavi/00002/video.avi-00230; 1 dets; 102.08 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00231; 1 dets; 104.57 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00232; 1 dets; 106.84 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00233; 1 dets; 83.69 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00234; 1 dets; 83.11 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00235; 1 dets; 96.95 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00236; 1 dets; 93.23 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00237; 1 dets; 80.30 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00238; 1 dets; 95.66 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00239; 1 dets; 95.04 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00240; 1 dets; 95.82 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00241; 1 dets; 97.79 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00242; 1 dets; 95.49 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00243; 1 dets; 90.35 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00244; 1 dets; 97.74 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00245; 1 dets; 97.88 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00246; 1 dets; 99.10 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00247; 1 dets; 99.33 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00248; 1 dets; 100.01 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00249; 1 dets; 97.97 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00250; 1 dets; 100.54 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00251; 1 dets; 97.73 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00252; 1 dets; 98.68 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00253; 1 dets; 98.37 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00254; 1 dets; 99.13 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00255; 1 dets; 97.52 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00256; 1 dets; 98.70 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00257; 1 dets; 99.37 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00258; 1 dets; 97.72 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00259; 1 dets; 100.40 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00260; 1 dets; 98.63 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00261; 1 dets; 91.54 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00262; 1 dets; 86.81 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00263; 1 dets; 99.01 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00264; 1 dets; 99.29 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00265; 1 dets; 99.53 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00266; 1 dets; 98.71 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00267; 1 dets; 98.72 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00268; 1 dets; 101.79 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00269; 1 dets; 103.03 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00270; 1 dets; 102.58 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00271; 1 dets; 100.80 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00272; 1 dets; 103.64 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00273; 1 dets; 104.43 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00274; 1 dets; 101.25 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00275; 1 dets; 102.77 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00276; 1 dets; 104.98 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00277; 1 dets; 98.33 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00278; 1 dets; 103.18 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00279; 1 dets; 103.90 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00280; 1 dets; 102.51 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00281; 1 dets; 101.14 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00282; 1 dets; 98.21 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00283; 1 dets; 103.56 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00284; 1 dets; 102.72 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00285; 1 dets; 102.37 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00286; 1 dets; 103.63 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00287; 1 dets; 103.28 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00288; 1 dets; 98.15 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00289; 1 dets; 98.79 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00290; 1 dets; 100.81 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00291; 1 dets; 103.04 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00292; 1 dets; 102.02 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00293; 1 dets; 101.74 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00294; 1 dets; 100.07 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00295; 1 dets; 100.07 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00296; 1 dets; 100.32 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00297; 1 dets; 99.17 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00298; 1 dets; 98.01 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00299; 1 dets; 95.97 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00300; 1 dets; 95.58 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00301; 1 dets; 97.67 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00302; 1 dets; 97.18 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00303; 1 dets; 99.27 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00304; 1 dets; 99.16 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00305; 1 dets; 95.39 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00306; 1 dets; 96.89 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00307; 1 dets; 96.61 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00308; 1 dets; 97.33 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00309; 1 dets; 99.23 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00310; 1 dets; 99.46 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00311; 1 dets; 99.57 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00312; 1 dets; 97.98 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00313; 1 dets; 96.45 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00314; 1 dets; 96.88 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00315; 1 dets; 99.25 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00316; 1 dets; 96.80 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00317; 1 dets; 98.74 Hz
+syncnet_python/data/work/pyavi/00002/video.avi-00318; 1 dets; 93.47 Hz
+syncnet_python/data/work/pyavi/00002/video.avi - scenes detected 1
+Written syncnet_python/data/work/pycrop/00002/00000
+Mean pos: x 111.65 y 82.48 s 80.45
+[2025-01-27 15:59:36,739] [INFO] pipeline_logger.run_pipeline: SyncNet pipeline successfully executed for video: syncnet_python/file_handling/final_output/corrected_example.avi with reference: 00002
+[2025-01-27 15:59:45,016] [INFO] pipeline_logger.run_syncnet: SyncNet model completed successfully. Log saved to: api/logs/final_logs/final_output_00002.log
