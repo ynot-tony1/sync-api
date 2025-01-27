@@ -1,8 +1,9 @@
 import os
 import shutil
 import logging
-from utils.log_utils import LogUtils 
-from settings import TEMP_PROCESSING_DIR, DATA_DIR, DATA_WORK_PYAVI_DIR
+from syncnet_python.utils.log_utils import LogUtils
+from api.config.settings import TEMP_PROCESSING_DIR, DATA_DIR, DATA_WORK_PYAVI_DIR
+
 
 LogUtils.configure_logging()
 logger = logging.getLogger('file_utils_logger')

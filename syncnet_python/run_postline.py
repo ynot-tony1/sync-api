@@ -1,14 +1,15 @@
 import os
 import logging
-from utils.file_utils import FileUtils
-from utils.ffmpeg_utils import FFmpegUtils
-from utils.syncnet_utils import SyncNetUtils
-from utils.analysis_utils import AnalysisUtils
-from settings import (
+from syncnet_python.utils.file_utils import FileUtils
+from syncnet_python.utils.ffmpeg_utils import FFmpegUtils
+from syncnet_python.utils.syncnet_utils import SyncNetUtils
+from syncnet_python.utils.analysis_utils import AnalysisUtils
+from api.config.settings import (
     RUN_LOGS_DIR, LOGS_DIR, FINAL_LOGS_DIR, DEFAULT_MAX_ITERATIONS,
     DEFAULT_TOLERANCE_MS, TEMP_PROCESSING_DIR, DATA_WORK_PYAVI_DIR,
     FINAL_OUTPUT_DIR
 )
+
 
 logger = logging.getLogger('run_postline')
 
@@ -65,7 +66,7 @@ def process_video(input_file, original_filename):
 
         # sync the video and audio streams from input file across multiple iterations using syncnet for analysis and ffmpeg with apad and atrim
         for iteration in range(DEFAULT_MAX_ITERATIONS):
-            logger.info(f"\n--- Synchronization Iteration {iteration + 1} ---")
+            logger.info(f"--- Synchronization Iteration {iteration + 1} ---")
             ref_str = f"{reference_number:05d}"
 
             # run the SyncNet pipeline

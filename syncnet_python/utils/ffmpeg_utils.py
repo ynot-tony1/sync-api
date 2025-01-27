@@ -3,8 +3,9 @@ import os
 import logging
 import shutil
 import subprocess
-from utils.log_utils import LogUtils  
-from settings import FINAL_OUTPUT_DIR
+from syncnet_python.utils.log_utils import LogUtils
+from api.config.settings import FINAL_OUTPUT_DIR
+
 
 LogUtils.configure_logging()
 logger = logging.getLogger('ffmpeg_logger')  

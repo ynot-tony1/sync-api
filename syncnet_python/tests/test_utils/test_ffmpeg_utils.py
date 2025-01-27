@@ -1,7 +1,7 @@
 import unittest
 import os
-from utils.ffmpeg_utils import FFmpegUtils 
-from settings import TEST_DATA_DIR
+from syncnet_python.utils.ffmpeg_utils import FFmpegUtils 
+from api.config.settings import TEST_DATA_DIR
 
 class TestFFmpegUtils(unittest.TestCase):
 

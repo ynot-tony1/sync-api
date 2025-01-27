@@ -3,8 +3,9 @@
 import os
 import subprocess
 import logging
-from utils.log_utils import LogUtils 
-from settings import LOGS_DIR, RUN_LOGS_DIR, DATA_WORK_DIR
+from syncnet_python.utils.log_utils import LogUtils
+from api.config.settings import LOGS_DIR, RUN_LOGS_DIR, DATA_WORK_DIR
+
 
 LogUtils.configure_logging()
 logger = logging.getLogger('pipeline_logger')
@@ -38,7 +39,7 @@ class SyncNetUtils:
         # building the run syncnet command
         cmd = [
             "python",
-            "run_syncnet.py",
+            "syncnet_python/run_syncnet.py",
             "--data_dir", DATA_WORK_DIR,
             "--reference", ref_str
         ]
@@ -71,7 +72,7 @@ class SyncNetUtils:
             RuntimeError: If the pipeline execution fails.
         """
         # building the command to run the syncnet pipeline
-        cmd = ["python", "run_pipeline.py", "--videofile", video_file, "--reference", ref]
+        cmd = ["python", "syncnet_python/run_pipeline.py", "--videofile", video_file, "--reference", ref]
         log_file = os.path.join(LOGS_DIR, 'pipeline.log')
         try:
             # opening the pipeline.log file in write mode to store the pipelines output
