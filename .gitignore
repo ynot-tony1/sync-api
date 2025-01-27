@@ -5,9 +5,8 @@
 venv/
 
 # ===== log files =====
-api/logs/final_logs
-api/logs/logs
-api/logs/run_logs
+api/logs
+
 
 # ===== file handling dirs =====
 syncnet_python/file_handling/final_output
