@@ -5,7 +5,6 @@ import torch
 from torchvision import transforms
 from .nets import S3FDNet
 from .box_utils import nms_
-from api.config.settings import DEVICE
 
 PATH_WEIGHT = './syncnet_python/detectors/s3fd/weights/sfd_face.pth'
 img_mean = np.array([104., 117., 123.])[:, np.newaxis, np.newaxis].astype('float32')
@@ -13,16 +12,17 @@ img_mean = np.array([104., 117., 123.])[:, np.newaxis, np.newaxis].astype('float
 
 class S3FD():
 
-    def __init__(self, device=DEVICE):
-        """
-        Initializes the S3FD model.
+    def __init__(self, device='cpu'):
 
-        Args:
-            device (str): Device to run the model on ('cpu' or 'cuda').
-        """
+        tstamp = time.time()
         self.device = device
+
+        print('[S3FD] loading with', self.device)
         self.net = S3FDNet(device=self.device).to(self.device)
+        state_dict = torch.load(PATH_WEIGHT, map_location=self.device)
+        self.net.load_state_dict(state_dict)
         self.net.eval()
+        print('[S3FD] finished loading (%.4f sec)' % (time.time() - tstamp))
     
     def detect_faces(self, image, conf_th=0.8, scales=[1]):
 
