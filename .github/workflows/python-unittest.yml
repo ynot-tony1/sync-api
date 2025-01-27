@@ -9,42 +9,52 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-22.04  # Changed to ubuntu-22.04 for better Python 3.7 support
+    runs-on: ubuntu-22.04 
 
     strategy:
       matrix:
         python-version: [3.7]
 
     steps:
-    # 1. Checkout the repository
+    # checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # 2. Set up Python
+    # set up Python
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-        cache: 'pip'  # Caches pip dependencies
+        cache: 'pip'
 
-    # 3. Install dependencies
+    # install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r syncnet_python/requirements.txt
 
-    # 4. Make download_model.sh executable
+    # install FFmpeg
+    - name: Install FFmpeg
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ffmpeg
+
+    # make download_model.sh executable
     - name: Make download_model.sh executable
       run: |
         chmod +x ./download_model.sh
 
-    # 5. Run download_model.sh script
+    # run download_model.sh script
     - name: Run download_model.sh
       run: |
+        echo "Starting download_model.sh"
         ./download_model.sh
+        echo "Completed download_model.sh"
 
-    # 6. Run unit tests
+    # run unit tests
     - name: Run unit tests
       run: |
+        echo "Starting unit tests"
         python3.7 -m unittest discover -s syncnet_python/tests/test_utils -p "*.py" -v
+        echo "Completed unit tests"
 
