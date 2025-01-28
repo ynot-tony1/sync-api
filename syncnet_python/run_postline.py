@@ -117,10 +117,10 @@ def process_video(input_file, original_filename):
 
         # running the final file through the pipeline and SyncNet once more to ensure 0 offset
         AnalysisUtils.verify_synchronization(
-            final_output_path,                 # path to the final synchronized video
+            final_output_path,                 # path of the final synchronized video
             f"{reference_number:05d}",         # formatted reference string
             fps,                               # frames per second
-            DEFAULT_TOLERANCE_MS               # tolerance in milliseconds
+            DEFAULT_TOLERANCE_MS               # tolerance in ms
         )
 
         # returning the path of the final synchronized video file
