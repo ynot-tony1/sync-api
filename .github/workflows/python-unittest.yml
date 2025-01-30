@@ -59,7 +59,7 @@ jobs:
         python syncnet_python/run_syncnet.py --videofile syncnet_python/data/example.avi --reference 00001
       continue-on-error: true 
 
-    # 9. Run Unit Tests
+    # run Unit Tests
     - name: Run Unit Tests
       run: |
         echo "=== Starting Unit Tests ==="

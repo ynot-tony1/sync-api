@@ -1,5 +1,3 @@
-# syncnet_python/tests/test_run_postline.py
-
 import unittest
 import os
 from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
