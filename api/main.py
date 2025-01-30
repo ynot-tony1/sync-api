@@ -2,28 +2,22 @@ from fastapi import FastAPI, File, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.utils.api_utils import ApiUtils
-from api.config.settings import FINAL_OUTPUT_DIR
+from api.config.settings import FINAL_OUTPUT_DIR, ALLOWED_LOCAL_1, ALLOWED_LOCAL_2
 from syncnet_python.run_postline import process_video
 import os
 import logging
 
-# configure loggers
 logger = logging.getLogger("fastapi")
 uvicorn_access_logger = logging.getLogger("uvicorn.access")
-# initialize the FastAPI application
 app = FastAPI()
+
 # define allowed origins for CORS
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    ALLOWED_LOCAL_1,
+    ALLOWED_LOCAL_2,
 ]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.add_middleware(CORSMiddleware)
+
 @app.post("/process")
 def process_endpoint(file=File(...)):
     # save the uploaded file to a temporary location

@@ -31,4 +31,10 @@ DEFAULT_TOLERANCE_MS = int(os.getenv("DEFAULT_TOLERANCE_MS", 10))
 # test data directory
 TEST_DATA_DIR = os.path.join(BASE_DIR, "syncnet_python", "tests", "test_data")
 
+# cors origin allowd urls
+ALLOWED_LOCAL_1= os.getenv("ALLOWED_LOCAL_1")
+ALLOWED_LOCAL_2= os.getenv("ALLOWED_LOCAL_2")
+
+
+
 
