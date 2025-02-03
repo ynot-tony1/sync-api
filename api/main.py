@@ -4,7 +4,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.utils.api_utils import ApiUtils
-from api.config.settings import FINAL_OUTPUT_DIR
+from api.config.settings import FINAL_OUTPUT_DIR, ALLOWED_LOCAL_1, ALLOWED_LOCAL_2
 from api.process_video import process_video
 
 logger = logging.getLogger("fastapi")
@@ -12,8 +12,8 @@ app = FastAPI()
 
 # setup cors.
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    ALLOWED_LOCAL_1,
+    ALLOWED_LOCAL_2,
 ]
 app.add_middleware(
     CORSMiddleware,

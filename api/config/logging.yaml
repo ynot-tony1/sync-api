@@ -16,13 +16,13 @@ handlers:
     formatter: console_format
     stream: ext://sys.stdout
 
-  # Capture all logs in a unified app.log
+  # Unified handler to capture all logs in app.log
   app_file_handler:
     class: logging.handlers.RotatingFileHandler
     level: DEBUG
     formatter: standard
     filename: api/logs/logs/app.log
-    maxBytes: 1048576
+    maxBytes: 1048576  # 1MB
     backupCount: 5
     encoding: utf8
 

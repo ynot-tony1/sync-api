@@ -32,14 +32,8 @@ DEFAULT_TOLERANCE_MS = int(os.getenv("DEFAULT_TOLERANCE_MS", 10))
 # test data directory
 TEST_DATA_DIR = os.path.join(BASE_DIR, os.getenv("TEST_DATA_DIR", "syncnet_python/tests/test_data"))
 
-# debugging
-DEBUG_SETTINGS = os.getenv("DEBUG_SETTINGS", "false").lower() == "true"
-
 # allowed cors origins
 ALLOWED_LOCAL_1 = os.getenv("ALLOWED_LOCAL_1", "http://localhost:3000")
 ALLOWED_LOCAL_2 = os.getenv("ALLOWED_LOCAL_2", "http://127.0.0.1:3000")
 ALLOWED_ORIGINS = [ALLOWED_LOCAL_1, ALLOWED_LOCAL_2]
 
-# for debugging, print out the temp processing dir value
-if DEBUG_SETTINGS:
-    print("TEMP_PROCESSING_DIR is set to:", TEMP_PROCESSING_DIR)
