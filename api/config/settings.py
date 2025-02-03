@@ -30,7 +30,7 @@ DEFAULT_MAX_ITERATIONS = int(os.getenv("DEFAULT_MAX_ITERATIONS", 10))
 DEFAULT_TOLERANCE_MS = int(os.getenv("DEFAULT_TOLERANCE_MS", 10))
 
 # test data directory
-TEST_DATA_DIR = os.path.join(BASE_DIR, os.getenv("TEST_DATA_DIR", "syncnet_python/tests/test_data"))
+TEST_DATA_DIR = os.path.join(BASE_DIR, os.getenv("TEST_DATA_DIR", "api/tests/test_data"))
 
 # allowed cors origins
 ALLOWED_LOCAL_1 = os.getenv("ALLOWED_LOCAL_1", "http://localhost:3000")
