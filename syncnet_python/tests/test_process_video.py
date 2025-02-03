@@ -1,7 +1,7 @@
 import unittest
 import os
 from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
-from syncnet_python.run_postline import process_video
+from api.process_video import process_video
 
 class TestRunPostline(unittest.TestCase):
     @classmethod
