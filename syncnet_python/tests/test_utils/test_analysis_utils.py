@@ -1,7 +1,7 @@
 import unittest
 import os
 import tempfile
-from syncnet_python.utils.analysis_utils import AnalysisUtils
+from api.utils.analysis_utils import AnalysisUtils
 
 class TestAnalysisUtils(unittest.TestCase):
 

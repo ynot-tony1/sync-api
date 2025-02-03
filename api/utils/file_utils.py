@@ -1,7 +1,7 @@
 import os
 import shutil
 import logging
-from syncnet_python.utils.log_utils import LogUtils
+from .log_utils import LogUtils
 from api.config.settings import TEMP_PROCESSING_DIR, DATA_DIR, DATA_WORK_PYAVI_DIR
 
 

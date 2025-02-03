@@ -3,7 +3,7 @@ import os
 import logging
 import shutil
 import subprocess
-from syncnet_python.utils.log_utils import LogUtils
+from .log_utils import LogUtils
 from api.config.settings import FINAL_OUTPUT_DIR
 
 

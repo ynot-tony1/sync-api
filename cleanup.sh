@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # deletes all contents of final_output
-find ./syncnet_python/file_handling/final_output -mindepth 1 -exec rm -rf {} +
+find ./api/file_handling/final_output -mindepth 1 -exec rm -rf {} +
 
 # deletes all .avi files in data/work
 find ./syncnet_python/data -type f -name '*.avi' -exec rm -f {} +
@@ -19,4 +19,4 @@ find ./api/logs/run_logs -mindepth 1 -exec rm -rf {} +
 find ./api/logs/logs -mindepth 1 -exec rm -rf {} +
 
 # deletes all files in temp_input
-find ./syncnet_python/file_handling/temp_input -mindepth 1 -exec rm -rf {} +
+find ./api/file_handling/temp_input -mindepth 1 -exec rm -rf {} +

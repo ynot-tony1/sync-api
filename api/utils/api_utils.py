@@ -2,7 +2,7 @@ import os
 import shutil
 import uuid
 import logging
-from syncnet_python.utils.log_utils import LogUtils
+from .log_utils import LogUtils
 
 from api.config.settings import TEMP_PROCESSING_DIR
 

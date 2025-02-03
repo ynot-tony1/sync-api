@@ -3,7 +3,7 @@
 import os
 import subprocess
 import logging
-from syncnet_python.utils.log_utils import LogUtils
+from .log_utils import LogUtils
 from api.config.settings import LOGS_DIR, RUN_LOGS_DIR, DATA_WORK_DIR
 
 
