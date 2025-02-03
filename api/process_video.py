@@ -54,15 +54,16 @@ def process_video(input_file, original_filename):
             return None
 
         total_shift_ms = 0
-        current_file_path = destination_path
+        # initialize corrected_file as the file moved to the data directory
+        corrected_file = destination_path
 
         # iterate through sync steps.
         for iteration in range(DEFAULT_MAX_ITERATIONS):
             logger.info(f"--- synchronization iteration {iteration + 1} ---")
             ref_str = f"{reference_number:05d}"
 
-            # run the pipeline and then the syncnet model.
-            SyncNetUtils.run_pipeline(current_file_path, ref_str)
+            # run the pipeline and then the syncnet model on the current file
+            SyncNetUtils.run_pipeline(corrected_file, ref_str)
             log_file = SyncNetUtils.run_syncnet(ref_str)
 
             # analyze the log to get the offset.
@@ -76,17 +77,17 @@ def process_video(input_file, original_filename):
                 break
 
             # apply the offset shift for the next iteration.
-            corrected_file = os.path.join(
+            new_corrected_file = os.path.join(
                 TEMP_PROCESSING_DIR,
                 f"corrected_iter{iteration + 1}_{original_filename}"
             )
-            FFmpegUtils.shift_audio(current_file_path, corrected_file, offset_ms)
+            FFmpegUtils.shift_audio(corrected_file, new_corrected_file, offset_ms)
 
-            if not os.path.exists(corrected_file):
-                logger.error(f"corrected file {corrected_file} was not created. aborting process.")
+            if not os.path.exists(new_corrected_file):
+                logger.error(f"corrected file {new_corrected_file} was not created. aborting process.")
                 return None
 
-            current_file_path = corrected_file
+            corrected_file = new_corrected_file
             reference_number += 1
 
         # apply the cumulative shift to generate the final output.
@@ -97,7 +98,11 @@ def process_video(input_file, original_filename):
         AnalysisUtils.verify_synchronization(
             final_output_path, f"{reference_number:05d}", fps, DEFAULT_TOLERANCE_MS
         )
-        os.remove(corrected_file)
+
+        # if a correction was applied (i.e. corrected_file differs from destination_path), remove it
+        if corrected_file != destination_path and os.path.exists(corrected_file):
+            os.remove(corrected_file)
+
         return final_output_path
 
     except Exception as e:
