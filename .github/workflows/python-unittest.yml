@@ -63,12 +63,12 @@ jobs:
     - name: Run Unit Tests
       run: |
         echo "=== Starting Unit Tests ==="
-        python3.7 -m unittest discover -s syncnet_python/tests/test_utils -p "*.py" -v
+        python3.7 -m unittest discover -s api/tests/test_utils -p "*.py" -v
         echo "=== Completed Unit Tests ==="
 
     # run Integration Tests
     - name: Run Integration Tests
       run: |
         echo "=== Starting Integration Tests ==="
-        python3.7 -m unittest discover -s syncnet_python/tests -p "*.py" -v
+        python3.7 -m unittest discover -s api/tests -p "*.py" -v
         echo "=== Completed Integration Tests ==="
