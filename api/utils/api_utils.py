@@ -8,7 +8,7 @@ from api.config.settings import TEMP_PROCESSING_DIR
 
 
 
-LogUtils.configure_logging()
+LogUtils.configure_logging() 
 logger = logging.getLogger(__name__)
 
 class ApiUtils:
@@ -32,7 +32,7 @@ class ApiUtils:
 
             
         """
-        # split the file path to get the extension out of it
+        # split the file path to get the extension outside of it
         file_extension = os.path.splitext(uploaded_file.filename)[1] 
         # create the file path with the temp directory, the UUID4 name and the file
         unique_filename = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
