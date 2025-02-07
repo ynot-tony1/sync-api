@@ -38,7 +38,7 @@ def process_video(input_file, original_filename):
     try:
         logger.info("starting video synchronization process...")
 
-        # ensure all required directories exist
+        # ensuring all required directories exist
         directories = [
             LOGS_DIR, RUN_LOGS_DIR, FINAL_LOGS_DIR, TEMP_PROCESSING_DIR,
             DATA_WORK_PYAVI_DIR, FINAL_OUTPUT_DIR
@@ -64,6 +64,7 @@ def process_video(input_file, original_filename):
             return None
         
         total_shift_ms = 0
+        
         # initialize corrected_file as the file moved to the data directory        
         corrected_file = destination_path
 

@@ -20,20 +20,20 @@ async def process_video_endpoint(file: UploadFile = File(...)):
     input_file_path = ApiUtils.save_temp_file(file)
     try:
         result = process_video(input_file_path, file.filename)
-        # if the result is a dict, that means "already_in_sync"
+        # if the result is a dict and it includes the already_in_sync key, its already in sync
         if isinstance(result, dict) and result.get("already_in_sync"):
             return JSONResponse(content=result)
 
-        # if it's None or doesn't exist, error
+        # if its none or doesn't exist, raise a 500 error
         if not result or not os.path.exists(result):
             logger.error("processing failed. no final output generated.")
             raise HTTPException(status_code=500, detail="processing failed.")
-
         logger.info(f"file fully synced and ready for download at: {result}")
     except Exception as e:
         logger.error(f"an error occurred: {e}")
         raise HTTPException(status_code=500, detail="processing failed.") from e
     finally:
+        # delete originally uploaded file
         os.remove(input_file_path)
 
     corrected_filename = f"corrected_{file.filename}"
