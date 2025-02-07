@@ -19,6 +19,7 @@ def process_video(input_file, original_filename):
       - copies the input file to a temporary folder
       - moves the file to the pipeline’s data directory
       - retrieves the video's fps
+      - checks for audio stream. if none is found, returns a small json dict "no_audio"
       - runs a loop (DEFAULT_MAX_ITERATIONS) of:
          1) run pipeline & syncnet -> get offset
          2) add offset to total_shift_ms
@@ -32,7 +33,9 @@ def process_video(input_file, original_filename):
     returns:
         str or dict or None
           - str: path to the final synchronized video if any shifting was needed
-          - dict: if the first offset is 0, a small JSON-style dict to signal "already_in_sync"
+          - dict: 
+              * if the first offset is 0 => {"already_in_sync": True, ...}
+              * if no audio => {"no_audio": True, ...}
           - None: if processing fails at any point
     """
     try:
@@ -48,7 +51,7 @@ def process_video(input_file, original_filename):
         # get the next directory reference number
         reference_number = int(FileUtils.get_next_directory_number())
 
-        # copy input to temp, move it into data work 
+        # copy input to temp, then move it into the data work directory
         temp_copy_path = FileUtils.copy_input_to_temp(input_file, original_filename)
         destination_path = FileUtils.move_to_data_work(temp_copy_path, reference_number)
 
@@ -62,19 +65,28 @@ def process_video(input_file, original_filename):
         if fps is None:
             logger.error("could not retrieve fps from the video. aborting process.")
             return None
-        
+
+        #  check if there's an audio stream, if no audio, return a json to the front end
+        audio_props = FFmpegUtils.get_audio_properties(input_file)
+        if audio_props is None:
+            logger.error("no audio stream found in the video. returning a JSON dict.")
+            return {
+                "no_audio": True,
+                "message": "the video you uploaded has no audio"
+            }
+
         total_shift_ms = 0
         
         # initialize corrected_file as the file moved to the data directory        
         corrected_file = destination_path
 
-        # iterate through sync steps    
+        # iterate through sync steps
         for iteration in range(DEFAULT_MAX_ITERATIONS):
             logger.info(f"--- synchronization iteration {iteration + 1} ---")
-            # format the ref string and pad it to 5 0s
+            # format the ref string
             ref_str = f"{reference_number:05d}"
 
-            # run the pipeline and then the syncnet model on the current file
+            # run the pipeline and then syncnet
             SyncNetUtils.run_pipeline(corrected_file, ref_str)
             log_file = SyncNetUtils.run_syncnet(ref_str)
 
@@ -83,7 +95,7 @@ def process_video(input_file, original_filename):
             total_shift_ms += offset_ms
             logger.info(f"total shift after iteration {iteration + 1}: {total_shift_ms} ms")
 
-            # if the offset is 0 on the 0th iteration then return a status json to the front end
+            # if the offset is 0 on the 0th iteration, return a status json to the front end
             if iteration == 0 and offset_ms == 0:
                 logger.info("first run offset is 0 ms; file is already synchronized, returning JSON dict.")
                 return {
@@ -91,12 +103,12 @@ def process_video(input_file, original_filename):
                     "message": "your file was already in sync"
                 }
 
-            # if the offset is within the tolerance, break the loop
+            # if the offset is within the tolerance, break
             if abs(offset_ms) <= DEFAULT_TOLERANCE_MS:
                 logger.info("synchronization offset is within the acceptable tolerance.")
                 break
 
-            # apply the offset shift for the next iteration            
+            # apply the offset shift for the next iteration
             new_corrected_file = os.path.join(
                 TEMP_PROCESSING_DIR,
                 f"corrected_iter{iteration + 1}_{original_filename}"
@@ -118,7 +130,7 @@ def process_video(input_file, original_filename):
             final_output_path, f"{reference_number:05d}", fps, DEFAULT_TOLERANCE_MS
         )
 
-        # if a correction was applied remove the corrected file
+        # if a correction was applied remove the last corrected_file
         if corrected_file != destination_path and os.path.exists(corrected_file):
             os.remove(corrected_file)
 

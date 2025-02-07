@@ -30,10 +30,13 @@ class TestRunProcessVideo(unittest.TestCase):
         os.remove(result)
 
     def test_process_video_no_audio(self):
-        """Test processing a video file without an audio stream."""
+        """test processing a video file without an audio stream."""
         result = process_video(self.no_audio_video, 'video_no_audio.avi')
-        # asserting that process_video returns none when given a file without an audio stream
-        self.assertIsNone(result, "process_video should return None for a video with no audio.")
+        # assert that process_video returns a dict indicating no audio stream
+        self.assertIsInstance(result, dict, "process_video should return a dict for a video with no audio.")
+        self.assertTrue(result.get("no_audio"), "process_video should indicate no audio stream in the returned dict.")
+        self.assertIn("message", result, "the returned dict should contain a 'message' key.")
+
 
     def test_process_video_invalid_input(self):
         """Test processing a non-existent video file."""
