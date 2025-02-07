@@ -9,14 +9,12 @@ formatters:
     format: '[%(asctime)s] [%(levelname)s] %(funcName)s: %(message)s'
 
 handlers:
-  # ------------------ SHARED HANDLERS ------------------ #
   console:
     class: logging.StreamHandler
     level: DEBUG
     formatter: console_format
     stream: ext://sys.stdout
 
-  # Unified handler to capture all logs in app.log
   app_file_handler:
     class: logging.handlers.RotatingFileHandler
     level: DEBUG
@@ -26,12 +24,11 @@ handlers:
     backupCount: 5
     encoding: utf8
 
-  # ------------------ EXISTING CUSTOM HANDLERS ------------------ #
-  postline_file_handler:
+  process_video_file_handler:
     class: logging.handlers.RotatingFileHandler
     level: DEBUG
     formatter: standard
-    filename: api/logs/logs/postline.log
+    filename: api/logs/logs/process_video.log
     maxBytes: 1048576
     backupCount: 5
     encoding: utf8
@@ -72,15 +69,6 @@ handlers:
     backupCount: 5
     encoding: utf8
 
-  api_file_handler:
-    class: logging.handlers.RotatingFileHandler
-    level: INFO
-    formatter: standard
-    filename: api/logs/logs/api.log
-    maxBytes: 1048576
-    backupCount: 5
-    encoding: utf8
-
   uvicorn_file_handler:
     class: logging.handlers.RotatingFileHandler
     level: INFO
@@ -90,11 +78,28 @@ handlers:
     backupCount: 5
     encoding: utf8
 
-# ------------------ LOGGERS ------------------ #
+  file_routes_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/file_routes.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  processing_routes_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/processing_routes.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
 loggers:
 
-  run_postline:
-    handlers: [postline_file_handler, console, app_file_handler]  
+  process_video:
+    handlers: [process_video_file_handler, console, app_file_handler]  
     level: DEBUG
     propagate: false
 
@@ -124,12 +129,12 @@ loggers:
     propagate: false
 
   api_logger:
-    handlers: [api_file_handler, console, app_file_handler]
+    handlers: [console, app_file_handler]
     level: DEBUG
     propagate: false
 
   fastapi:
-    handlers: [api_file_handler, console, app_file_handler]
+    handlers: [console, app_file_handler]
     level: DEBUG
     propagate: false
 
@@ -148,7 +153,16 @@ loggers:
     level: INFO
     propagate: false
 
-# ------------------ ROOT LOGGER ------------------ #
+  file_routes:
+    handlers: [file_routes_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  processing_routes:
+    handlers: [processing_routes_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
 root:
   handlers: [app_file_handler, console]
   level: DEBUG
