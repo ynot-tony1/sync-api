@@ -30,10 +30,13 @@ class TestRunProcessVideo(unittest.TestCase):
         os.remove(result)
 
     def test_process_video_no_audio(self):
-        """Test processing a video file without an audio stream."""
+        """test processing a video file without an audio stream."""
         result = process_video(self.no_audio_video, 'video_no_audio.avi')
-        # asserting that process_video returns none when given a file without an audio stream
-        self.assertIsNone(result, "process_video should return None for a video with no audio.")
+        # assert that process_video returns a dict indicating no audio stream
+        self.assertIsInstance(result, dict, "process_video should return a dict for a video with no audio.")
+        self.assertTrue(result.get("no_audio"), "process_video should indicate no audio stream in the returned dict.")
+        self.assertIn("message", result, "the returned dict should contain a 'message' key.")
+
 
     def test_process_video_invalid_input(self):
         """Test processing a non-existent video file."""
@@ -43,12 +46,19 @@ class TestRunProcessVideo(unittest.TestCase):
         self.assertIsNone(result, "process_video should return None for a non-existent input file.")
 
     def test_process_video_already_synchronized(self):
-        """Test processing a video that's already synchronized."""
+        """test processing a video that's already synchronized."""
         result = process_video(self.synced_video, 'synced_example.avi')
-        self.assertIsNotNone(result, "process_video returned None for an already synchronized video.")
-        self.assertTrue(os.path.exists(result), f"Processed file does not exist at {result}.")
-        self.assertGreater(os.path.getsize(result), 0, "Processed file is empty.")
-        os.remove(result)
+        # expect a dict when the first offset is 0
+        self.assertIsInstance(result, dict, "process_video should return a dict for an already synchronized video.")
+        self.assertTrue(result.get("already_in_sync"), "the returned dict should have 'already_in_sync' set to True.")
+        self.assertIn("message", result, "the returned dict should contain a 'message' key indicating the file is in sync.")
+        expected_message = "your file was already in sync"
+        self.assertEqual(result.get("message"), expected_message, f"expected message: '{expected_message}'.")
+        # if a final output file is provided, check that it exists and then remove it
+        final_output = result.get("final_output")
+        if final_output:
+            self.assertTrue(os.path.exists(final_output), "final output file should exist for an already synchronized video.")
+            os.remove(final_output)
 
     @classmethod
     def tearDownClass(cls):
