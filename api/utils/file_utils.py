@@ -29,14 +29,11 @@ class FileUtils:
         """
 
 
-        # extract the original filename
         original_filename = os.path.basename(initial_path)
 
-        # create the path for the moved file
         dest_file_path = os.path.join(DATA_DIR, f"{dir_num}_{original_filename}")
 
         try:
-             # use shutil to move it the file from initial to the destination path
             shutil.move(initial_path, dest_file_path)
         except Exception as e:
             error_msg = f"Couldnt move the file to {dest_file_path}: {e}"
@@ -57,9 +54,7 @@ class FileUtils:
         Returns:
             str: Path to the copied file in the temporary directory.
         """
-        # create the path for the new temp file
         temp_file = os.path.join(TEMP_PROCESSING_DIR, f"corrected_{original_name}")
-        # use shutil to copy it
         shutil.copy(input_file, temp_file)
         logger.debug(f"copied file to: {temp_file}")
         
@@ -130,7 +125,6 @@ class FileUtils:
             str: Path to the copied video file.
         """
         try:
-            # use shitl to copy the file from the source to destination
             shutil.copy(source, destination)
             logger.info(f"video file copied from {source} to {destination}")
             return destination
@@ -139,33 +133,24 @@ class FileUtils:
             raise IOError(f"could not copy video file: {e}")
 
     @staticmethod
-    def get_next_directory_number():
+    def get_next_directory_number(data_dir):
         """
         Returns the next directory number as a zero-padded string, eg. 00001.
         If no numeric subdirectories exist, it starts at 1.
         """
-        # create an empty list to store the numbers
         existing_numbers = []
-
-        # using os's listdir function here to return the names of each directory as a list of strings
-        all_items = os.listdir(DATA_WORK_PYAVI_DIR)
-
-        # iterating through each name and if it is a digit, cast it as an int and then appends it to the existing numbers list
+        all_items = os.listdir(data_dir)
         for item in all_items:
             if item.isdigit():
                 number = int(item)
                 existing_numbers.append(number)
             else:
                 logger.debug(f"Going to ignore this non-numeric directory: {item}")
-
-        # if there's no numeric folder, initialize at 1
         if not existing_numbers:
             logger.info("Couldn't see any numeric directories. Starting it off at 00001.")
             next_number = 1
         else:   
-        # using the max function to find the highest number and adding 1 to it to get the next directory number
             next_number = max(existing_numbers) + 1
-        # format the number with 5 padded zeros to remain consistent with the syncnet pipeline implementation
         formatted_number = f"{next_number:05d}"
         logger.debug(f"The next number in the directory is: {formatted_number}")
         return formatted_number

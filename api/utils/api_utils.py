@@ -3,10 +3,8 @@ import shutil
 import uuid
 import logging
 from .log_utils import LogUtils
-
+import asyncio
 from api.config.settings import TEMP_PROCESSING_DIR
-
-
 
 LogUtils.configure_logging() 
 logger = logging.getLogger(__name__)
@@ -48,3 +46,4 @@ class ApiUtils:
             logger.error(f"Failed to save temporary file '{unique_filename}': {e}")
             raise IOError(f"Could not save temporary file: {e}")
         return unique_filename
+
