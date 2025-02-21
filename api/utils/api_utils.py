@@ -3,6 +3,7 @@ import shutil
 import uuid
 import logging
 from .log_utils import LogUtils
+from api.connection_manager import broadcast  
 import asyncio
 from api.config.settings import TEMP_PROCESSING_DIR
 
@@ -47,3 +48,17 @@ class ApiUtils:
             raise IOError(f"Could not save temporary file: {e}")
         return unique_filename
 
+    @staticmethod
+    def send_websocket_message(message: str):
+        """
+        Schedules a broadcast of a debug message to connected WebSocket clients.
+        If there is a running event loop, schedule the broadcast as a task.
+        Otherwise, run it immediately.
+        """
+        try:
+            # Use the current running loop if available
+            loop = asyncio.get_running_loop()
+            loop.create_task(broadcast(message))
+        except RuntimeError:
+            # If no event loop is running, start one for this broadcast
+            asyncio.run(broadcast(message))

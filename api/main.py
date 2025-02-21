@@ -4,6 +4,7 @@ from api.config.settings import ALLOWED_LOCAL_1, ALLOWED_LOCAL_2
 from api.routes.processing_routes import router as processing_router
 from api.routes.file_routes import router as file_router
 import logging
+from api.routes.ws_routes import router as ws_router  
 from device_config import DEVICE
 logger = logging.getLogger("uvicorn.info")
 
@@ -32,6 +33,7 @@ app.add_middleware(
 
 app.include_router(processing_router)
 app.include_router(file_router)
+app.include_router(ws_router)
 
 
 @app.get("/", tags=["root"])
