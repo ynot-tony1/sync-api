@@ -53,6 +53,7 @@ jobs:
 
     # test SyncNet Execution Independently
     - name: Test SyncNet Execution
+      working-directory: ${{ github.workspace }}
       run: |
         echo "=== Testing SyncNet Execution ==="
         python syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00001
