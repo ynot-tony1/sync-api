@@ -1,17 +1,11 @@
-# utils/syncnet_utils.py
-
 import os
 import subprocess
 import logging
 from .log_utils import LogUtils
 from api.config.settings import LOGS_DIR, RUN_LOGS_DIR, DATA_WORK_DIR
 
-
 LogUtils.configure_logging()
 logger = logging.getLogger('pipeline_logger')
-
-class SyncNetUtils:
-    """Utility class for handling SyncNet operations."""
 
 class SyncNetUtils:
     """Utility class for handling SyncNet operations."""
@@ -36,18 +30,19 @@ class SyncNetUtils:
         if log_file is None:
             log_file = os.path.join(RUN_LOGS_DIR, f"run_{ref_str}.log")
         
-        # building the run syncnet command
+        # building the run syncnet command using module invocation (-m)
         cmd = [
             "python",
-            "syncnet_python/run_syncnet.py",
+            "-m",            
+            "syncnet_python.run_syncnet",
             "--data_dir", DATA_WORK_DIR,
             "--reference", ref_str
         ]
 
         try:
-            # opening the log file in write mode to capture syncnets output
+            # opening the log file in write mode to capture SyncNet's output
             with open(log_file, 'w') as log:
-                # running the syncnet command, redirecting both stdout and stderr to the log file
+                # running the SyncNet command, redirecting both stdout and stderr to the log file
                 subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
             logger.info(f"SyncNet model completed successfully. Log saved to: {log_file}")
         
@@ -71,11 +66,17 @@ class SyncNetUtils:
         Raises:
             RuntimeError: If the pipeline execution fails.
         """
-        # building the command to run the syncnet pipeline
-        cmd = ["python", "syncnet_python/run_pipeline.py", "--videofile", video_file, "--reference", ref]
+        # building the command to run the syncnet pipeline using module invocation (-m)
+        cmd = [
+            "python",
+            "-m",
+            "syncnet_python.run_pipeline",
+            "--videofile", video_file,
+            "--reference", ref
+        ]
         log_file = os.path.join(LOGS_DIR, 'pipeline.log')
         try:
-            # opening the pipeline.log file in write mode to store the pipelines output
+            # opening the pipeline.log file in write mode to store the pipeline's output
             with open(log_file, 'w') as log:
                 # running the syncnet pipeline command and redirecting stdout and stderr to the log file
                 subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
@@ -84,5 +85,3 @@ class SyncNetUtils:
             logger.error(f"SyncNet pipeline failed for video {video_file} (ref={ref}): {e}")
             # raising a runtime error with the error message in it
             raise RuntimeError(f"SyncNet pipeline failed for video {video_file} (ref={ref}): {e}") from e
-
-    

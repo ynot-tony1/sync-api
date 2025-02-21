@@ -23,5 +23,4 @@ class LogUtils:
             logging.error(f"Couldn't find the logging configuration file at: {LOG_CONFIG_PATH}")
             raise
 
-        # applying the logging configuration to run all of the loggers from the YAML
         logging.config.dictConfig(config)

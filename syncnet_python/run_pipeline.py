@@ -12,8 +12,9 @@ from scenedetect.detectors import ContentDetector
 from scipy.interpolate import interp1d
 from scipy.io import wavfile
 from scipy import signal
+from device_config import DEVICE
 
-from detectors import S3FD
+from .detectors.s3fd import S3FD
 
 # ========== PARSE ARGS ==========
 parser = argparse.ArgumentParser(description = "FaceTracker")
@@ -55,7 +56,7 @@ def bb_intersection_over_union(boxA, boxB):
 # ========== FACE TRACKING ==========
 def track_shot(opt, scenefaces):
 
-  iouThres  = 0.5     # Minimum IOU between consecutive face detections
+  iouThres  = 0.5   
   tracks    = []
 
   while True:
@@ -108,10 +109,9 @@ def crop_video(opt, track, cropfile):
   for det in track['bbox']:
 
     dets['s'].append(max((det[3]-det[1]),(det[2]-det[0]))/2) 
-    dets['y'].append((det[1]+det[3])/2) # crop center y 
-    dets['x'].append((det[0]+det[2])/2) # crop center x
-
-  # Smooth detections
+    dets['y'].append((det[1]+det[3])/2) 
+    dets['x'].append((det[0]+det[2])/2) 
+  
   dets['s'] = signal.medfilt(dets['s'], kernel_size=13)   
   dets['x'] = signal.medfilt(dets['x'], kernel_size=13)
   dets['y'] = signal.medfilt(dets['y'], kernel_size=13)
@@ -120,14 +120,14 @@ def crop_video(opt, track, cropfile):
 
     cs  = opt.crop_scale
 
-    bs  = dets['s'][fidx]   # Detection box size
-    bsi = int(bs*(1+2*cs))  # Pad videos by this amount 
+    bs  = dets['s'][fidx] 
+    bsi = int(bs*(1+2*cs)) 
 
     image = cv2.imread(flist[frame])
     
     frame_image = np.pad(image, ((bsi,bsi),(bsi,bsi),(0,0)), 'constant', constant_values=(110,110))
-    my  = dets['y'][fidx]+bsi  # BBox center Y
-    mx  = dets['x'][fidx]+bsi  # BBox center X
+    my  = dets['y'][fidx]+bsi
+    mx  = dets['x'][fidx]+bsi 
 
     face = frame_image[int(my-bs):int(my+bs*(1+2*cs)), int(mx-bs*(1+cs)):int(mx+bs*(1+cs))]
     
@@ -181,7 +181,7 @@ def crop_video(opt, track, cropfile):
 # ========== FACE DETECTION ==========
 def inference_video(opt):
 
-  DET = S3FD(device='cpu')  # Force CPU usage
+  DET = S3FD(device=DEVICE)
 
   flist = glob.glob(os.path.join(opt.frames_dir, opt.reference, '*.jpg'))
   flist.sort()

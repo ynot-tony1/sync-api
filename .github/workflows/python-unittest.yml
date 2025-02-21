@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-22.04 
 
     strategy:
@@ -19,6 +18,10 @@ jobs:
     # checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
+
+    # set PYTHONPATH to repository root (sync-api)
+    - name: Set PYTHONPATH to repository root
+      run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
 
     # set up Python
     - name: CI build test and breakdown ${{ matrix.python-version }}
@@ -55,8 +58,8 @@ jobs:
     - name: Test SyncNet Execution
       run: |
         echo "=== Testing SyncNet Execution ==="
-        python syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00001
-        python syncnet_python/run_syncnet.py --videofile syncnet_python/data/example.avi --reference 00001
+        python -m syncnet_python.run_pipeline --videofile syncnet_python/data/example.avi --reference 00001
+        python -m syncnet_python.run_syncnet --videofile syncnet_python/data/example.avi --reference 00001
       continue-on-error: true 
 
     # run Unit Tests

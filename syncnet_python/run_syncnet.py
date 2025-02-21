@@ -1,6 +1,6 @@
 import time, pdb, argparse, subprocess, pickle, os, gzip, glob
 
-from SyncNetInstance import *
+from .SyncNetInstance import *
 
 # ==================== PARSE ARGUMENT ====================
 
@@ -12,8 +12,6 @@ parser.add_argument('--data_dir', type=str, default='syncnet_python/data/work', 
 parser.add_argument('--videofile', type=str, default='', help='Path to the input video file.')
 parser.add_argument('--reference', type=str, default='', help='Reference string for output files.')
 opt = parser.parse_args()
-
-# Update directory paths based on the root structure
 
 setattr(opt, 'avi_dir', os.path.join(opt.data_dir, 'pyavi'))
 setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, 'pytmp'))
@@ -27,7 +25,6 @@ s = SyncNetInstance()
 s.loadParameters(opt.initial_model)
 print("Model %s loaded." % opt.initial_model)
 
-# Get list of cropped video files for processing
 flist = glob.glob(os.path.join(opt.crop_dir, opt.reference, '0*.avi'))
 flist.sort()
 

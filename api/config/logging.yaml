@@ -6,7 +6,7 @@ formatters:
     format: '[%(asctime)s] [%(levelname)s] %(name)s.%(funcName)s: %(message)s'
   
   console_format:
-    format: '[%(asctime)s] [%(levelname)s] %(funcName)s: %(message)s'
+    format: '[%(asctime)s] %(funcName)s: %(message)s'
 
 handlers:
   console:
@@ -20,7 +20,7 @@ handlers:
     level: DEBUG
     formatter: standard
     filename: api/logs/logs/app.log
-    maxBytes: 1048576  # 1MB
+    maxBytes: 1048576 
     backupCount: 5
     encoding: utf8
 
@@ -109,7 +109,7 @@ loggers:
     propagate: false
 
   ffmpeg_logger:
-    handlers: [ffmpeg_file_handler, console]
+    handlers: [ffmpeg_file_handler]
     level: DEBUG
     propagate: false
 
@@ -161,6 +161,10 @@ loggers:
   processing_routes:
     handlers: [processing_routes_file_handler, console, app_file_handler]
     level: DEBUG
+    propagate: false
+
+  asyncio:
+    level: WARNING
     propagate: false
 
 root:
