@@ -58,8 +58,8 @@ jobs:
     - name: Test SyncNet Execution
       run: |
         echo "=== Testing SyncNet Execution ==="
-        python -m syncnet_python/run_pipeline.py --videofile syncnet_python/data/example.avi --reference 00001
-        python -m syncnet_python/run_syncnet.py --videofile syncnet_python/data/example.avi --reference 00001
+        python -m syncnet_python/run_pipeline --videofile syncnet_python/data/example.avi --reference 00001
+        python -m syncnet_python/run_syncnet --videofile syncnet_python/data/example.avi --reference 00001
       continue-on-error: true 
 
     # run Unit Tests
