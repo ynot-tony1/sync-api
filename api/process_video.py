@@ -89,7 +89,6 @@ def process_video(input_file, original_filename):
         final_output_path = os.path.join(FINAL_OUTPUT_DIR, f"corrected_{original_filename}")
         FFmpegUtils.apply_cumulative_shift(input_file, final_output_path, total_shift_ms)
 
-        # Final verification
         AnalysisUtils.verify_synchronization(
             final_output_path, f"{reference_number:05d}", fps, DEFAULT_TOLERANCE_MS
         )

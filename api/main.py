@@ -30,7 +30,6 @@ app.add_middleware(
 )
 
 
-# include the routers in the app
 app.include_router(processing_router)
 app.include_router(file_router)
 
