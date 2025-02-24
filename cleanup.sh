@@ -9,6 +9,9 @@ find ./syncnet_python/data -type f -name '*.avi' -exec rm -f {} +
 # deletes all pipeline processing files
 find ./syncnet_python/data/work -type d -regex '.*/[0-9]+' -exec rm -r {} +
 
+# Deletes all .avi files in data/work
+find ./syncnet_python/data -type f -delete
+
 # deletes all final logs
 find ./api/logs/final_logs -mindepth 1 -exec rm -rf {} +
 
