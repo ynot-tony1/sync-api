@@ -10,37 +10,35 @@ from api.config.settings import TEMP_PROCESSING_DIR
 LogUtils.configure_logging() 
 logger = logging.getLogger(__name__)
 
-class ApiUtils:
-    """Utility class for handling Api operations."""
 
+class ApiUtils:
+    """Utility class for handling API operations."""
 
     @staticmethod
     def save_temp_file(uploaded_file):
         """
         Saves an uploaded file to a temporary directory with a unique UUID4 name.
 
+        The function extracts the file extension from the uploaded file's filename,
+        generates a unique filename using UUID4, and constructs a full file path using
+        the TEMP_PROCESSING_DIR. It then opens the destination file in binary write mode,
+        copies the content from the uploaded file to the temporary file, and closes the file.
+        If any error occurs during this process, an IOError is raised.
+
         Args:
             uploaded_file (UploadFile): The uploaded file to save.
-            directory (str): Directory where the file will be saved.
 
         Returns:
-            str: Path to the saved temporary file.
+            str: The path to the saved temporary file.
 
         Raises:
             IOError: If there is an error saving the file.
-
-            
         """
-        # split the file path to get the extension outside of it
-        file_extension = os.path.splitext(uploaded_file.filename)[1] 
-        # create the file path with the temp directory, the UUID4 name and the file
+        file_extension = os.path.splitext(uploaded_file.filename)[1]
         unique_filename = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
         try:
-            # open the file in binary write mode
             temp_file = open(unique_filename, "wb")
-            # copy over the content of the uploaded file to the temporary file safely
             shutil.copyfileobj(uploaded_file.file, temp_file)
-            # close the file after writing
             temp_file.close()
             logger.info(f"Temporary file saved: {unique_filename}")
         except Exception as e:
@@ -52,13 +50,16 @@ class ApiUtils:
     def send_websocket_message(message: str):
         """
         Schedules a broadcast of a debug message to connected WebSocket clients.
-        If there is a running event loop, schedule the broadcast as a task.
-        Otherwise, run it immediately.
+
+        This function attempts to retrieve the current running asyncio event loop and
+        schedules the broadcast function as a task within that loop. If no event loop is
+        currently running, it uses asyncio.run to execute the broadcast immediately.
+
+        Args:
+            message (str): The message to broadcast to WebSocket clients.
         """
         try:
-            # Use the current running loop if available
             loop = asyncio.get_running_loop()
             loop.create_task(broadcast(message))
         except RuntimeError:
-            # If no event loop is running, start one for this broadcast
             asyncio.run(broadcast(message))

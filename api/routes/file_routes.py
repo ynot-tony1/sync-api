@@ -7,7 +7,7 @@ from api.config.settings import FINAL_OUTPUT_DIR
 logger = logging.getLogger("file_routes")
 router = APIRouter()
 
-@router.get("/download/{filename}", tags=["files"])
+@router.get("/download/{filename}")
 def download_file(filename: str):
     """
     endpoint to download a processed video file.

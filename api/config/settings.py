@@ -26,8 +26,7 @@ DATA_DIR = os.path.join(BASE_DIR, os.getenv("DATA_DIR", "syncnet_python/data"))
 
 
 # processing constants
-DEFAULT_MAX_ITERATIONS = int(os.getenv("DEFAULT_MAX_ITERATIONS", 1000))
-DEFAULT_TOLERANCE_MS = int(os.getenv("DEFAULT_TOLERANCE_MS", 10))
+DEFAULT_MAX_ITERATIONS = int(os.getenv("DEFAULT_MAX_ITERATIONS", 30))
 
 # test data directory
 TEST_DATA_DIR = os.path.join(BASE_DIR, os.getenv("TEST_DATA_DIR", "api/tests/test_data"))
