@@ -11,12 +11,108 @@ class FFmpegUtils:
     """Utility class for handling FFmpeg operations."""
 
     @staticmethod
-    def shift_audio(input_file, output_file, offset_ms):
-        """Shift the audio of the input video by a specified millisecond offset.
+    def reencode_to_avi(input_file: str, output_file: str) -> None:
+        """
+        Re-encodes the input file to an .avi container with PCM S16LE audio.
 
-        This function adjusts the audio track of the provided video file by the specified
-        offset in milliseconds. It preserves the original video stream and uses the same audio codec.
-        A positive offset shifts the audio forward, while a negative offset shifts it backward.
+        The video is re-encoded to a generically safe codec ('mpeg4') suitable for the AVI container.
+        This method uses FFmpeg to convert the input file, setting the video codec to 'mpeg4' and the audio
+        codec to 'pcm_s16le'. It overwrites any existing output file and logs the FFmpeg standard output and error.
+        If FFmpeg fails, a RuntimeError is raised with the error message.
+
+        Args:
+            input_file (str): Path to the user's original video.
+            output_file (str): Path where the .avi file will be created.
+
+        Raises:
+            RuntimeError: If FFmpeg fails during the re-encoding process.
+        """
+        logger.info(f"Re-encoding {input_file} to {output_file} as AVI with PCM audio.")
+        try:
+            out, err = (
+                ffmpeg
+                .input(input_file)
+                .output(
+                    output_file,
+                    vcodec='mpeg4',
+                    acodec='pcm_s16le',
+                    strict='experimental'
+                )
+                .overwrite_output()
+                .run(capture_stdout=True, capture_stderr=True)
+            )
+            logger.debug(f"FFmpeg stdout: {out.decode('utf-8') if out else 'N/A'}")
+            logger.debug(f"FFmpeg stderr: {err.decode('utf-8') if err else 'N/A'}")
+        except ffmpeg.Error as e:
+            error_msg = e.stderr.decode('utf-8') if e.stderr else str(e)
+            logger.error(f"FFmpeg error while re-encoding to AVI: {error_msg}")
+            raise RuntimeError(f"Failed to re-encode {input_file} to AVI: {error_msg}") from e
+
+    @staticmethod
+    def reencode_to_original_format(
+        input_avi_file: str,
+        output_file: str,
+        original_container_ext: str,
+        original_video_codec: str,
+        original_audio_codec: str
+    ) -> None:
+        """
+        Converts the final corrected .avi back into the original container format using the original codecs.
+
+        This method takes a corrected .avi file and re-encodes it into the original container format
+        (e.g., .mp4, .mov) using the specified original video and audio codecs. If the original codecs
+        are not provided, it defaults to copying the respective streams. The output file is overwritten
+        if it exists. Any FFmpeg errors encountered during the process will result in a RuntimeError.
+
+        Args:
+            input_avi_file (str): Path to the corrected .avi file from the pipeline.
+            output_file (str): Path to the final re-encoded file (including the correct extension).
+            original_container_ext (str): The target container extension (e.g., ".mp4", ".mov").
+            original_video_codec (str): The original video codec from the input file, if known.
+            original_audio_codec (str): The original audio codec from the input file, if known.
+
+        Raises:
+            RuntimeError: If FFmpeg fails during the re-encoding process.
+        """
+        vcodec = original_video_codec if original_video_codec else "copy"
+        acodec = original_audio_codec if original_audio_codec else "copy"
+
+        logger.info(
+            f"Re-encoding {input_avi_file} back to {output_file} "
+            f"using container ext {original_container_ext}."
+        )
+        try:
+            out, err = (
+                ffmpeg
+                .input(input_avi_file)
+                .output(
+                    output_file,
+                    vcodec=vcodec,
+                    acodec=acodec
+                )
+                .overwrite_output()
+                .run(capture_stdout=True, capture_stderr=True)
+            )
+            logger.debug(f"FFmpeg stdout: {out.decode('utf-8') if out else 'N/A'}")
+            logger.debug(f"FFmpeg stderr: {err.decode('utf-8') if err else 'N/A'}")
+        except ffmpeg.Error as e:
+            error_msg = e.stderr.decode('utf-8') if e.stderr else str(e)
+            logger.error(f"FFmpeg error while re-encoding to original format: {error_msg}")
+            raise RuntimeError(
+                f"Failed to re-encode to original container {original_container_ext}: {error_msg}"
+            ) from e
+
+    @staticmethod
+    def shift_audio(input_file, output_file, offset_ms):
+        """
+        Shifts the audio of the input video by a specified millisecond offset.
+
+        This method adjusts the audio track of the provided video file by the given offset.
+        A positive offset shifts the audio forward, whereas a negative offset shifts it backward.
+        It preserves the original video stream and uses the same audio codec. The function retrieves
+        the audio properties from the input file and constructs an FFmpeg filter accordingly. If the
+        input file does not exist or audio properties cannot be retrieved, an error is logged. FFmpeg is
+        then used to apply the audio shift, and any errors during this process will result in a RuntimeError.
 
         Args:
             input_file (str): The path to the input video file.
@@ -79,10 +175,13 @@ class FFmpegUtils:
 
     @staticmethod
     def apply_cumulative_shift(input_file, final_output, total_shift_ms):
-        """Apply a cumulative audio shift to the original input file.
+        """
+        Applies a cumulative audio shift to the original input file.
 
-        This method creates a temporary copy of the input video, applies an audio shift to it,
-        and then cleans up the temporary file after processing.
+        This method creates a temporary copy of the input video in the FINAL_OUTPUT_DIR,
+        applies an audio shift to the copied file using the specified total shift in milliseconds,
+        and then cleans up the temporary file after processing. The final synchronized video is saved
+        to the provided output path. Any errors during the shifting process will result in a RuntimeError.
 
         Args:
             input_file (str): Path to the original input video.
@@ -109,9 +208,13 @@ class FFmpegUtils:
 
     @staticmethod
     def get_video_fps(file_path):
-        """Retrieve the frames per second (FPS) of a video file.
+        """
+        Retrieves the frames per second (FPS) of a video file.
 
-        This function uses FFprobe to extract the FPS value from the video stream of the file.
+        This function uses FFprobe to extract the FPS value from the video stream of the specified file.
+        It probes the file for stream information and retrieves the 'r_frame_rate' from the first stream.
+        The FPS is calculated by dividing the numerator by the denominator from the 'r_frame_rate' string.
+        If no streams are found or an error occurs, the function logs an error and returns None.
 
         Args:
             file_path (str): The path to the video file.
@@ -147,17 +250,20 @@ class FFmpegUtils:
 
     @staticmethod
     def get_audio_properties(file_path):
-        """Retrieve audio properties from a video file.
+        """
+        Retrieves audio properties from a video file.
 
         This method uses FFprobe to extract audio properties such as sample rate, number of channels,
-        and the audio codec from the provided video file.
+        and the audio codec from the provided video file. It iterates through the streams until it finds
+        one with the 'audio' codec type. If an audio stream is found, a dictionary containing the audio
+        properties is returned. If no audio stream is found or an error occurs, the function logs an error
+        and returns None.
 
         Args:
             file_path (str): The path to the video file.
 
         Returns:
-            dict or None: A dictionary containing audio properties if an audio stream is found;
-                          otherwise, None.
+            dict or None: A dictionary containing audio properties if an audio stream is found; otherwise, None.
         """
         logger.debug(f"Probing audio properties for {file_path}")
         try:
@@ -185,17 +291,19 @@ class FFmpegUtils:
 
     @staticmethod
     def get_video_properties(file_path):
-        """Retrieve video properties from a file.
+        """
+        Retrieves video properties from a video file.
 
         This function uses FFprobe to extract key video properties such as width, height, codec name,
-        and average frame rate from the provided video file.
+        average frame rate, and the calculated FPS from the provided video file. It searches through the
+        streams for one with the 'video' codec type and attempts to convert the 'avg_frame_rate' to FPS.
+        If a video stream is found, a dictionary containing the video properties is returned; otherwise, None.
 
         Args:
             file_path (str): The path to the video file.
 
         Returns:
-            dict or None: A dictionary containing video properties if a video stream is found;
-                          otherwise, None.
+            dict or None: A dictionary containing video properties if a video stream is found; otherwise, None.
         """
         logger.debug(f"Probing video properties for {file_path}")
         try:
@@ -203,11 +311,19 @@ class FFmpegUtils:
             streams = info.get('streams', [])
             for stream in streams:
                 if stream.get('codec_type') == 'video':
+                    avg_frame_rate = stream.get('avg_frame_rate')
+                    try:
+                        num, den = avg_frame_rate.split('/')
+                        fps = float(num) / float(den) if float(den) != 0 else None
+                    except Exception as e:
+                        logger.error(f"Error converting avg_frame_rate '{avg_frame_rate}' to fps: {e}")
+                        fps = None
                     video_props = {
                         'width': stream.get('width'),
                         'height': stream.get('height'),
                         'codec_name': stream.get('codec_name'),
-                        'avg_frame_rate': stream.get('avg_frame_rate')
+                        'avg_frame_rate': avg_frame_rate,
+                        'fps': fps
                     }
                     logger.info(f"Retrieved video properties for {file_path}: {video_props}")
                     return video_props
