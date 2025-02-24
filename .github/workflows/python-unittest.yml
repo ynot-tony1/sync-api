@@ -15,46 +15,38 @@ jobs:
         python-version: [3.7]
 
     steps:
-    # checkout repository
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # set PYTHONPATH to repository root (sync-api)
     - name: Set PYTHONPATH to repository root
       run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
 
-    # set up Python
     - name: CI build test and breakdown ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'
 
-    # install system dependencies
     - name: Install system dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y ffmpeg libsm6 libxext6 libxrender-dev
 
-    # install Python dependencies
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r syncnet_python/requirements.txt
 
-    # make download_model.sh executable
     - name: Make download_model.sh executable
       run: |
         chmod +x ./download_model.sh
 
-    # run download_model.sh script with verbose output
     - name: Run download_model.sh
       run: |
         echo "=== Executing download_model.sh ==="
         ./download_model.sh
         echo "=== Finished executing download_model.sh ==="
 
-    # test SyncNet Execution Independently
     - name: Test SyncNet Execution
       run: |
         echo "=== Testing SyncNet Execution ==="
@@ -62,14 +54,12 @@ jobs:
         python -m syncnet_python.run_syncnet --videofile syncnet_python/data/example.avi --reference 00001
       continue-on-error: true 
 
-    # run Unit Tests
     - name: Run Unit Tests
       run: |
         echo "=== Starting Unit Tests ==="
         python3.7 -m unittest discover -s api/tests/test_utils -p "*.py" -v
         echo "=== Completed Unit Tests ==="
 
-    # run Integration Tests
     - name: Run Integration Tests
       run: |
         echo "=== Starting Integration Tests ==="
