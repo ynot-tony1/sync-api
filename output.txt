@@ -1,0 +1,2649 @@
+# Directory Structure (Depth 3)
+.
+├── api
+│   ├── config
+│   │   ├── logging.yaml
+│   │   ├── __pycache__
+│   │   └── settings.py
+│   ├── connection_manager.py
+│   ├── file_handling
+│   │   ├── final_output
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   └── temp_input
+│   ├── __init__.py
+│   ├── logs
+│   │   ├── final_logs
+│   │   ├── logs
+│   │   └── run_logs
+│   ├── main.py
+│   ├── process_video.py
+│   ├── __pycache__
+│   │   ├── connection_manager.cpython-37.pyc
+│   │   ├── exceptions.cpython-37.pyc
+│   │   ├── __init__.cpython-37.pyc
+│   │   ├── main.cpython-37.pyc
+│   │   └── process_video.cpython-37.pyc
+│   ├── routes
+│   │   ├── file_routes.py
+│   │   ├── __init__.py
+│   │   ├── processing_routes.py
+│   │   ├── __pycache__
+│   │   └── ws_routes.py
+│   ├── tests
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── test_data
+│   │   ├── test_process_video.py
+│   │   └── test_utils
+│   └── utils
+│       ├── analysis_utils.py
+│       ├── api_utils.py
+│       ├── ffmpeg_utils.py
+│       ├── file_utils.py
+│       ├── __init__.py
+│       ├── log_utils.py
+│       ├── __pycache__
+│       ├── syncnet_utils.py
+│       └── ws_logging_handler.py
+├── cleanall.sh
+├── cleanup.sh
+├── device_config.py
+├── download_model.sh
+├── __init__ .py
+├── output.txt
+├── __pycache__
+│   └── device_config.cpython-37.pyc
+├── requirements.txt
+└── syncnet_python
+    ├── data
+    │   └── work
+    ├── demo_feature.py
+    ├── demo_syncnet.py
+    ├── detectors
+    │   ├── __init__.py
+    │   ├── __pycache__
+    │   ├── README.md
+    │   └── s3fd
+    ├── img
+    │   ├── ex1.jpg
+    │   └── ex2.jpg
+    ├── __init__.py
+    ├── LICENSE.md
+    ├── __pycache__
+    │   ├── __init__.cpython-37.pyc
+    │   ├── run_pipeline.cpython-37.pyc
+    │   ├── run_syncnet.cpython-37.pyc
+    │   ├── SyncNetInstance.cpython-37.pyc
+    │   └── SyncNetModel.cpython-37.pyc
+    ├── README.md
+    ├── requirements.txt
+    ├── run_pipeline.py
+    ├── run_syncnet.py
+    ├── run_visualise.py
+    ├── SyncNetInstance.py
+    └── SyncNetModel.py
+
+29 directories, 54 files
+
+# Environment Variables
+# logging directories
+LOGS_BASE=api/logs
+LOGS_DIR=api/logs/logs
+FINAL_LOGS_DIR=api/logs/final_logs
+RUN_LOGS_DIR=api/logs/run_logs
+LOG_CONFIG_PATH=api/config/logging.yaml
+
+# processing directories
+FILE_HANDLING_DIR=api/file_handling
+TEMP_PROCESSING_DIR=api/file_handling/temp_input
+FINAL_OUTPUT_DIR=api/file_handling/final_output
+DATA_WORK_PYAVI_DIR=syncnet_python/data/work/pyavi
+DATA_WORK_DIR=syncnet_python/data/work
+DATA_DIR=syncnet_python/data
+
+# processing constants
+DEFAULT_MAX_ITERATIONS=1000
+
+# test data directory
+TEST_DATA_DIR=api/tests/test_data
+
+
+# allowed cors origins
+ALLOWED_LOCAL_1=http://localhost:3000
+ALLOWED_LOCAL_2=http://127.0.0.1:3000
+
+
+
+
+# SyncNet Requirements
+aiofiles==23.2.1
+aiohttp==3.8.6
+aiosignal==1.3.1
+annotated-types==0.5.0
+anyio==3.7.1
+async-timeout==4.0.3
+asynctest==0.13.0
+attrs==24.2.0
+audioread==3.0.1
+cached-property==1.5.2
+certifi==2024.8.30
+cffi==1.15.1
+charset-normalizer==3.4.0
+click==8.1.7
+cycler==0.11.0
+decorator==5.1.1
+distro==1.9.0
+dotenv==0.9.9
+exceptiongroup==1.2.2
+fastapi==0.103.2
+ffmpeg-python==0.2.0
+frozenlist==1.3.3
+future==1.0.0
+h11==0.14.0
+httpcore==0.17.3
+httpx==0.24.1
+idna==3.10
+imageio==2.31.2
+imageio-ffmpeg==0.5.1
+importlib-metadata==6.7.0
+importlib-resources==5.12.0
+joblib==1.3.2
+kiwisolver==1.4.5
+librosa==0.7.2
+llvmlite==0.39.1
+matplotlib==3.3.4
+multidict==6.0.5
+numba==0.56.4
+numpy==1.18.1
+opencv-contrib-python==4.10.0.84
+opencv-python==4.10.0.84
+Pillow==9.5.0
+platformdirs==4.0.0
+proglog==0.1.10
+pycparser==2.21
+pydantic==2.5.3
+pydantic_core==2.14.6
+pyparsing==3.1.4
+python-dateutil==2.9.0.post0
+python-decouple==3.8
+python-dotenv==0.21.1
+python-magic==0.4.27
+python-multipart==0.0.8
+python-speech-features==0.6
+PyYAML==6.0.1
+requests==2.31.0
+resampy==0.4.3
+scenedetect==0.6.4
+scikit-learn==1.0.2
+scipy==1.2.1
+six==1.16.0
+sniffio==1.3.1
+soundfile==0.12.1
+starlette==0.27.0
+threadpoolctl==3.1.0
+torch==1.4.0
+torchvision==0.5.0
+tqdm==4.66.6
+typing_extensions==4.7.1
+urllib3==2.0.7
+uvicorn==0.22.0
+watchdog==3.0.0
+websockets==11.0.3
+yarl==1.9.4
+zipp==3.15.0
+
+# Video Processing Script
+import os
+import logging
+from api.utils.api_utils import ApiUtils
+from api.utils.syncnet_utils import SyncNetUtils
+
+logger = logging.getLogger('process_video')
+
+def process_video(input_file, original_filename):
+    """
+    Processes a video file to synchronize its audio and video streams using SyncNet.
+
+    This function orchestrates the complete video processing workflow:
+      1. Prepares the video for synchronization by copying, moving, and re-encoding 
+         (if necessary) using SyncNet utilities.
+      2. Iteratively applies audio shifts and finalizes the synchronization using
+         the SyncNet pipeline.
+      3. Sends websocket notifications to update the user about the processing progress.
+      4. Returns a dictionary indicating success and includes the final output file path,
+         or returns an error dictionary if processing fails.
+
+    Args:
+        input_file (str): The file path to the uploaded video that needs processing.
+        original_filename (str): The original name of the uploaded video file.
+
+    Returns:
+        dict: A dictionary containing the outcome of the processing. On success, it contains:
+            - "status": "success"
+            - "final_output": <str> Final output file path after synchronization and re-encoding.
+            - "message": "Video processed successfully."
+            
+            On failure, it returns one of the following error dictionaries:
+            - {"no_audio": True, "message": "The video you uploaded has no audio stream inside"}
+            - {"no_video": True, "message": "Couldn't see any video stream in the file"}
+            - {"no_fps": True, "message": "Could not retrieve fps"}
+            - {"error": True, "message": <error message>}
+
+    Raises:
+        This function does not raise exceptions directly. Instead, it catches exceptions,
+        logs the error, sends a websocket notification, and returns an error dictionary.
+    """
+    try:
+        avi_file, vid_props, audio_props, fps, destination_path, reference_number = SyncNetUtils.prepare_video(
+            input_file, original_filename)
+        
+        result = SyncNetUtils.synchronize_video(
+            avi_file, input_file, original_filename, vid_props, audio_props, fps, destination_path, reference_number
+        )
+        if isinstance(result, dict):
+            return result
+        ApiUtils.send_websocket_message("We're done, download your file with the link at the top! Thanks")
+        return {
+            "status": "success",
+            "final_output": result,
+            "message": "Video processed successfully."
+        }
+
+    except Exception as e:
+        error_msg = f"An error occurred during video processing: {e}"
+        logger.error(error_msg)
+        ApiUtils.send_websocket_message(error_msg)
+        err_text = str(e)
+        if "No audio stream" in err_text:
+            return {"no_audio": True, "message": "The video you uploaded has no audio stream inside"}
+        elif "Couldn't find any video stream" in err_text:
+            return {"no_video": True, "message": "Couldn't see any video stream in the file"}
+        elif "retrieve fps" in err_text:
+            return {"no_fps": True, "message": "Could not retrieve fps"}
+        else:
+            return {"error": True, "message": {e}}
+
+# FastAPI Main App
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from api.config.settings import ALLOWED_LOCAL_1, ALLOWED_LOCAL_2
+from api.routes.processing_routes import router as processing_router
+from api.routes.file_routes import router as file_router
+import logging
+from api.routes.ws_routes import router as ws_router  
+from device_config import DEVICE
+logger = logging.getLogger("uvicorn.info")
+
+app = FastAPI()
+
+@app.on_event("startup")
+def processing():
+    if(DEVICE =="cuda"):
+        logger.info(f"Running on a {DEVICE} gpu")
+    else:
+        logger.info(f"Running on a {DEVICE}")
+
+
+origins = [
+    ALLOWED_LOCAL_1,
+    ALLOWED_LOCAL_2,
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins, 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+app.include_router(processing_router)
+app.include_router(file_router)
+app.include_router(ws_router)
+
+
+@app.get("/", tags=["root"])
+def read_root():
+    return {"message": "welcome to sync-api"}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "api.main:app",
+        host="127.0.0.1",
+        port=8000,
+        reload=True,
+        reload_exclude=["syncnet_python/data/work/pytmp*"] 
+    )
+
+# COnnectionManager p
+from fastapi import WebSocket
+
+active_connections = []
+
+async def connect(websocket: WebSocket):
+    await websocket.accept()
+    active_connections.append(websocket)
+
+async def broadcast(message: str):
+    for connection in active_connections:
+        await connection.send_text(message)
+
+def disconnect(websocket: WebSocket):
+    if websocket in active_connections:
+        active_connections.remove(websocket)
+
+# Logging Configuration
+version: 1
+disable_existing_loggers: False
+
+formatters:
+  standard:
+    format: '[%(asctime)s] [%(levelname)s] %(name)s.%(funcName)s: %(message)s'
+  
+  console_format:
+    format: '[%(asctime)s] %(funcName)s: %(message)s'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: console_format
+    stream: ext://sys.stdout
+
+  app_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/app.log
+    maxBytes: 1048576 
+    backupCount: 5
+    encoding: utf8
+
+  process_video_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/process_video.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  ffmpeg_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/ffmpeg.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  pipeline_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/pipeline.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  analysis_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/analysis.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  file_utils_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/file_utils.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  uvicorn_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: INFO
+    formatter: standard
+    filename: api/logs/logs/uvicorn.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  file_routes_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/file_routes.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+  processing_routes_file_handler:
+    class: logging.handlers.RotatingFileHandler
+    level: DEBUG
+    formatter: standard
+    filename: api/logs/logs/processing_routes.log
+    maxBytes: 1048576
+    backupCount: 5
+    encoding: utf8
+
+loggers:
+
+  process_video:
+    handlers: [process_video_file_handler, console, app_file_handler]  
+    level: DEBUG
+    propagate: false
+
+  multipart:
+    handlers: [app_file_handler]  
+    level: WARNING
+    propagate: false
+
+  ffmpeg_logger:
+    handlers: [ffmpeg_file_handler]
+    level: DEBUG
+    propagate: false
+
+  pipeline_logger:
+    handlers: [pipeline_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  analysis_logger:
+    handlers: [analysis_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  file_utils_logger:
+    handlers: [file_utils_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  api_logger:
+    handlers: [console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  fastapi:
+    handlers: [console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  uvicorn:
+    handlers: [uvicorn_file_handler, console, app_file_handler]
+    level: INFO
+    propagate: false
+
+  uvicorn.error:
+    handlers: [uvicorn_file_handler, console, app_file_handler]
+    level: ERROR
+    propagate: false
+
+  uvicorn.access:
+    handlers: [uvicorn_file_handler, console, app_file_handler]
+    level: INFO
+    propagate: false
+
+  file_routes:
+    handlers: [file_routes_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  processing_routes:
+    handlers: [processing_routes_file_handler, console, app_file_handler]
+    level: DEBUG
+    propagate: false
+
+  asyncio:
+    level: WARNING
+    propagate: false
+
+root:
+  handlers: [app_file_handler, console]
+  level: DEBUG
+
+# Settings Configuration
+import os
+from dotenv import load_dotenv
+
+# determine the project root directory 
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../"))
+
+# load the .env file from the project root
+dotenv_path = os.path.join(BASE_DIR, ".env")
+load_dotenv(dotenv_path=dotenv_path, override=True)
+
+
+# logging directories 
+LOGS_BASE = os.path.join(BASE_DIR, os.getenv("LOGS_BASE", "api/logs"))
+LOGS_DIR = os.path.join(BASE_DIR, os.getenv("LOGS_DIR", "api/logs/logs"))
+FINAL_LOGS_DIR = os.path.join(BASE_DIR, os.getenv("FINAL_LOGS_DIR", "api/logs/final_logs"))
+RUN_LOGS_DIR = os.path.join(BASE_DIR, os.getenv("RUN_LOGS_DIR", "api/logs/run_logs"))
+LOG_CONFIG_PATH = os.path.join(BASE_DIR, os.getenv("LOG_CONFIG_PATH", "api/config/logging.yaml"))
+
+# processing directories (
+FILE_HANDLING_DIR = os.path.join(BASE_DIR, os.getenv("FILE_HANDLING_DIR", "api/file_handling"))
+TEMP_PROCESSING_DIR = os.path.join(BASE_DIR, os.getenv("TEMP_PROCESSING_DIR", "api/file_handling/temp_input"))
+FINAL_OUTPUT_DIR = os.path.join(BASE_DIR, os.getenv("FINAL_OUTPUT_DIR", "api/file_handling/final_output"))
+DATA_WORK_PYAVI_DIR = os.path.join(BASE_DIR, os.getenv("DATA_WORK_PYAVI_DIR", "syncnet_python/data/work/pyavi"))
+DATA_WORK_DIR = os.path.join(BASE_DIR, os.getenv("DATA_WORK_DIR", "syncnet_python/data/work"))
+DATA_DIR = os.path.join(BASE_DIR, os.getenv("DATA_DIR", "syncnet_python/data"))
+
+
+# processing constants
+DEFAULT_MAX_ITERATIONS = int(os.getenv("DEFAULT_MAX_ITERATIONS", 30))
+
+# test data directory
+TEST_DATA_DIR = os.path.join(BASE_DIR, os.getenv("TEST_DATA_DIR", "api/tests/test_data"))
+
+# allowed cors origins
+ALLOWED_LOCAL_1 = os.getenv("ALLOWED_LOCAL_1", "http://localhost:3000")
+ALLOWED_LOCAL_2 = os.getenv("ALLOWED_LOCAL_2", "http://127.0.0.1:3000")
+ALLOWED_ORIGINS = [ALLOWED_LOCAL_1, ALLOWED_LOCAL_2]
+
+
+# __init__.py from D3FD Configuration
+import time
+import sys
+import os
+import numpy as np
+import cv2
+import torch
+from torchvision import transforms
+from .nets import S3FDNet
+from .box_utils import nms_
+from api.config.settings import BASE_DIR  
+from device_config import DEVICE
+
+PATH_WEIGHT = os.path.join(BASE_DIR, "syncnet_python", "detectors", "s3fd", "weights", "sfd_face.pth")
+img_mean = np.array([104., 117., 123.])[:, np.newaxis, np.newaxis].astype('float32')
+
+class S3FD():
+    def __init__(self, device=DEVICE):
+        tstamp = time.time()
+        self.device = torch.device(device)
+        print('[S3FD] loading with', self.device)
+        self.net = S3FDNet(device=self.device).to(self.device)
+        state_dict = torch.load(PATH_WEIGHT, map_location=self.device)
+        self.net.load_state_dict(state_dict)
+        self.net.eval()
+        print('[S3FD] finished loading (%.4f sec)' % (time.time() - tstamp))
+    
+    def detect_faces(self, image, conf_th=0.8, scales=[1]):
+        w, h = image.shape[1], image.shape[0]
+        bboxes = np.empty(shape=(0, 5))
+        with torch.no_grad():
+            for s in scales:
+                scaled_img = cv2.resize(image, dsize=(0, 0), fx=s, fy=s, interpolation=cv2.INTER_LINEAR)
+                scaled_img = np.swapaxes(scaled_img, 1, 2)
+                scaled_img = np.swapaxes(scaled_img, 1, 0)
+                scaled_img = scaled_img[[2, 1, 0], :, :]
+                scaled_img = scaled_img.astype('float32')
+                scaled_img -= img_mean
+                scaled_img = scaled_img[[2, 1, 0], :, :]
+                x = torch.from_numpy(scaled_img).unsqueeze(0).to(self.device)
+                y = self.net(x)
+                detections = y.data
+                scale = torch.Tensor([w, h, w, h])
+                for i in range(detections.size(1)):
+                    j = 0
+                    while detections[0, i, j, 0] > conf_th:
+                        score = detections[0, i, j, 0]
+                        pt = (detections[0, i, j, 1:] * scale).cpu().numpy()
+                        bbox = (pt[0], pt[1], pt[2], pt[3], score)
+                        bboxes = np.vstack((bboxes, bbox))
+                        j += 1
+                keep = nms_(bboxes, 0.1)
+                bboxes = bboxes[keep]
+        return bboxes
+
+# SyncnetInstance 
+#!/usr/bin/python
+#-*- coding: utf-8 -*-
+
+
+import torch
+import numpy
+import time, pdb, argparse, subprocess, os, math, glob
+import cv2
+import python_speech_features
+
+from scipy import signal
+from scipy.io import wavfile
+from .SyncNetModel import *  
+from shutil import rmtree
+from device_config import DEVICE
+
+# ==================== Get OFFSET ====================
+
+def calc_pdist(feat1, feat2, vshift=10):
+    win_size = vshift * 2 + 1
+    feat2p = torch.nn.functional.pad(feat2, (0, 0, vshift, vshift))
+    dists = []
+    for i in range(len(feat1)):
+        dists.append(torch.nn.functional.pairwise_distance(
+            feat1[[i], :].repeat(win_size, 1),
+            feat2p[i:i+win_size, :]
+        ))
+    return dists
+
+# ==================== MAIN DEF ====================
+
+class SyncNetInstance(torch.nn.Module):
+    def __init__(self, dropout=0, num_layers_in_fc_layers=1024):
+        super(SyncNetInstance, self).__init__()
+        self.__S__ = S(num_layers_in_fc_layers=num_layers_in_fc_layers).to(DEVICE)
+    
+    def evaluate(self, opt, videofile):
+        self.__S__.eval()
+
+        tmp_ref_dir = os.path.join(opt.tmp_dir, opt.reference)
+        if os.path.exists(tmp_ref_dir):
+            rmtree(tmp_ref_dir)
+        os.makedirs(tmp_ref_dir)
+
+        command = ("ffmpeg -y -i %s -threads 1 -f image2 %s" % (
+            videofile,
+            os.path.join(tmp_ref_dir, '%06d.jpg')
+        ))
+        subprocess.call(command, shell=True, stdout=None)
+
+        command = ("ffmpeg -y -i %s -async 1 -ac 1 -vn -acodec pcm_s16le -ar 16000 %s" % (
+            videofile,
+            os.path.join(tmp_ref_dir, 'audio.wav')
+        ))
+        subprocess.call(command, shell=True, stdout=None)
+        
+        images = []
+        flist = glob.glob(os.path.join(tmp_ref_dir, '*.jpg'))
+        flist.sort()
+        for fname in flist:
+            images.append(cv2.imread(fname))
+        im = numpy.stack(images, axis=3)
+        im = numpy.expand_dims(im, axis=0)
+        im = numpy.transpose(im, (0, 3, 4, 1, 2))
+        imtv = torch.from_numpy(im.astype('float32')).float().to(DEVICE)
+
+        sample_rate, audio = wavfile.read(os.path.join(tmp_ref_dir, 'audio.wav'))
+        mfcc = zip(*python_speech_features.mfcc(audio, sample_rate))
+        mfcc = numpy.stack([numpy.array(i) for i in mfcc])
+        cc = numpy.expand_dims(numpy.expand_dims(mfcc, axis=0), axis=0)
+        cct = torch.from_numpy(cc.astype('float32')).float().to(DEVICE)
+
+        if (float(len(audio)) / 16000) != (float(len(images)) / 25):
+            print("WARNING: Audio (%.4fs) and video (%.4fs) lengths are different." % (
+                float(len(audio)) / 16000,
+                float(len(images)) / 25
+            ))
+
+        min_length = min(len(images), math.floor(len(audio) / 640))
+        
+        lastframe = min_length - 5
+        im_feat = []
+        cc_feat = []
+        tS = time.time()
+        for i in range(0, lastframe, opt.batch_size):
+            im_batch = [ imtv[:, :, vframe:vframe+5, :, :] 
+                         for vframe in range(i, min(lastframe, i+opt.batch_size)) ]
+            im_in = torch.cat(im_batch, 0)
+            im_in = im_in.to(DEVICE)
+            im_out = self.__S__.forward_lip(im_in)
+            im_feat.append(im_out.data.cpu())
+
+            cc_batch = [ cct[:, :, :, vframe*4:vframe*4+20] 
+                         for vframe in range(i, min(lastframe, i+opt.batch_size)) ]
+            cc_in = torch.cat(cc_batch, 0)
+            cc_in = cc_in.to(DEVICE)
+            cc_out = self.__S__.forward_aud(cc_in)
+            cc_feat.append(cc_out.data.cpu())
+
+        im_feat = torch.cat(im_feat, 0)
+        cc_feat = torch.cat(cc_feat, 0)
+
+        print('Compute time %.3f sec.' % (time.time() - tS))
+
+        dists = calc_pdist(im_feat, cc_feat, vshift=opt.vshift)
+        mdist = torch.mean(torch.stack(dists, 1), 1)
+
+        minval, minidx = torch.min(mdist, 0)
+        offset = opt.vshift - minidx
+        conf = torch.median(mdist) - minval
+
+        fdist = numpy.stack([dist[minidx].numpy() for dist in dists])
+        fconf = torch.median(mdist).numpy() - fdist
+        fconfm = signal.medfilt(fconf, kernel_size=9)
+        
+        numpy.set_printoptions(formatter={'float': '{: 0.3f}'.format})
+        print('Framewise conf: ')
+        print(fconfm)
+        print('AV offset: \t%d \nMin dist: \t%.3f\nConfidence: \t%.3f' % (offset, minval, conf))
+
+        dists_npy = numpy.array([ dist.numpy() for dist in dists ])
+        return offset.numpy(), conf.numpy(), dists_npy
+
+    def extract_feature(self, opt, videofile):
+        self.__S__.eval()
+        
+        cap = cv2.VideoCapture(videofile)
+        images = []
+        while True:
+            ret, image = cap.read()
+            if not ret:
+                break
+            images.append(image)
+        im = numpy.stack(images, axis=3)
+        im = numpy.expand_dims(im, axis=0)
+        im = numpy.transpose(im, (0, 3, 4, 1, 2))
+        imtv = torch.from_numpy(im.astype('float32')).float().to(DEVICE)
+        
+        lastframe = len(images) - 4
+        im_feat = []
+        tS = time.time()
+        for i in range(0, lastframe, opt.batch_size):
+            im_batch = [ imtv[:, :, vframe:vframe+5, :, :] 
+                         for vframe in range(i, min(lastframe, i+opt.batch_size)) ]
+            im_in = torch.cat(im_batch, 0).to(DEVICE)
+            im_out = self.__S__.forward_lipfeat(im_in)
+            im_feat.append(im_out.data.cpu())
+        im_feat = torch.cat(im_feat, 0)
+
+        print('Compute time %.3f sec.' % (time.time() - tS))
+        return im_feat
+
+    def loadParameters(self, path):
+        loaded_state = torch.load(path, map_location=lambda storage, loc: storage)
+        self_state = self.__S__.state_dict()
+        for name, param in loaded_state.items():
+            if name in self_state:
+                self_state[name].copy_(param)
+
+# run pipeline
+import sys, time, os, pdb, argparse, pickle, subprocess, glob, cv2
+import numpy as np
+from shutil import rmtree
+
+import scenedetect
+from scenedetect.video_manager import VideoManager
+from scenedetect.scene_manager import SceneManager
+from scenedetect.frame_timecode import FrameTimecode
+from scenedetect.stats_manager import StatsManager
+from scenedetect.detectors import ContentDetector
+
+from scipy.interpolate import interp1d
+from scipy.io import wavfile
+from scipy import signal
+from device_config import DEVICE
+
+from .detectors.s3fd import S3FD
+
+# ========== PARSE ARGS ==========
+parser = argparse.ArgumentParser(description = "FaceTracker")
+parser.add_argument('--data_dir',       type=str, default='syncnet_python/data/work', help='Output directory')
+parser.add_argument('--videofile',      type=str, default='',   help='Input video file')
+parser.add_argument('--reference',      type=str, default='',   help='Video reference')
+parser.add_argument('--facedet_scale',  type=float, default=0.25, help='Scale factor for face detection')
+parser.add_argument('--crop_scale',     type=float, default=0.40, help='Scale bounding box')
+parser.add_argument('--min_track',      type=int, default=100,  help='Minimum facetrack duration')
+parser.add_argument('--frame_rate',     type=int, default=25,   help='Frame rate')
+parser.add_argument('--num_failed_det', type=int, default=25,   help='Number of missed detections allowed before tracking is stopped')
+parser.add_argument('--min_face_size',  type=int, default=100,  help='Minimum face size in pixels')
+opt = parser.parse_args()
+
+# Set additional paths
+setattr(opt, 'avi_dir', os.path.join(opt.data_dir, 'pyavi'))
+setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, 'pytmp'))
+setattr(opt, 'work_dir', os.path.join(opt.data_dir, 'pywork'))
+setattr(opt, 'crop_dir', os.path.join(opt.data_dir, 'pycrop'))
+setattr(opt, 'frames_dir', os.path.join(opt.data_dir, 'pyframes'))
+
+# ========== IOU FUNCTION ==========
+def bb_intersection_over_union(boxA, boxB):
+  
+  xA = max(boxA[0], boxB[0])
+  yA = max(boxA[1], boxB[1])
+  xB = min(boxA[2], boxB[2])
+  yB = min(boxA[3], boxB[3])
+ 
+  interArea = max(0, xB - xA) * max(0, yB - yA)
+ 
+  boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
+  boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
+ 
+  iou = interArea / float(boxAArea + boxBArea - interArea)
+ 
+  return iou
+
+# ========== FACE TRACKING ==========
+def track_shot(opt, scenefaces):
+
+  iouThres  = 0.5   
+  tracks    = []
+
+  while True:
+    track     = []
+    for framefaces in scenefaces:
+      for face in framefaces:
+        if track == []:
+          track.append(face)
+          framefaces.remove(face)
+        elif face['frame'] - track[-1]['frame'] <= opt.num_failed_det:
+          iou = bb_intersection_over_union(face['bbox'], track[-1]['bbox'])
+          if iou > iouThres:
+            track.append(face)
+            framefaces.remove(face)
+            continue
+        else:
+          break
+
+    if track == []:
+      break
+    elif len(track) > opt.min_track:
+      
+      framenum    = np.array([ f['frame'] for f in track ])
+      bboxes      = np.array([np.array(f['bbox']) for f in track])
+
+      frame_i   = np.arange(framenum[0], framenum[-1]+1)
+
+      bboxes_i    = []
+      for ij in range(0,4):
+        interpfn  = interp1d(framenum, bboxes[:,ij])
+        bboxes_i.append(interpfn(frame_i))
+      bboxes_i  = np.stack(bboxes_i, axis=1)
+
+      if max(np.mean(bboxes_i[:,2]-bboxes_i[:,0]), np.mean(bboxes_i[:,3]-bboxes_i[:,1])) > opt.min_face_size:
+        tracks.append({'frame':frame_i,'bbox':bboxes_i})
+
+  return tracks
+
+# ========== VIDEO CROP AND SAVE ==========
+def crop_video(opt, track, cropfile):
+
+  flist = glob.glob(os.path.join(opt.frames_dir, opt.reference, '*.jpg'))
+  flist.sort()
+
+  fourcc = cv2.VideoWriter_fourcc(*'XVID')
+  vOut = cv2.VideoWriter(cropfile + 't.avi', fourcc, opt.frame_rate, (224,224))
+
+  dets = {'x':[], 'y':[], 's':[]}
+
+  for det in track['bbox']:
+
+    dets['s'].append(max((det[3]-det[1]),(det[2]-det[0]))/2) 
+    dets['y'].append((det[1]+det[3])/2) 
+    dets['x'].append((det[0]+det[2])/2) 
+  
+  dets['s'] = signal.medfilt(dets['s'], kernel_size=13)   
+  dets['x'] = signal.medfilt(dets['x'], kernel_size=13)
+  dets['y'] = signal.medfilt(dets['y'], kernel_size=13)
+
+  for fidx, frame in enumerate(track['frame']):
+
+    cs  = opt.crop_scale
+
+    bs  = dets['s'][fidx] 
+    bsi = int(bs*(1+2*cs)) 
+
+    image = cv2.imread(flist[frame])
+    
+    frame_image = np.pad(image, ((bsi,bsi),(bsi,bsi),(0,0)), 'constant', constant_values=(110,110))
+    my  = dets['y'][fidx]+bsi
+    mx  = dets['x'][fidx]+bsi 
+
+    face = frame_image[int(my-bs):int(my+bs*(1+2*cs)), int(mx-bs*(1+cs)):int(mx+bs*(1+cs))]
+    
+    vOut.write(cv2.resize(face, (224,224)))
+
+  audiotmp    = os.path.join(opt.tmp_dir, opt.reference, 'audio.wav')
+  audiostart  = (track['frame'][0])/opt.frame_rate
+  audioend    = (track['frame'][-1]+1)/opt.frame_rate
+
+  vOut.release()
+
+  # ========== CROP AUDIO FILE ==========
+
+  command = ("ffmpeg -y -i %s -ss %.3f -to %.3f %s" % (
+      os.path.join(opt.avi_dir, opt.reference, 'audio.wav'),
+      audiostart,
+      audioend,
+      audiotmp
+  )) 
+  output = subprocess.call(command, shell=True, stdout=None)
+
+  if output != 0:
+    pdb.set_trace()
+
+  sample_rate, audio = wavfile.read(audiotmp)
+
+  # ========== COMBINE AUDIO AND VIDEO FILES ==========
+
+  command = ("ffmpeg -y -i %st.avi -i %s -c:v copy -c:a copy %s.avi" % (
+      cropfile,
+      audiotmp,
+      cropfile
+  ))
+  output = subprocess.call(command, shell=True, stdout=None)
+
+  if output != 0:
+    pdb.set_trace()
+
+  print('Written %s' % cropfile)
+
+  os.remove(cropfile + 't.avi')
+
+  print('Mean pos: x %.2f y %.2f s %.2f' % (
+      np.mean(dets['x']),
+      np.mean(dets['y']),
+      np.mean(dets['s'])
+  ))
+
+  return {'track': track, 'proc_track': dets}
+
+# ========== FACE DETECTION ==========
+def inference_video(opt):
+
+  DET = S3FD(device=DEVICE)
+
+  flist = glob.glob(os.path.join(opt.frames_dir, opt.reference, '*.jpg'))
+  flist.sort()
+
+  dets = []
+      
+  for fidx, fname in enumerate(flist):
+
+    start_time = time.time()
+    
+    image = cv2.imread(fname)
+
+    image_np = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    bboxes = DET.detect_faces(image_np, conf_th=0.9, scales=[opt.facedet_scale])
+
+    dets.append([])
+    for bbox in bboxes:
+      dets[-1].append({'frame':fidx, 'bbox':(bbox[:-1]).tolist(), 'conf':bbox[-1]})
+
+    elapsed_time = time.time() - start_time
+
+    print('%s-%05d; %d dets; %.2f Hz' % (
+        os.path.join(opt.avi_dir, opt.reference, 'video.avi'),
+        fidx,
+        len(dets[-1]),
+        (1 / elapsed_time) if elapsed_time > 0 else 0
+    )) 
+
+  savepath = os.path.join(opt.work_dir, opt.reference, 'faces.pckl')
+
+  with open(savepath, 'wb') as fil:
+    pickle.dump(dets, fil)
+
+  return dets
+
+# ========== SCENE DETECTION ==========
+def scene_detect(opt):
+
+  video_manager = VideoManager([os.path.join(opt.avi_dir, opt.reference, 'video.avi')])
+  stats_manager = StatsManager()
+  scene_manager = SceneManager(stats_manager)
+  # Add ContentDetector algorithm (constructor takes detector options like threshold).
+  scene_manager.add_detector(ContentDetector())
+  base_timecode = video_manager.get_base_timecode()
+
+  video_manager.set_downscale_factor()
+
+  video_manager.start()
+
+  scene_manager.detect_scenes(frame_source=video_manager)
+
+  scene_list = scene_manager.get_scene_list(base_timecode)
+
+  savepath = os.path.join(opt.work_dir, opt.reference, 'scene.pckl')
+
+  if scene_list == []:
+    scene_list = [(video_manager.get_base_timecode(), video_manager.get_current_timecode())]
+
+  with open(savepath, 'wb') as fil:
+    pickle.dump(scene_list, fil)
+
+  print('%s - scenes detected %d' % (
+      os.path.join(opt.avi_dir, opt.reference, 'video.avi'),
+      len(scene_list)
+  ))
+
+  return scene_list
+    
+
+# ========== EXECUTE DEMO ==========
+# ========== DELETE EXISTING DIRECTORIES ==========
+
+def main():
+    try:
+        dirs_to_remove = [
+            os.path.join(opt.work_dir, opt.reference),
+            os.path.join(opt.crop_dir, opt.reference),
+            os.path.join(opt.avi_dir, opt.reference),
+            os.path.join(opt.frames_dir, opt.reference),
+            os.path.join(opt.tmp_dir, opt.reference)
+        ]
+
+        for directory in dirs_to_remove:
+            if os.path.exists(directory):
+                rmtree(directory)
+
+        # ========== MAKE NEW DIRECTORIES ==========
+        dirs_to_create = [
+            os.path.join(opt.work_dir, opt.reference),
+            os.path.join(opt.crop_dir, opt.reference),
+            os.path.join(opt.avi_dir, opt.reference),
+            os.path.join(opt.frames_dir, opt.reference),
+            os.path.join(opt.tmp_dir, opt.reference)
+        ]
+
+        for directory in dirs_to_create:
+            os.makedirs(directory, exist_ok=True)
+
+        # ========== CONVERT VIDEO AND EXTRACT FRAMES ==========
+        video_output = os.path.join(opt.avi_dir, opt.reference, 'video.avi')
+        command = ("ffmpeg -y -i %s -qscale:v 2 -async 1 -r 25 %s" % (
+            opt.videofile,
+            video_output
+        ))
+        output = subprocess.call(command, shell=True, stdout=None)
+
+        frames_output = os.path.join(opt.frames_dir, opt.reference, '%06d.jpg')
+        command = ("ffmpeg -y -i %s -qscale:v 2 -threads 1 -f image2 %s" % (
+            video_output,
+            frames_output
+        )) 
+        output = subprocess.call(command, shell=True, stdout=None)
+
+        audio_output = os.path.join(opt.avi_dir, opt.reference, 'audio.wav')
+        command = ("ffmpeg -y -i %s -ac 1 -vn -acodec pcm_s16le -ar 16000 %s" % (
+            video_output,
+            audio_output
+        )) 
+        output = subprocess.call(command, shell=True, stdout=None)
+
+        # ========== FACE DETECTION ==========
+        faces = inference_video(opt)
+
+        # ========== SCENE DETECTION ==========
+        scene = scene_detect(opt)
+
+        # ========== FACE TRACKING ==========
+        alltracks = []
+        vidtracks = []
+
+        for shot in scene:
+
+            if shot[1].frame_num - shot[0].frame_num >= opt.min_track :
+                alltracks.extend(track_shot(opt, faces[shot[0].frame_num:shot[1].frame_num]))
+
+        # ========== FACE TRACK CROP ==========
+        for ii, track in enumerate(alltracks):
+            cropfile = os.path.join(opt.crop_dir, opt.reference, '%05d' % ii)
+            vidtracks.append(crop_video(opt, track, cropfile))
+
+        # ========== SAVE RESULTS ==========
+        savepath = os.path.join(opt.work_dir, opt.reference, 'tracks.pckl')
+
+        with open(savepath, 'wb') as fil:
+            pickle.dump(vidtracks, fil)
+
+        # Clean up temporary directory
+        rmtree(os.path.join(opt.tmp_dir, opt.reference))
+
+    except Exception as e:
+        print(f"An error occurred during video processing: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+# run syncnet
+import sys, time, os, pdb, argparse, pickle, subprocess, glob, cv2
+import numpy as np
+from shutil import rmtree
+
+import scenedetect
+from scenedetect.video_manager import VideoManager
+from scenedetect.scene_manager import SceneManager
+from scenedetect.frame_timecode import FrameTimecode
+from scenedetect.stats_manager import StatsManager
+from scenedetect.detectors import ContentDetector
+
+from scipy.interpolate import interp1d
+from scipy.io import wavfile
+from scipy import signal
+from device_config import DEVICE
+
+from .detectors.s3fd import S3FD
+
+# ========== PARSE ARGS ==========
+parser = argparse.ArgumentParser(description = "FaceTracker")
+parser.add_argument('--data_dir',       type=str, default='syncnet_python/data/work', help='Output directory')
+parser.add_argument('--videofile',      type=str, default='',   help='Input video file')
+parser.add_argument('--reference',      type=str, default='',   help='Video reference')
+parser.add_argument('--facedet_scale',  type=float, default=0.25, help='Scale factor for face detection')
+parser.add_argument('--crop_scale',     type=float, default=0.40, help='Scale bounding box')
+parser.add_argument('--min_track',      type=int, default=100,  help='Minimum facetrack duration')
+parser.add_argument('--frame_rate',     type=int, default=25,   help='Frame rate')
+parser.add_argument('--num_failed_det', type=int, default=25,   help='Number of missed detections allowed before tracking is stopped')
+parser.add_argument('--min_face_size',  type=int, default=100,  help='Minimum face size in pixels')
+opt = parser.parse_args()
+
+# Set additional paths
+setattr(opt, 'avi_dir', os.path.join(opt.data_dir, 'pyavi'))
+setattr(opt, 'tmp_dir', os.path.join(opt.data_dir, 'pytmp'))
+setattr(opt, 'work_dir', os.path.join(opt.data_dir, 'pywork'))
+setattr(opt, 'crop_dir', os.path.join(opt.data_dir, 'pycrop'))
+setattr(opt, 'frames_dir', os.path.join(opt.data_dir, 'pyframes'))
+
+# ========== IOU FUNCTION ==========
+def bb_intersection_over_union(boxA, boxB):
+  
+  xA = max(boxA[0], boxB[0])
+  yA = max(boxA[1], boxB[1])
+  xB = min(boxA[2], boxB[2])
+  yB = min(boxA[3], boxB[3])
+ 
+  interArea = max(0, xB - xA) * max(0, yB - yA)
+ 
+  boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
+  boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
+ 
+  iou = interArea / float(boxAArea + boxBArea - interArea)
+ 
+  return iou
+
+# ========== FACE TRACKING ==========
+def track_shot(opt, scenefaces):
+
+  iouThres  = 0.5   
+  tracks    = []
+
+  while True:
+    track     = []
+    for framefaces in scenefaces:
+      for face in framefaces:
+        if track == []:
+          track.append(face)
+          framefaces.remove(face)
+        elif face['frame'] - track[-1]['frame'] <= opt.num_failed_det:
+          iou = bb_intersection_over_union(face['bbox'], track[-1]['bbox'])
+          if iou > iouThres:
+            track.append(face)
+            framefaces.remove(face)
+            continue
+        else:
+          break
+
+    if track == []:
+      break
+    elif len(track) > opt.min_track:
+      
+      framenum    = np.array([ f['frame'] for f in track ])
+      bboxes      = np.array([np.array(f['bbox']) for f in track])
+
+      frame_i   = np.arange(framenum[0], framenum[-1]+1)
+
+      bboxes_i    = []
+      for ij in range(0,4):
+        interpfn  = interp1d(framenum, bboxes[:,ij])
+        bboxes_i.append(interpfn(frame_i))
+      bboxes_i  = np.stack(bboxes_i, axis=1)
+
+      if max(np.mean(bboxes_i[:,2]-bboxes_i[:,0]), np.mean(bboxes_i[:,3]-bboxes_i[:,1])) > opt.min_face_size:
+        tracks.append({'frame':frame_i,'bbox':bboxes_i})
+
+  return tracks
+
+# ========== VIDEO CROP AND SAVE ==========
+def crop_video(opt, track, cropfile):
+
+  flist = glob.glob(os.path.join(opt.frames_dir, opt.reference, '*.jpg'))
+  flist.sort()
+
+  fourcc = cv2.VideoWriter_fourcc(*'XVID')
+  vOut = cv2.VideoWriter(cropfile + 't.avi', fourcc, opt.frame_rate, (224,224))
+
+  dets = {'x':[], 'y':[], 's':[]}
+
+  for det in track['bbox']:
+
+    dets['s'].append(max((det[3]-det[1]),(det[2]-det[0]))/2) 
+    dets['y'].append((det[1]+det[3])/2) 
+    dets['x'].append((det[0]+det[2])/2) 
+  
+  dets['s'] = signal.medfilt(dets['s'], kernel_size=13)   
+  dets['x'] = signal.medfilt(dets['x'], kernel_size=13)
+  dets['y'] = signal.medfilt(dets['y'], kernel_size=13)
+
+  for fidx, frame in enumerate(track['frame']):
+
+    cs  = opt.crop_scale
+
+    bs  = dets['s'][fidx] 
+    bsi = int(bs*(1+2*cs)) 
+
+    image = cv2.imread(flist[frame])
+    
+    frame_image = np.pad(image, ((bsi,bsi),(bsi,bsi),(0,0)), 'constant', constant_values=(110,110))
+    my  = dets['y'][fidx]+bsi
+    mx  = dets['x'][fidx]+bsi 
+
+    face = frame_image[int(my-bs):int(my+bs*(1+2*cs)), int(mx-bs*(1+cs)):int(mx+bs*(1+cs))]
+    
+    vOut.write(cv2.resize(face, (224,224)))
+
+  audiotmp    = os.path.join(opt.tmp_dir, opt.reference, 'audio.wav')
+  audiostart  = (track['frame'][0])/opt.frame_rate
+  audioend    = (track['frame'][-1]+1)/opt.frame_rate
+
+  vOut.release()
+
+  # ========== CROP AUDIO FILE ==========
+
+  command = ("ffmpeg -y -i %s -ss %.3f -to %.3f %s" % (
+      os.path.join(opt.avi_dir, opt.reference, 'audio.wav'),
+      audiostart,
+      audioend,
+      audiotmp
+  )) 
+  output = subprocess.call(command, shell=True, stdout=None)
+
+  if output != 0:
+    pdb.set_trace()
+
+  sample_rate, audio = wavfile.read(audiotmp)
+
+  # ========== COMBINE AUDIO AND VIDEO FILES ==========
+
+  command = ("ffmpeg -y -i %st.avi -i %s -c:v copy -c:a copy %s.avi" % (
+      cropfile,
+      audiotmp,
+      cropfile
+  ))
+  output = subprocess.call(command, shell=True, stdout=None)
+
+  if output != 0:
+    pdb.set_trace()
+
+  print('Written %s' % cropfile)
+
+  os.remove(cropfile + 't.avi')
+
+  print('Mean pos: x %.2f y %.2f s %.2f' % (
+      np.mean(dets['x']),
+      np.mean(dets['y']),
+      np.mean(dets['s'])
+  ))
+
+  return {'track': track, 'proc_track': dets}
+
+# ========== FACE DETECTION ==========
+def inference_video(opt):
+
+  DET = S3FD(device=DEVICE)
+
+  flist = glob.glob(os.path.join(opt.frames_dir, opt.reference, '*.jpg'))
+  flist.sort()
+
+  dets = []
+      
+  for fidx, fname in enumerate(flist):
+
+    start_time = time.time()
+    
+    image = cv2.imread(fname)
+
+    image_np = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    bboxes = DET.detect_faces(image_np, conf_th=0.9, scales=[opt.facedet_scale])
+
+    dets.append([])
+    for bbox in bboxes:
+      dets[-1].append({'frame':fidx, 'bbox':(bbox[:-1]).tolist(), 'conf':bbox[-1]})
+
+    elapsed_time = time.time() - start_time
+
+    print('%s-%05d; %d dets; %.2f Hz' % (
+        os.path.join(opt.avi_dir, opt.reference, 'video.avi'),
+        fidx,
+        len(dets[-1]),
+        (1 / elapsed_time) if elapsed_time > 0 else 0
+    )) 
+
+  savepath = os.path.join(opt.work_dir, opt.reference, 'faces.pckl')
+
+  with open(savepath, 'wb') as fil:
+    pickle.dump(dets, fil)
+
+  return dets
+
+# ========== SCENE DETECTION ==========
+def scene_detect(opt):
+
+  video_manager = VideoManager([os.path.join(opt.avi_dir, opt.reference, 'video.avi')])
+  stats_manager = StatsManager()
+  scene_manager = SceneManager(stats_manager)
+  # Add ContentDetector algorithm (constructor takes detector options like threshold).
+  scene_manager.add_detector(ContentDetector())
+  base_timecode = video_manager.get_base_timecode()
+
+  video_manager.set_downscale_factor()
+
+  video_manager.start()
+
+  scene_manager.detect_scenes(frame_source=video_manager)
+
+  scene_list = scene_manager.get_scene_list(base_timecode)
+
+  savepath = os.path.join(opt.work_dir, opt.reference, 'scene.pckl')
+
+  if scene_list == []:
+    scene_list = [(video_manager.get_base_timecode(), video_manager.get_current_timecode())]
+
+  with open(savepath, 'wb') as fil:
+    pickle.dump(scene_list, fil)
+
+  print('%s - scenes detected %d' % (
+      os.path.join(opt.avi_dir, opt.reference, 'video.avi'),
+      len(scene_list)
+  ))
+
+  return scene_list
+    
+
+# ========== EXECUTE DEMO ==========
+# ========== DELETE EXISTING DIRECTORIES ==========
+
+def main():
+    try:
+        dirs_to_remove = [
+            os.path.join(opt.work_dir, opt.reference),
+            os.path.join(opt.crop_dir, opt.reference),
+            os.path.join(opt.avi_dir, opt.reference),
+            os.path.join(opt.frames_dir, opt.reference),
+            os.path.join(opt.tmp_dir, opt.reference)
+        ]
+
+        for directory in dirs_to_remove:
+            if os.path.exists(directory):
+                rmtree(directory)
+
+        # ========== MAKE NEW DIRECTORIES ==========
+        dirs_to_create = [
+            os.path.join(opt.work_dir, opt.reference),
+            os.path.join(opt.crop_dir, opt.reference),
+            os.path.join(opt.avi_dir, opt.reference),
+            os.path.join(opt.frames_dir, opt.reference),
+            os.path.join(opt.tmp_dir, opt.reference)
+        ]
+
+        for directory in dirs_to_create:
+            os.makedirs(directory, exist_ok=True)
+
+        # ========== CONVERT VIDEO AND EXTRACT FRAMES ==========
+        video_output = os.path.join(opt.avi_dir, opt.reference, 'video.avi')
+        command = ("ffmpeg -y -i %s -qscale:v 2 -async 1 -r 25 %s" % (
+            opt.videofile,
+            video_output
+        ))
+        output = subprocess.call(command, shell=True, stdout=None)
+
+        frames_output = os.path.join(opt.frames_dir, opt.reference, '%06d.jpg')
+        command = ("ffmpeg -y -i %s -qscale:v 2 -threads 1 -f image2 %s" % (
+            video_output,
+            frames_output
+        )) 
+        output = subprocess.call(command, shell=True, stdout=None)
+
+        audio_output = os.path.join(opt.avi_dir, opt.reference, 'audio.wav')
+        command = ("ffmpeg -y -i %s -ac 1 -vn -acodec pcm_s16le -ar 16000 %s" % (
+            video_output,
+            audio_output
+        )) 
+        output = subprocess.call(command, shell=True, stdout=None)
+
+        # ========== FACE DETECTION ==========
+        faces = inference_video(opt)
+
+        # ========== SCENE DETECTION ==========
+        scene = scene_detect(opt)
+
+        # ========== FACE TRACKING ==========
+        alltracks = []
+        vidtracks = []
+
+        for shot in scene:
+
+            if shot[1].frame_num - shot[0].frame_num >= opt.min_track :
+                alltracks.extend(track_shot(opt, faces[shot[0].frame_num:shot[1].frame_num]))
+
+        # ========== FACE TRACK CROP ==========
+        for ii, track in enumerate(alltracks):
+            cropfile = os.path.join(opt.crop_dir, opt.reference, '%05d' % ii)
+            vidtracks.append(crop_video(opt, track, cropfile))
+
+        # ========== SAVE RESULTS ==========
+        savepath = os.path.join(opt.work_dir, opt.reference, 'tracks.pckl')
+
+        with open(savepath, 'wb') as fil:
+            pickle.dump(vidtracks, fil)
+
+        # Clean up temporary directory
+        rmtree(os.path.join(opt.tmp_dir, opt.reference))
+
+    except Exception as e:
+        print(f"An error occurred during video processing: {e}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+# Route Files
+import os
+import logging
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import FileResponse
+from api.config.settings import FINAL_OUTPUT_DIR
+
+logger = logging.getLogger("file_routes")
+router = APIRouter()
+
+@router.get("/download/{filename}")
+def download_file(filename: str):
+    """
+    endpoint to download a processed video file.
+    - constructs the file path based on FINAL_OUTPUT_DIR,
+    - returns the file if it exists, otherwise raises a 404 error.
+    """
+    file_path = os.path.join(FINAL_OUTPUT_DIR, filename)
+    if not os.path.isfile(file_path):
+        logger.error(f"file not found: {file_path}")
+        raise HTTPException(status_code=404, detail="file not found.")
+    logger.info(f"file download successful: {file_path}")
+    return FileResponse(file_path, filename=filename)
+from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.concurrency import run_in_threadpool
+import os
+import logging
+
+from api.utils.api_utils import ApiUtils
+from api.process_video import process_video
+
+logger = logging.getLogger("processing_routes")
+router = APIRouter()
+
+@router.post("/process")
+async def process_video_endpoint(file: UploadFile = File(...)):
+    """
+    Processes an uploaded video file and returns a download link for the processed video.
+
+    This endpoint performs the following workflow:
+      1. Saves the uploaded file temporarily using ApiUtils.
+      2. Invokes the process_video function to perform video synchronization.
+      3. If processing is successful, extracts the final output filename and constructs
+         a download URL in the format "/download/<final_filename>".
+      4. Returns a JSON response containing the filename and download URL.
+      5. In the event of an error or if processing fails, returns an error response.
+
+    Args:
+        file (UploadFile): The video file uploaded by the client.
+
+    Returns:
+        JSONResponse: A JSON object with either:
+            - On success:
+                {
+                    "filename": "<final_filename>",
+                    "url": "/download/<final_filename>"
+                }
+            - On failure, an error dictionary describing the issue.
+
+    Raises:
+        HTTPException: If the processing fails or no final output is generated.
+    """
+    input_file_path = await run_in_threadpool(ApiUtils.save_temp_file, file)
+    try:
+        result = await run_in_threadpool(process_video, input_file_path, file.filename)
+        
+        if isinstance(result, dict):
+            if result.get("status") == "success" and "final_output" in result:
+                final_filename = os.path.basename(result["final_output"])
+                return JSONResponse(content={
+                    "filename": final_filename,
+                    "url": f"/download/{final_filename}"
+                })
+            return JSONResponse(content=result)
+        
+        if not result or not os.path.exists(result):
+            logger.error("Processing failed. No final output generated.")
+            raise HTTPException(status_code=500, detail="processing failed.")
+        
+        logger.info(f"File fully synced and ready for download at: {result}")
+    
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail="processing failed.") from e
+    
+    finally:
+        if os.path.exists(input_file_path):
+            await run_in_threadpool(os.remove, input_file_path)
+    final_filename = os.path.basename(result)
+    return JSONResponse(content={
+        "filename": final_filename,
+        "url": f"/download/{final_filename}"
+    })
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from api.connection_manager import connect, disconnect
+
+router = APIRouter()
+
+@router.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    try:
+        await connect(websocket)
+    except Exception:
+        return
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await websocket.send_text(f"Echo: {data}")
+    except WebSocketDisconnect:
+        disconnect(websocket)
+# Utility Scripts
+import os
+import re
+import logging
+from .file_utils import FileUtils
+from .log_utils import LogUtils
+from api.config.settings import FINAL_LOGS_DIR
+
+LogUtils.configure_logging()
+logger = logging.getLogger('analysis_logger')
+
+
+class AnalysisUtils:
+    """Utility class for analyzing SyncNet's output logs."""
+
+    @staticmethod
+    def analyze_syncnet_log(log_filename, fps):
+        """
+        Analyzes the SyncNet log file to determine the synchronization offset.
+
+        This function reads the log file specified by `log_filename` using the file utility,
+        then extracts offset and confidence pairs from the log content via a regular expression.
+        It verifies that the log content exists and logs a warning with the full path of the log file
+        if no content is found, returning an offset of 0. If valid offset-confidence pairs are found,
+        it aggregates the confidence scores for each offset. If no pairs are found or the aggregation
+        is empty, it logs the appropriate warning and returns 0. Finally, it identifies the offset with the
+        highest aggregated confidence score, converts this offset from frames to milliseconds using the
+        provided `fps`, logs the best offset in frames and milliseconds, and returns the resulting value.
+
+        Args:
+            log_filename (str): The path to the SyncNet log file.
+            fps (int or float): Frames per second of the video.
+
+        Returns:
+            int: Offset in milliseconds. Returns 0 if the log file has no content or no valid offset-confidence pairs.
+        """
+        log_content = FileUtils.read_log_file(log_filename)
+        if not log_content:
+            logger.warning(f"No content inside this log file: {log_filename}")
+            return 0
+
+        pairs = AnalysisUtils.extract_offset_confidence_pairs(log_content)
+        if not pairs:
+            logger.warning("Couldn't find any pairs in the SyncNet log.")
+            return 0
+
+        offset_conf = AnalysisUtils.aggregate_confidence(pairs)
+        if not offset_conf:
+            logger.warning("Couldnt add up confidence scores.")
+            return 0
+
+        best_offset = max(offset_conf, key=offset_conf.get)
+        offset_ms = AnalysisUtils.convert_frames_to_ms(best_offset, fps)
+        logger.info(f"The offset would be: {best_offset} frames ({offset_ms} ms)")
+        return offset_ms
+
+    @staticmethod
+    def extract_offset_confidence_pairs(log_text):
+        """
+        Extracts offset and confidence pairs from the provided log text.
+
+        This function declares a regex pattern that matches "AV offset:" followed by an optional sign
+        and an integer, then non-greedily matches any characters until "Confidence:" followed by a floating-point
+        number. It uses `re.findall` with the `re.DOTALL` flag to retrieve all matching (offset, confidence)
+        tuples from the log text. Each offset is cast to an integer and each confidence to a float before
+        being stored as a tuple in a list, which is then returned.
+
+        Args:
+            log_text (str): The content of the SyncNet log file.
+
+        Returns:
+            list of tuples: A list where each tuple contains an offset (int) and its corresponding confidence (float).
+        """
+        pattern = r'AV offset:\s*([-+]?\d+).*?Confidence:\s*([\d.]+)'
+        matches = re.findall(pattern, log_text, re.DOTALL)
+        pairs = []
+        for offset, confidence in matches:
+            converted_offset = int(offset)
+            converted_confidence = float(confidence)
+            converted_pair = (converted_offset, converted_confidence)
+            pairs.append(converted_pair)
+        logger.debug(f"Extracted pairs: {pairs}")
+        return pairs
+
+    @staticmethod
+    def aggregate_confidence(pairs):
+        """
+        Aggregates confidence scores for each synchronization offset.
+
+        This function initializes a dictionary to accumulate confidence scores for each offset.
+        It iterates through the provided list of (offset, confidence) pairs. For each pair, if the offset
+        already exists in the dictionary, it adds the confidence score to the existing total; otherwise,
+        it initializes the offset with the current confidence score.
+
+        Args:
+            pairs (list of tuples): A list where each tuple contains an offset (int) and a confidence (float).
+
+        Returns:
+            dict: A dictionary mapping each offset (int) to its aggregated confidence score (float).
+        """
+        confidence_map = {}
+        for offset, confidence in pairs:
+            if offset in confidence_map:
+                confidence_map[offset] += confidence
+            else:
+                confidence_map[offset] = confidence
+        return confidence_map
+
+    @staticmethod
+    def convert_frames_to_ms(frames, fps):
+        """
+        Converts a number of frames to milliseconds based on the frames per second (fps).
+
+        This function calculates the duration per frame in milliseconds by dividing 1000 by the fps value.
+        It then multiplies the number of frames by the duration per frame and returns the result as an integer.
+        If the fps value is missing or invalid, it logs an error and raises a ValueError.
+
+        Args:
+            frames (int): The number of frames.
+            fps (float): Frames per second.
+
+        Returns:
+            int: The total time in milliseconds corresponding to the given number of frames.
+
+        Raises:
+            ValueError: If `fps` is missing or invalid.
+        """
+        if fps:
+            duration_per_frame_ms = 1000 / fps
+        else:
+            logger.error("fps value is missing. Can't convert frames to milliseconds.")
+            raise ValueError("fps must be provided and can't be None.")
+        return int(frames * duration_per_frame_ms)
+import os
+import shutil
+import uuid
+import logging
+from .log_utils import LogUtils
+from api.connection_manager import broadcast  
+import asyncio
+from api.config.settings import TEMP_PROCESSING_DIR
+
+LogUtils.configure_logging() 
+logger = logging.getLogger(__name__)
+
+
+class ApiUtils:
+    """Utility class for handling API operations."""
+
+    @staticmethod
+    def save_temp_file(uploaded_file):
+        """
+        Saves an uploaded file to a temporary directory with a unique UUID4 name.
+
+        The function extracts the file extension from the uploaded file's filename,
+        generates a unique filename using UUID4, and constructs a full file path using
+        the TEMP_PROCESSING_DIR. It then opens the destination file in binary write mode,
+        copies the content from the uploaded file to the temporary file, and closes the file.
+        If any error occurs during this process, an IOError is raised.
+
+        Args:
+            uploaded_file (UploadFile): The uploaded file to save.
+
+        Returns:
+            str: The path to the saved temporary file.
+
+        Raises:
+            IOError: If there is an error saving the file.
+        """
+        file_extension = os.path.splitext(uploaded_file.filename)[1]
+        unique_filename = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
+        try:
+            temp_file = open(unique_filename, "wb")
+            shutil.copyfileobj(uploaded_file.file, temp_file)
+            temp_file.close()
+            logger.info(f"Temporary file saved: {unique_filename}")
+        except Exception as e:
+            logger.error(f"Failed to save temporary file '{unique_filename}': {e}")
+            raise IOError(f"Could not save temporary file: {e}")
+        return unique_filename
+
+    @staticmethod
+    def send_websocket_message(message: str):
+        """
+        Schedules a broadcast of a debug message to connected WebSocket clients.
+
+        This function attempts to retrieve the current running asyncio event loop and
+        schedules the broadcast function as a task within that loop. If no event loop is
+        currently running, it uses asyncio.run to execute the broadcast immediately.
+
+        Args:
+            message (str): The message to broadcast to WebSocket clients.
+        """
+        try:
+            loop = asyncio.get_running_loop()
+            loop.create_task(broadcast(message))
+        except RuntimeError:
+            asyncio.run(broadcast(message))
+import os
+import logging
+import shutil
+import ffmpeg
+from api.config.settings import FINAL_OUTPUT_DIR
+
+logger = logging.getLogger("ffmpeg_logger")
+
+
+class FFmpegUtils:
+    """Utility class for handling FFmpeg operations."""
+
+    @staticmethod
+    def reencode_to_avi(input_file: str, output_file: str) -> None:
+        """
+        Re-encodes the input file to an .avi container with PCM S16LE audio.
+
+        The video is re-encoded to a generically safe codec ('mpeg4') suitable for the AVI container.
+        This method uses FFmpeg to convert the input file, setting the video codec to 'mpeg4' and the audio
+        codec to 'pcm_s16le'. It overwrites any existing output file and logs the FFmpeg standard output and error.
+        If FFmpeg fails, a RuntimeError is raised with the error message.
+
+        Args:
+            input_file (str): Path to the user's original video.
+            output_file (str): Path where the .avi file will be created.
+
+        Raises:
+            RuntimeError: If FFmpeg fails during the re-encoding process.
+        """
+        logger.info(f"Re-encoding {input_file} to {output_file} as AVI with PCM audio.")
+        try:
+            out, err = (
+                ffmpeg
+                .input(input_file)
+                .output(
+                    output_file,
+                    vcodec='mpeg4',
+                    acodec='pcm_s16le',
+                    strict='experimental'
+                )
+                .overwrite_output()
+                .run(capture_stdout=True, capture_stderr=True)
+            )
+            logger.debug(f"FFmpeg stdout: {out.decode('utf-8') if out else 'N/A'}")
+            logger.debug(f"FFmpeg stderr: {err.decode('utf-8') if err else 'N/A'}")
+        except ffmpeg.Error as e:
+            error_msg = e.stderr.decode('utf-8') if e.stderr else str(e)
+            logger.error(f"FFmpeg error while re-encoding to AVI: {error_msg}")
+            raise RuntimeError(f"Failed to re-encode {input_file} to AVI: {error_msg}") from e
+
+    @staticmethod
+    def reencode_to_original_format(
+        input_avi_file: str,
+        output_file: str,
+        original_container_ext: str,
+        original_video_codec: str,
+        original_audio_codec: str
+    ) -> None:
+        """
+        Converts the final corrected .avi back into the original container format using the original codecs.
+
+        This method takes a corrected .avi file and re-encodes it into the original container format
+        (e.g., .mp4, .mov) using the specified original video and audio codecs. If the original codecs
+        are not provided, it defaults to copying the respective streams. The output file is overwritten
+        if it exists. Any FFmpeg errors encountered during the process will result in a RuntimeError.
+
+        Args:
+            input_avi_file (str): Path to the corrected .avi file from the pipeline.
+            output_file (str): Path to the final re-encoded file (including the correct extension).
+            original_container_ext (str): The target container extension (e.g., ".mp4", ".mov").
+            original_video_codec (str): The original video codec from the input file, if known.
+            original_audio_codec (str): The original audio codec from the input file, if known.
+
+        Raises:
+            RuntimeError: If FFmpeg fails during the re-encoding process.
+        """
+        vcodec = original_video_codec if original_video_codec else "copy"
+        acodec = original_audio_codec if original_audio_codec else "copy"
+
+        logger.info(
+            f"Re-encoding {input_avi_file} back to {output_file} "
+            f"using container ext {original_container_ext}."
+        )
+        try:
+            out, err = (
+                ffmpeg
+                .input(input_avi_file)
+                .output(
+                    output_file,
+                    vcodec=vcodec,
+                    acodec=acodec
+                )
+                .overwrite_output()
+                .run(capture_stdout=True, capture_stderr=True)
+            )
+            logger.debug(f"FFmpeg stdout: {out.decode('utf-8') if out else 'N/A'}")
+            logger.debug(f"FFmpeg stderr: {err.decode('utf-8') if err else 'N/A'}")
+        except ffmpeg.Error as e:
+            error_msg = e.stderr.decode('utf-8') if e.stderr else str(e)
+            logger.error(f"FFmpeg error while re-encoding to original format: {error_msg}")
+            raise RuntimeError(
+                f"Failed to re-encode to original container {original_container_ext}: {error_msg}"
+            ) from e
+
+    @staticmethod
+    def shift_audio(input_file, output_file, offset_ms):
+        """
+        Shifts the audio of the input video by a specified millisecond offset.
+
+        This method adjusts the audio track of the provided video file by the given offset.
+        A positive offset shifts the audio forward, whereas a negative offset shifts it backward.
+        It preserves the original video stream and uses the same audio codec. The function retrieves
+        the audio properties from the input file and constructs an FFmpeg filter accordingly. If the
+        input file does not exist or audio properties cannot be retrieved, an error is logged. FFmpeg is
+        then used to apply the audio shift, and any errors during this process will result in a RuntimeError.
+
+        Args:
+            input_file (str): The path to the input video file.
+            output_file (str): The path for the output video with shifted audio.
+            offset_ms (int): The number of milliseconds to shift the audio. Positive values shift
+                             the audio forward; negative values shift it backward.
+
+        Raises:
+            RuntimeError: If the FFmpeg command fails or an error occurs during processing.
+        """
+        if not os.path.exists(input_file):
+            logger.error(f"Input file not found: {input_file}")
+            return
+
+        audio_props = FFmpegUtils.get_audio_properties(input_file)
+        if audio_props is None:
+            logger.error(f"Failed to retrieve audio properties from {input_file}")
+            return
+
+        sample_rate = int(audio_props.get('sample_rate'))
+        channels = int(audio_props.get('channels'))
+        codec_name = audio_props.get('codec_name')
+
+        if offset_ms > 0:
+            filter_complex = f"adelay={offset_ms}|{offset_ms},apad"
+            logger.info(f"Shifting audio forward by {offset_ms} ms.")
+        else:
+            shift_abs = abs(offset_ms)
+            filter_complex = f"atrim=start={shift_abs / 1000},apad"
+            logger.info(f"Shifting audio backward by {shift_abs} ms.")
+
+        logger.debug(f"Audio shift filter: {filter_complex}")
+
+        try:
+            out, err = (
+                ffmpeg
+                .input(input_file)
+                .output(
+                    output_file,
+                    **{
+                        'c:v': 'copy',
+                        'af': filter_complex,
+                        'c:a': codec_name,
+                        'ar': sample_rate,
+                        'ac': channels,
+                        'threads': '4',
+                        'shortest': None 
+                    }
+                )
+                .overwrite_output()
+                .run(capture_stdout=True, capture_stderr=True)
+            )
+            logger.debug(f"FFmpeg stdout: {out.decode('utf-8') if out else 'N/A'}")
+            logger.debug(f"FFmpeg stderr: {err.decode('utf-8') if err else 'N/A'}")
+            logger.info(f"Audio successfully shifted. Output saved to {output_file}")
+        except ffmpeg.Error as exc:
+            error_msg = exc.stderr.decode('utf-8') if exc.stderr else str(exc)
+            logger.error(f"FFmpeg error: {error_msg}")
+            raise RuntimeError(f"Error shifting audio for {input_file}: {error_msg}") from exc
+
+    @staticmethod
+    def apply_cumulative_shift(input_file, final_output, total_shift_ms):
+        """
+        Applies a cumulative audio shift to the original input file.
+
+        This method creates a temporary copy of the input video in the FINAL_OUTPUT_DIR,
+        applies an audio shift to the copied file using the specified total shift in milliseconds,
+        and then cleans up the temporary file after processing. The final synchronized video is saved
+        to the provided output path. Any errors during the shifting process will result in a RuntimeError.
+
+        Args:
+            input_file (str): Path to the original input video.
+            final_output (str): Path where the final synchronized video will be saved.
+            total_shift_ms (int): Total audio shift in milliseconds to be applied.
+
+        Raises:
+            RuntimeError: If the cumulative audio shift process fails.
+        """
+        copied_file = os.path.join(FINAL_OUTPUT_DIR, os.path.basename(input_file))
+        shutil.copy(input_file, copied_file)
+        logger.info(f"Copied {input_file} to {copied_file} for shifting.")
+
+        try:
+            FFmpegUtils.shift_audio(copied_file, final_output, total_shift_ms)
+            logger.info(f"Applied cumulative audio shift. Final output saved to {final_output}")
+        except Exception as e:
+            logger.error(f"Failed to apply cumulative shift: {e}")
+            raise RuntimeError(f"Could not apply cumulative shift: {e}")
+        finally:
+            if os.path.exists(copied_file):
+                os.remove(copied_file)
+                logger.debug(f"Removed temporary file {copied_file}")
+
+    @staticmethod
+    def get_video_fps(file_path):
+        """
+        Retrieves the frames per second (FPS) of a video file.
+
+        This function uses FFprobe to extract the FPS value from the video stream of the specified file.
+        It probes the file for stream information and retrieves the 'r_frame_rate' from the first stream.
+        The FPS is calculated by dividing the numerator by the denominator from the 'r_frame_rate' string.
+        If no streams are found or an error occurs, the function logs an error and returns None.
+
+        Args:
+            file_path (str): The path to the video file.
+
+        Returns:
+            float or None: The FPS of the video if successfully retrieved; otherwise, None.
+        """
+        try:
+            logger.debug(f"Probing video FPS for {file_path}")
+            info = ffmpeg.probe(file_path)
+            streams = info.get('streams', [])
+            if not streams:
+                logger.error(f"No streams found in {file_path}")
+                return None
+
+            fps_str = streams[0].get('r_frame_rate')
+            if not fps_str:
+                logger.error(f"No r_frame_rate found for {file_path}")
+                return None
+
+            num, den = map(int, fps_str.split('/'))
+            fps = num / den if den else 0
+            logger.info(f"Obtained FPS for {file_path}: {fps}")
+            return fps
+        except ffmpeg.Error as e:
+            error_msg = e.stderr.decode('utf-8') if e.stderr else str(e)
+            logger.error(f"FFprobe error: {error_msg}")
+            logger.error(f"FFprobe has failed for {file_path}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error while retrieving FPS for {file_path}: {e}")
+            return None
+
+    @staticmethod
+    def get_audio_properties(file_path):
+        """
+        Retrieves audio properties from a video file.
+
+        This method uses FFprobe to extract audio properties such as sample rate, number of channels,
+        and the audio codec from the provided video file. It iterates through the streams until it finds
+        one with the 'audio' codec type. If an audio stream is found, a dictionary containing the audio
+        properties is returned. If no audio stream is found or an error occurs, the function logs an error
+        and returns None.
+
+        Args:
+            file_path (str): The path to the video file.
+
+        Returns:
+            dict or None: A dictionary containing audio properties if an audio stream is found; otherwise, None.
+        """
+        logger.debug(f"Probing audio properties for {file_path}")
+        try:
+            info = ffmpeg.probe(file_path)
+            streams = info.get('streams', [])
+            for stream in streams:
+                if stream.get('codec_type') == 'audio':
+                    audio_props = {
+                        'sample_rate': stream.get('sample_rate'),
+                        'channels': stream.get('channels'),
+                        'codec_name': stream.get('codec_name')
+                    }
+                    logger.info(f"Retrieved audio properties for {file_path}: {audio_props}")
+                    return audio_props
+            logger.error(f"No audio stream found in {file_path}")
+            return None
+        except ffmpeg.Error as e:
+            error_msg = e.stderr.decode('utf-8') if e.stderr else str(e)
+            logger.error(f"FFprobe error: {error_msg}")
+            logger.error(f"Failed to get audio properties for {file_path}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error while retrieving audio properties for {file_path}: {e}")
+            return None
+
+    @staticmethod
+    def get_video_properties(file_path):
+        """
+        Retrieves video properties from a video file.
+
+        This function uses FFprobe to extract key video properties such as width, height, codec name,
+        average frame rate, and the calculated FPS from the provided video file. It searches through the
+        streams for one with the 'video' codec type and attempts to convert the 'avg_frame_rate' to FPS.
+        If a video stream is found, a dictionary containing the video properties is returned; otherwise, None.
+
+        Args:
+            file_path (str): The path to the video file.
+
+        Returns:
+            dict or None: A dictionary containing video properties if a video stream is found; otherwise, None.
+        """
+        logger.debug(f"Probing video properties for {file_path}")
+        try:
+            info = ffmpeg.probe(file_path)
+            streams = info.get('streams', [])
+            for stream in streams:
+                if stream.get('codec_type') == 'video':
+                    avg_frame_rate = stream.get('avg_frame_rate')
+                    try:
+                        num, den = avg_frame_rate.split('/')
+                        fps = float(num) / float(den) if float(den) != 0 else None
+                    except Exception as e:
+                        logger.error(f"Error converting avg_frame_rate '{avg_frame_rate}' to fps: {e}")
+                        fps = None
+                    video_props = {
+                        'width': stream.get('width'),
+                        'height': stream.get('height'),
+                        'codec_name': stream.get('codec_name'),
+                        'avg_frame_rate': avg_frame_rate,
+                        'fps': fps
+                    }
+                    logger.info(f"Retrieved video properties for {file_path}: {video_props}")
+                    return video_props
+            logger.info(f"No video stream found in {file_path}")
+            return None
+        except ffmpeg.Error as e:
+            logger.error(f"Error retrieving video properties for {file_path}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error while retrieving video properties for {file_path}: {e}")
+            return None
+import os
+import shutil
+import logging
+from .log_utils import LogUtils
+from api.config.settings import TEMP_PROCESSING_DIR, DATA_DIR, DATA_WORK_PYAVI_DIR
+
+
+LogUtils.configure_logging()
+logger = logging.getLogger('file_utils_logger')
+
+class FileUtils:
+    """Utility class for handling file operations."""
+
+    @staticmethod
+    def move_to_data_work(initial_path, dir_num):
+        """
+        Moves a file to the data work directory, prefixing the filename with the directory number.
+
+        Args:
+            initial_path (str): Path to the file to be moved.
+            dir_num (str or int): Reference number for the filename prefix.
+
+        Returns:
+            str: Destination path after moving.
+
+        Raises:
+            FileNotFoundError: If the destination file does not exist after moving.
+            IOError: If the file cannot be moved.
+        """
+
+
+        original_filename = os.path.basename(initial_path)
+
+        dest_file_path = os.path.join(DATA_DIR, f"{dir_num}_{original_filename}")
+
+        try:
+            shutil.move(initial_path, dest_file_path)
+        except Exception as e:
+            error_msg = f"Couldnt move the file to {dest_file_path}: {e}"
+            logger.error(error_msg)
+            raise IOError(f"File cant be moved to {dest_file_path}: {e}")
+        logger.debug(f"Copied file successfully moved from temp directory to: {dest_file_path}")
+        return dest_file_path
+
+    @staticmethod
+    def copy_input_to_temp(input_file, original_name):
+        """
+        Copies the input file to a temporary processing directory.
+
+        Args:
+            input_file (str): Path to the input video file.
+            original_name (str): Original filename of the video.
+
+        Returns:
+            str: Path to the copied file in the temporary directory.
+        """
+        temp_file = os.path.join(TEMP_PROCESSING_DIR, f"corrected_{original_name}")
+        shutil.copy(input_file, temp_file)
+        logger.debug(f"copied file to: {temp_file}")
+        
+        return temp_file
+
+    @staticmethod
+    def prepare_directories(directories):
+        """
+        Ensures that all specified directories exist.
+
+        Args:
+            directories (list of str): List of directory paths to create.
+        """
+        for directory in directories:
+            os.makedirs(directory, exist_ok=True)
+
+
+    @staticmethod
+    def read_log_file(file_path):
+        """
+        Reads the content of a log file.
+
+        Args:
+            file_path (str): Path to the log file.
+
+        Returns:
+            str or None: Content of the log file if successful; otherwise, None.
+        """
+        try:
+            with open(file_path, 'r') as file:
+                content = file.read()
+            logger.debug(f"successfully read log file: {file_path}")
+            return content
+        except FileNotFoundError:
+            logger.warning(f"log file not found: {file_path}")
+            return None
+        except Exception as e:
+            logger.error(f"failed to read log file {file_path}: {e}")
+            return None
+
+    @staticmethod
+    def cleanup_file(file_path):
+        """
+        Removes a specified file.
+
+        Args:
+            file_path (str): Path to the file to remove.
+        """
+        try:
+            os.remove(file_path)
+            logger.debug(f"file successfully removed: {file_path}")
+        except FileNotFoundError:
+            logger.warning(f"file already removed: {file_path}")
+        except Exception as e:
+            logger.error(f"failed to remove file {file_path}: {e}")
+            raise IOError(f"could not remove file {file_path}: {e}")
+
+    @staticmethod
+    def copy_video_file(source, destination):
+        """
+        Copies a video file from source to destination.
+
+        Args:
+            source (str): Path to the source video file.
+            destination (str): Path to the destination.
+
+        Returns:
+            str: Path to the copied video file.
+        """
+        try:
+            shutil.copy(source, destination)
+            logger.info(f"video file copied from {source} to {destination}")
+            return destination
+        except Exception as e:
+            logger.error(f"failed to copy video file from {source} to {destination}: {e}")
+            raise IOError(f"could not copy video file: {e}")
+
+    @staticmethod
+    def get_next_directory_number(data_dir):
+        """
+        Returns the next directory number as a zero-padded string, eg. 00001.
+        If no numeric subdirectories exist, it starts at 1.
+        """
+        existing_numbers = []
+        all_items = os.listdir(data_dir)
+        for item in all_items:
+            if item.isdigit():
+                number = int(item)
+                existing_numbers.append(number)
+            else:
+                logger.debug(f"Going to ignore this non-numeric directory: {item}")
+        if not existing_numbers:
+            logger.info("Couldn't see any numeric directories. Starting it off at 00001.")
+            next_number = 1
+        else:   
+            next_number = max(existing_numbers) + 1
+        formatted_number = f"{next_number:05d}"
+        logger.debug(f"The next number in the directory is: {formatted_number}")
+        return formatted_numberimport logging
+import logging.config
+from api.config.settings import LOG_CONFIG_PATH
+import yaml
+
+class LogUtils:
+    """
+    Utilities for configuring and retrieving loggers using YAML configurations.
+    """
+
+    @staticmethod
+    def configure_logging():
+        """
+        Configure logging using a YAML configuration file.
+        
+        Does not return any specific named logger once the config is applied, 
+        can call `logging.getLogger('name')` anywhere in your code.
+        """
+        try:
+            with open(LOG_CONFIG_PATH, 'r') as file:
+                config = yaml.safe_load(file)
+        except FileNotFoundError:
+            logging.error(f"Couldn't find the logging configuration file at: {LOG_CONFIG_PATH}")
+            raise
+
+        logging.config.dictConfig(config)
+import os
+import subprocess
+import logging
+from .log_utils import LogUtils
+from api.config.settings import LOGS_DIR, RUN_LOGS_DIR, DATA_WORK_DIR
+from api.utils.api_utils import ApiUtils
+from api.utils.file_utils import FileUtils
+from api.utils.ffmpeg_utils import FFmpegUtils
+from api.utils.analysis_utils import AnalysisUtils
+from api.config.settings import (
+    DEFAULT_MAX_ITERATIONS, TEMP_PROCESSING_DIR, FINAL_LOGS_DIR, 
+    FINAL_OUTPUT_DIR, DATA_WORK_PYAVI_DIR
+)
+
+LogUtils.configure_logging()
+logger = logging.getLogger('pipeline_logger')
+
+
+class SyncNetUtils:
+    """Utility class for handling SyncNet operations."""
+
+    @staticmethod
+    def run_syncnet(ref_str, log_file=None):
+        """
+        Executes the SyncNet model and logs the output.
+
+        This function runs the SyncNet module as a subprocess using the provided 
+        reference string and directs its stdout/stderr output into a log file.
+        
+        Args:
+            ref_str (str): The reference identifier used for processing.
+            log_file (str, optional): The path to the log file. If not provided, a default 
+                log file in RUN_LOGS_DIR is used.
+        
+        Returns:
+            str: The path to the log file where SyncNet output is stored.
+        
+        Raises:
+            RuntimeError: If the subprocess call to run SyncNet fails.
+        """
+        if log_file is None:
+            log_file = os.path.join(RUN_LOGS_DIR, f"run_{ref_str}.log")
+        cmd = [
+            "python",
+            "-m",
+            "syncnet_python.run_syncnet",
+            "--data_dir", DATA_WORK_DIR,
+            "--reference", ref_str
+        ]
+        try:
+            with open(log_file, 'w') as log:
+                subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
+            logger.info(f"SyncNet model completed successfully. Log saved to: {log_file}")
+        except subprocess.CalledProcessError as e:
+            error_msg = f"SyncNet failed while processing reference {ref_str}: {e}"
+            logger.error(error_msg)
+            raise RuntimeError(error_msg) from e
+        return log_file
+
+    @staticmethod
+    def run_pipeline(video_file, ref):
+        """
+        Runs the SyncNet pipeline on a given video file.
+
+        This function calls the SyncNet pipeline module as a subprocess, which performs 
+        the preliminary synchronization steps on the provided video file.
+        
+        Args:
+            video_file (str): The path to the video file to be processed.
+            ref (str): The reference identifier used during processing.
+        
+        Returns:
+            None
+        
+        Raises:
+            RuntimeError: If the subprocess call to run the pipeline fails.
+        """
+        cmd = [
+            "python",
+            "-m",
+            "syncnet_python.run_pipeline",
+            "--videofile", video_file,
+            "--reference", ref
+        ]
+        log_file = os.path.join(LOGS_DIR, 'pipeline.log')
+        try:
+            with open(log_file, 'w') as log:
+                subprocess.run(cmd, stdout=log, stderr=subprocess.STDOUT, check=True)
+            logger.info(f"SyncNet pipeline successfully executed for video: {video_file} with reference: {ref}")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"SyncNet pipeline failed for video {video_file} (ref={ref}): {e}")
+            raise RuntimeError(f"SyncNet pipeline failed for video {video_file} (ref={ref}): {e}") from e
+
+    @staticmethod
+    def prepare_video(input_file, original_filename):
+        """
+        Prepares the video for synchronization by performing file operations and re-encoding if necessary.
+
+        The function performs the following steps:
+          1. Sends websocket messages to indicate progress.
+          2. Copies the input file to a temporary location.
+          3. Moves the file to the working directory and retrieves a reference number.
+          4. Extracts video and audio properties.
+          5. Checks if the file is already an AVI; if not, it re-encodes the file to AVI.
+        
+        Args:
+            input_file (str): The path to the input video file.
+            original_filename (str): The original filename of the uploaded video.
+        
+        Returns:
+            tuple: A tuple containing:
+                - avi_file (str): The path to the AVI file (either original or re-encoded).
+                - vid_props (dict): The video properties.
+                - audio_props (dict): The audio properties.
+                - fps (float): Frames per second of the video.
+                - destination_path (str): The path where the file was moved.
+                - reference_number (int): A unique reference number for processing.
+        
+        Raises:
+            RuntimeError: If the destination file does not exist or required video/audio properties are missing.
+        """
+        ApiUtils.send_websocket_message("Here we go...")
+        ApiUtils.send_websocket_message("Setting up our filing system...")
+        reference_number = int(FileUtils.get_next_directory_number(DATA_WORK_PYAVI_DIR))
+        ApiUtils.send_websocket_message("Copying your file to work on...")
+        temp_copy_path = FileUtils.copy_input_to_temp(input_file, original_filename)
+        destination_path = FileUtils.move_to_data_work(temp_copy_path, reference_number)
+        if not os.path.exists(destination_path):
+            raise RuntimeError(f"Destination file {destination_path} doesn't exist. Aborting process.")
+        
+        vid_props = FFmpegUtils.get_video_properties(input_file)
+        if vid_props is None:
+            raise RuntimeError("Couldn't find any video stream")
+        fps = vid_props.get('fps')
+        ApiUtils.send_websocket_message("Finding out about your file...")
+        audio_props = FFmpegUtils.get_audio_properties(input_file)
+        if audio_props is None:
+            raise RuntimeError("No audio stream found in the video.")
+        
+        ext = os.path.splitext(original_filename)[1].lower()
+        if ext == ".avi":
+            avi_file = destination_path
+        else:
+            avi_file = os.path.splitext(destination_path)[0] + "_reencoded.avi"
+            FFmpegUtils.reencode_to_avi(destination_path, avi_file)
+        
+        return avi_file, vid_props, audio_props, fps, destination_path, reference_number
+
+    @staticmethod
+    def perform_sync_iterations(corrected_file, original_filename, fps, reference_number):
+        """
+        Iteratively runs the SyncNet pipeline and applies incremental audio shifts.
+
+        For a maximum number of iterations, this function:
+          1. Runs the SyncNet pipeline and model.
+          2. Analyzes the log file to determine the required audio offset.
+          3. If the offset is zero (and it's the first iteration), returns an "already in sync" dict.
+          4. Otherwise, adjusts the audio stream by shifting it and accumulates the total shift.
+        
+        Args:
+            corrected_file (str): The path to the current corrected video file.
+            original_filename (str): The original filename of the video.
+            fps (float): Frames per second of the video.
+            reference_number (int): The current reference number.
+        
+        Returns:
+            tuple: A tuple containing:
+                - total_shift_ms (int): The total cumulative audio shift in milliseconds.
+                - corrected_file (str): The path to the final corrected video file after iterations.
+                - reference_number (int): The updated reference number after iterations.
+        
+        Raises:
+            RuntimeError: If a corrected file is not created during an iteration.
+        """
+        total_shift_ms = 0
+        for iteration in range(DEFAULT_MAX_ITERATIONS):
+            iteration_msg = f"Pass number {iteration + 1} in progress..."
+            ApiUtils.send_websocket_message(iteration_msg)
+            logger.info(iteration_msg)
+
+            ref_str = f"{reference_number:05d}"
+            ApiUtils.send_websocket_message("Running the pipeline...")
+            SyncNetUtils.run_pipeline(corrected_file, ref_str)
+
+            ApiUtils.send_websocket_message("Running the model...")
+            log_file = SyncNetUtils.run_syncnet(ref_str)
+
+            ApiUtils.send_websocket_message("Analyzing the results that came back...")
+            offset_ms = AnalysisUtils.analyze_syncnet_log(log_file, fps)
+            
+            if offset_ms == 0:
+                if iteration == 0:
+                    ApiUtils.send_websocket_message("Your clip is already in sync")
+                    return {"already_in_sync": True, "message": "already in sync"}
+                else:
+                    ApiUtils.send_websocket_message("Clip is now perfectly in sync; finishing...")
+                    break
+
+            if offset_ms > 0:
+                debug_msg = (f"Analysis complete: offset is {offset_ms} ms. "
+                             f"Your clip is currently exactly {offset_ms} ms ahead of the video.")
+            elif offset_ms < 0:
+                debug_msg = (f"Analysis complete: offset is {offset_ms} ms. "
+                             f"Your clip is sitting at {abs(offset_ms)} ms behind the video.")
+
+            ApiUtils.send_websocket_message(debug_msg)
+            total_shift_ms += offset_ms
+
+            offset_msg = f"Total shift after pass {iteration + 1} will be {total_shift_ms} ms."
+            logger.info(offset_msg)
+            ApiUtils.send_websocket_message(offset_msg)
+
+            base_name = os.path.splitext(original_filename)[0]
+            new_corrected_file = os.path.join(
+                TEMP_PROCESSING_DIR,
+                f"corrected_iter{iteration + 1}_{base_name}.avi"
+            )
+            ApiUtils.send_websocket_message("Adjusting the streams in your file...")
+            FFmpegUtils.shift_audio(corrected_file, new_corrected_file, offset_ms)
+            if not os.path.exists(new_corrected_file):
+                raise RuntimeError(f"Corrected file {new_corrected_file} was not created. Aborting process.")
+
+            corrected_file = new_corrected_file
+            reference_number += 1
+
+        return total_shift_ms, corrected_file, reference_number
+
+    @staticmethod
+    def finalize_sync(input_file, original_filename, total_shift_ms, reference_number,
+                      fps, destination_path, vid_props, audio_props, corrected_file):
+        """
+        Finalizes the synchronization process by applying the cumulative shift, generating the final log file, 
+        and performing any final corrections before re-encoding to the original container.
+
+        This function applies the cumulative audio shift to produce a preliminary final output, then runs
+        the SyncNet pipeline and model to generate a final log file. The log is analyzed for any remaining 
+        offset. If the offset is non-zero, an error dict is returned. Otherwise, the function re-encodes the
+        output back to the original container unless the original file is AVI (in which case re-encoding is skipped).
+
+        Args:
+            input_file (str): Path to the user's original video.
+            original_filename (str): Original filename of the video.
+            total_shift_ms (int): Cumulative audio shift from iterations.
+            reference_number (int): The reference number used in processing.
+            fps (float): Frames per second.
+            destination_path (str): Path where the file was originally moved.
+            vid_props (dict): Video properties.
+            audio_props (dict): Audio properties.
+            corrected_file (str): Path to the corrected file from the iterative process.
+        
+        Returns:
+            str or dict: On success, returns the final output file path (re-encoded if necessary).
+                         On error, returns a dictionary containing error information.
+        """
+        final_output_path = os.path.join(FINAL_OUTPUT_DIR, f"corrected_{original_filename}")
+        ApiUtils.send_websocket_message("Making the final shift...")
+        FFmpegUtils.apply_cumulative_shift(input_file, final_output_path, total_shift_ms)
+        ApiUtils.send_websocket_message("Double checking everything...")
+        ref_str = f"{reference_number:05d}"
+        SyncNetUtils.run_pipeline(final_output_path, ref_str)
+        final_log = os.path.join(FINAL_LOGS_DIR, f"final_output_{ref_str}.log")
+        SyncNetUtils.run_syncnet(ref_str, final_log)
+        final_offset = AnalysisUtils.analyze_syncnet_log(final_log, fps)
+        
+        if final_offset != 0:
+            error_msg = "final offset incorrect"
+            ApiUtils.send_websocket_message(
+                "Something has gone wrong behind the scenes, apologies. Please refresh the page and try again"
+            )
+            logger.error(error_msg)
+            return {
+                "error": True,
+                "message": "Something has gone wrong behind the scenes, apologies. Please refresh the page and try again",
+                "final_offset": final_offset
+            }
+        
+        if corrected_file != destination_path and os.path.exists(corrected_file):
+            os.remove(corrected_file)
+        original_ext = os.path.splitext(original_filename)[1].lower()
+
+        if original_ext == ".avi":
+            logger.info("Original file was AVI; skipping re-encoding to preserve AVI format.")
+            return final_output_path
+        else:
+            original_video_codec = vid_props.get('codec_name')
+            original_audio_codec = audio_props.get('codec_name')
+            restored_final = os.path.splitext(final_output_path)[0] + "_restored" + original_ext
+            logger.info("Re-encoding the final output back to the original container.")
+            FFmpegUtils.reencode_to_original_format(
+                final_output_path,
+                restored_final,
+                original_ext,
+                original_video_codec,
+                original_audio_codec
+            )
+            return restored_final
+
+    @staticmethod
+    def synchronize_video(avi_file, input_file, original_filename, vid_props, audio_props,
+                          fps, destination_path, reference_number):
+        """
+        Performs synchronization by iteratively applying audio shifts and finalizing the output.
+
+        This function serves as the main orchestration method. It calls the functions to perform iterative
+        synchronization and then finalizes the video output. The final output file path is returned if 
+        processing is successful, otherwise an error dict is returned.
+        
+        Args:
+            avi_file (str): Path to the AVI version of the input video.
+            input_file (str): Path to the original input video.
+            original_filename (str): Original filename of the video.
+            vid_props (dict): Video properties.
+            audio_props (dict): Audio properties.
+            fps (float): Frames per second.
+            destination_path (str): Path where the file was moved.
+            reference_number (int): The initial reference number.
+        
+        Returns:
+            str or dict: On success, the final output file path (string). If an error occurs, returns a dict with error details.
+        """
+        ApiUtils.send_websocket_message("Ok, had a look; let's begin to sync...")
+        sync_iterations_result = SyncNetUtils.perform_sync_iterations(
+            corrected_file=avi_file,
+            original_filename=original_filename,
+            fps=fps,
+            reference_number=reference_number
+        )
+        if isinstance(sync_iterations_result, dict):
+            return sync_iterations_result
+
+        total_shift_ms, final_corrected_file, updated_reference_number = sync_iterations_result
+        final_output_path = SyncNetUtils.finalize_sync(
+            input_file=input_file,
+            original_filename=original_filename,
+            total_shift_ms=total_shift_ms,
+            reference_number=updated_reference_number,
+            fps=fps,
+            destination_path=destination_path,
+            vid_props=vid_props,
+            audio_props=audio_props,
+            corrected_file=final_corrected_file
+        )
+        return final_output_path
+
+    @staticmethod
+    def verify_synchronization(final_path, ref_str, fps):
+        """
+        Double-checks that the final synchronized video is within the correct offset.
+
+        This function re-runs the SyncNet pipeline and model on the final output file to generate a log.
+        It then analyzes the log to determine if the audio and video streams are synchronized properly.
+        
+        Args:
+            final_path (str): The path to the final output video file.
+            ref_str (str): The reference identifier as a string.
+            fps (float): Frames per second of the video.
+        
+        Returns:
+            None
+        
+        Side Effects:
+            Logs the final offset in milliseconds.
+        """
+        logger.info("Starting final synchronization verification...")
+        SyncNetUtils.run_pipeline(final_path, ref_str)
+        final_log = os.path.join(FINAL_LOGS_DIR, f"final_output_{ref_str}.log")
+        SyncNetUtils.run_syncnet(ref_str, final_log)
+        final_offset = AnalysisUtils.analyze_syncnet_log(final_log, fps)
+        logger.info(f"Final offset: {final_offset} ms")
+import asyncio
+import logging
+from connection_manager import broadcast
+
+class WebSocketLogHandler(logging.Handler):
+    def emit(self, record):
+        msg = self.format(record)
+        asyncio.create_task(broadcast(msg))

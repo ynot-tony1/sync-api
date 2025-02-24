@@ -10,14 +10,6 @@ logger = logging.getLogger("uvicorn.info")
 
 app = FastAPI()
 
-@app.on_event("startup")
-def processing():
-    if(DEVICE =="cuda"):
-        logger.info(f"Running on a {DEVICE} gpu")
-    else:
-        logger.info(f"Running on a {DEVICE}")
-
-
 origins = [
     ALLOWED_LOCAL_1,
     ALLOWED_LOCAL_2,
