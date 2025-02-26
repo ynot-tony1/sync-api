@@ -45,10 +45,6 @@ Raises:
     logs the error, sends a websocket notification, and returns an error dictionary.
 """
 
-
-
-
-
     try:
         avi_file, vid_props, audio_props, fps, destination_path, reference_number = SyncNetUtils.prepare_video(
             input_file, original_filename

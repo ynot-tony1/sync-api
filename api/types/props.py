@@ -1,38 +1,37 @@
-from typing_extensions import TypedDict
-from typing import Union, Dict, List
+from pydantic import BaseModel
+from typing import Union, Dict
 
-JSONType = Union[str, int, float, bool, None, Dict[str, 'JSONType'], List['JSONType']]
-
-LogConfig = Dict[str, JSONType]
+JSONType = Union[str, int, float, bool, None, dict, list]
 
 
-class VideoProps(TypedDict):
-    width: int
-    height: int
+class LogConfig(BaseModel):
+    __root__: Dict[str, JSONType]
+
+LogConfig.update_forward_refs()
+
+class VideoProps(BaseModel):
     codec_name: str
     avg_frame_rate: str
     fps: float
 
-class AudioProps(TypedDict, total=False):
-    sample_rate: str
-    channels: int
-    codec_name: str
+class AudioProps(BaseModel):
+    sample_rate: Union[str, None] = None
+    channels: Union[int, None] = None
+    codec_name: Union[str, None] = None
 
-
-class SyncError(TypedDict):
+class SyncError(BaseModel):
     error: bool
     message: str
     final_offset: int
 
-
-class ProcessSuccess(TypedDict):
+class ProcessSuccess(BaseModel):
     status: str  # e.g. "success"
     final_output: str
     message: str
 
-class ProcessError(TypedDict, total=False):
+class ProcessError(BaseModel):
     error: bool
-    no_audio: bool
-    no_video: bool
-    no_fps: bool
+    no_audio: Union[bool, None] = None
+    no_video: Union[bool, None] = None
+    no_fps: Union[bool, None] = None
     message: str

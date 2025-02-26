@@ -215,8 +215,6 @@ class FFmpegUtils:
                         logger.error(f"Error converting avg_frame_rate '{avg_frame_rate}' to fps: {e}")
                         fps = None
                     video_props: VideoProps = {
-                        'width': stream.get('width'),
-                        'height': stream.get('height'),
                         'codec_name': stream.get('codec_name'),
                         'avg_frame_rate': avg_frame_rate,
                         'fps': fps if fps is not None else 0.0
