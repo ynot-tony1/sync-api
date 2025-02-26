@@ -1,6 +1,6 @@
 import os
 import unittest
-from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
+from api.config.type_settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
 from api.process_video import process_video
 
 

@@ -1,45 +1,43 @@
+"""
+Utility class for handling API operations.
+"""
+
 import os
 import shutil
 import uuid
 import logging
-from .log_utils import LogUtils
-from api.connection_manager import broadcast  
 import asyncio
+from typing import Any
+
+from fastapi import UploadFile
+from api.connection_manager import broadcast
+from api.utils.log_utils import LogUtils
 from api.config.settings import TEMP_PROCESSING_DIR
 
-LogUtils.configure_logging() 
-logger = logging.getLogger(__name__)
+LogUtils.configure_logging()
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class ApiUtils:
-    """Utility class for handling API operations."""
-
     @staticmethod
-    def save_temp_file(uploaded_file):
+    def save_temp_file(uploaded_file: UploadFile) -> str:
         """
-        Saves an uploaded file to a temporary directory with a unique UUID4 name.
-
-        The function extracts the file extension from the uploaded file's filename,
-        generates a unique filename using UUID4, and constructs a full file path using
-        the TEMP_PROCESSING_DIR. It then opens the destination file in binary write mode,
-        copies the content from the uploaded file to the temporary file, and closes the file.
-        If any error occurs during this process, an IOError is raised.
-
+        Saves an uploaded file to a temporary directory with a unique name.
+        
         Args:
-            uploaded_file (UploadFile): The uploaded file to save.
-
+            uploaded_file (UploadFile): The file uploaded by the client.
+        
         Returns:
-            str: The path to the saved temporary file.
-
+            str: Path to the saved temporary file.
+        
         Raises:
-            IOError: If there is an error saving the file.
+            IOError: If the file cannot be saved.
         """
-        file_extension = os.path.splitext(uploaded_file.filename)[1]
-        unique_filename = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
+        file_extension: str = os.path.splitext(uploaded_file.filename)[1]
+        unique_filename: str = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
         try:
-            temp_file = open(unique_filename, "wb")
-            shutil.copyfileobj(uploaded_file.file, temp_file)
-            temp_file.close()
+            with open(unique_filename, "wb") as temp_file:
+                shutil.copyfileobj(uploaded_file.file, temp_file)
             logger.info(f"Temporary file saved: {unique_filename}")
         except Exception as e:
             logger.error(f"Failed to save temporary file '{unique_filename}': {e}")
@@ -47,16 +45,12 @@ class ApiUtils:
         return unique_filename
 
     @staticmethod
-    def send_websocket_message(message: str):
+    def send_websocket_message(message: str) -> None:
         """
-        Schedules a broadcast of a debug message to connected WebSocket clients.
-
-        This function attempts to retrieve the current running asyncio event loop and
-        schedules the broadcast function as a task within that loop. If no event loop is
-        currently running, it uses asyncio.run to execute the broadcast immediately.
-
+        Broadcasts a message to connected WebSocket clients.
+        
         Args:
-            message (str): The message to broadcast to WebSocket clients.
+            message (str): The message to send.
         """
         try:
             loop = asyncio.get_running_loop()

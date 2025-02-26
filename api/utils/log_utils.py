@@ -1,26 +1,28 @@
-import logging
+"""
+Utilities for configuring logging using YAML.
+"""
+
+import os
 import logging.config
-from api.config.settings import LOG_CONFIG_PATH
+from typing import Any
 import yaml
 
-class LogUtils:
-    """
-    Utilities for configuring and retrieving loggers using YAML configurations.
-    """
+from api.config.type_settings import LOG_CONFIG_PATH
 
+
+class LogUtils:
     @staticmethod
-    def configure_logging():
+    def configure_logging() -> None:
         """
-        Configure logging using a YAML configuration file.
+        Configures logging from a YAML configuration file.
         
-        Does not return any specific named logger once the config is applied, 
-        can call `logging.getLogger('name')` anywhere in your code.
+        Raises:
+            FileNotFoundError: If the config file is not found.
         """
         try:
             with open(LOG_CONFIG_PATH, 'r') as file:
-                config = yaml.safe_load(file)
+                config: Any = yaml.safe_load(file)
         except FileNotFoundError:
             logging.error(f"Couldn't find the logging configuration file at: {LOG_CONFIG_PATH}")
             raise
-
         logging.config.dictConfig(config)
