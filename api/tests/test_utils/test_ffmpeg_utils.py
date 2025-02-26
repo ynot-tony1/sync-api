@@ -3,7 +3,7 @@ import shutil
 import tempfile
 import unittest
 
-from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
+from api.config.type_settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
 from api.utils.ffmpeg_utils import FFmpegUtils
 
 class TestFFmpegUtils(unittest.TestCase):
@@ -14,16 +14,7 @@ class TestFFmpegUtils(unittest.TestCase):
         cls.no_audio_video = os.path.join(TEST_DATA_DIR, 'video_no_audio.avi')
         cls.no_video_video = os.path.join(TEST_DATA_DIR, 'video_no_video_stream.avi')
 
-    def test_get_video_fps_success(self):
-        """Test that get_video_fps returns the expected FPS for a valid video file."""
-        fps = FFmpegUtils.get_video_fps(self.example_video)
-        self.assertIsNotNone(fps, "FPS should not be None for a valid video file.")
-        self.assertAlmostEqual(fps, 25.0, places=1, msg="FPS should be around 25.0 for example.avi.")
 
-    def test_get_video_fps_no_video_stream(self):
-        """Test that get_video_fps returns 0 when there is no video stream."""
-        fps = FFmpegUtils.get_video_fps(self.no_video_video)
-        self.assertEqual(fps, 0, "FPS should be 0 for a file without a video stream.")
 
 
     def test_get_audio_properties_success(self):

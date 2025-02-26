@@ -1,132 +1,102 @@
-import os
+"""
+Utility class for analyzing SyncNet log output.
+"""
+
 import re
 import logging
-from .file_utils import FileUtils
-from .log_utils import LogUtils
-from api.config.settings import FINAL_LOGS_DIR
+from typing import List, Tuple, Dict, Any, Union
 
-LogUtils.configure_logging()
-logger = logging.getLogger('analysis_logger')
+from api.utils.file_utils import FileUtils
+
+logger: logging.Logger = logging.getLogger('analysis_logger')
 
 
 class AnalysisUtils:
-    """Utility class for analyzing SyncNet's output logs."""
-
     @staticmethod
-    def analyze_syncnet_log(log_filename, fps):
+    def analyze_syncnet_log(log_filename: str, fps: Union[int, float]) -> int:
         """
-        Analyzes the SyncNet log file to determine the synchronization offset.
-
-        This function reads the log file specified by `log_filename` using the file utility,
-        then extracts offset and confidence pairs from the log content via a regular expression.
-        It verifies that the log content exists and logs a warning with the full path of the log file
-        if no content is found, returning an offset of 0. If valid offset-confidence pairs are found,
-        it aggregates the confidence scores for each offset. If no pairs are found or the aggregation
-        is empty, it logs the appropriate warning and returns 0. Finally, it identifies the offset with the
-        highest aggregated confidence score, converts this offset from frames to milliseconds using the
-        provided `fps`, logs the best offset in frames and milliseconds, and returns the resulting value.
-
+        Analyzes the SyncNet log file and determines the synchronization offset.
+        
         Args:
-            log_filename (str): The path to the SyncNet log file.
-            fps (int or float): Frames per second of the video.
-
+            log_filename (str): Path to the log file.
+            fps (int | float): Frames per second.
+        
         Returns:
-            int: Offset in milliseconds. Returns 0 if the log file has no content or no valid offset-confidence pairs.
+            int: Offset in milliseconds.
         """
-        log_content = FileUtils.read_log_file(log_filename)
+        log_content: Union[str, None] = FileUtils.read_log_file(log_filename)
         if not log_content:
             logger.warning(f"No content inside this log file: {log_filename}")
             return 0
 
-        pairs = AnalysisUtils.extract_offset_confidence_pairs(log_content)
+        pairs: List[Tuple[int, float]] = AnalysisUtils.extract_offset_confidence_pairs(log_content)
         if not pairs:
             logger.warning("Couldn't find any pairs in the SyncNet log.")
             return 0
 
-        offset_conf = AnalysisUtils.aggregate_confidence(pairs)
+        offset_conf: Dict[int, float] = AnalysisUtils.aggregate_confidence(pairs)
         if not offset_conf:
-            logger.warning("Couldnt add up confidence scores.")
+            logger.warning("Couldn't add up confidence scores.")
             return 0
 
-        best_offset = max(offset_conf, key=offset_conf.get)
-        offset_ms = AnalysisUtils.convert_frames_to_ms(best_offset, fps)
+        best_offset: int = max(offset_conf, key=offset_conf.get)
+        offset_ms: int = AnalysisUtils.convert_frames_to_ms(best_offset, fps)
         logger.info(f"The offset would be: {best_offset} frames ({offset_ms} ms)")
         return offset_ms
 
     @staticmethod
-    def extract_offset_confidence_pairs(log_text):
+    def extract_offset_confidence_pairs(log_text: str) -> List[Tuple[int, float]]:
         """
-        Extracts offset and confidence pairs from the provided log text.
-
-        This function declares a regex pattern that matches "AV offset:" followed by an optional sign
-        and an integer, then non-greedily matches any characters until "Confidence:" followed by a floating-point
-        number. It uses `re.findall` with the `re.DOTALL` flag to retrieve all matching (offset, confidence)
-        tuples from the log text. Each offset is cast to an integer and each confidence to a float before
-        being stored as a tuple in a list, which is then returned.
-
+        Extracts offset and confidence pairs from log text.
+        
         Args:
-            log_text (str): The content of the SyncNet log file.
-
+            log_text (str): Content of the log file.
+        
         Returns:
-            list of tuples: A list where each tuple contains an offset (int) and its corresponding confidence (float).
+            List[Tuple[int, float]]: List of (offset, confidence) tuples.
         """
-        pattern = r'AV offset:\s*([-+]?\d+).*?Confidence:\s*([\d.]+)'
-        matches = re.findall(pattern, log_text, re.DOTALL)
-        pairs = []
-        for offset, confidence in matches:
-            converted_offset = int(offset)
-            converted_confidence = float(confidence)
-            converted_pair = (converted_offset, converted_confidence)
-            pairs.append(converted_pair)
+        pattern: str = r'AV offset:\s*([-+]?\d+).*?Confidence:\s*([\d.]+)'
+        matches: List[Tuple[str, str]] = re.findall(pattern, log_text, re.DOTALL)
+        pairs: List[Tuple[int, float]] = []
+        for offset_str, conf_str in matches:
+            pairs.append((int(offset_str), float(conf_str)))
         logger.debug(f"Extracted pairs: {pairs}")
         return pairs
 
     @staticmethod
-    def aggregate_confidence(pairs):
+    def aggregate_confidence(pairs: List[Tuple[int, float]]) -> Dict[int, float]:
         """
-        Aggregates confidence scores for each synchronization offset.
-
-        This function initializes a dictionary to accumulate confidence scores for each offset.
-        It iterates through the provided list of (offset, confidence) pairs. For each pair, if the offset
-        already exists in the dictionary, it adds the confidence score to the existing total; otherwise,
-        it initializes the offset with the current confidence score.
-
+        Aggregates confidence scores for each offset.
+        
         Args:
-            pairs (list of tuples): A list where each tuple contains an offset (int) and a confidence (float).
-
+            pairs (List[Tuple[int, float]]): List of (offset, confidence) tuples.
+        
         Returns:
-            dict: A dictionary mapping each offset (int) to its aggregated confidence score (float).
+            Dict[int, float]: Mapping of offset to total confidence.
         """
-        confidence_map = {}
+        confidence_map: Dict[int, float] = {}
         for offset, confidence in pairs:
-            if offset in confidence_map:
-                confidence_map[offset] += confidence
-            else:
-                confidence_map[offset] = confidence
+            confidence_map[offset] = confidence_map.get(offset, 0) + confidence
         return confidence_map
 
     @staticmethod
-    def convert_frames_to_ms(frames, fps):
+    def convert_frames_to_ms(frames: int, fps: Union[int, float]) -> int:
         """
-        Converts a number of frames to milliseconds based on the frames per second (fps).
-
-        This function calculates the duration per frame in milliseconds by dividing 1000 by the fps value.
-        It then multiplies the number of frames by the duration per frame and returns the result as an integer.
-        If the fps value is missing or invalid, it logs an error and raises a ValueError.
-
+        Converts frame count to milliseconds.
+        
         Args:
-            frames (int): The number of frames.
-            fps (float): Frames per second.
-
+            frames (int): Number of frames.
+            fps (int | float): Frames per second.
+        
         Returns:
-            int: The total time in milliseconds corresponding to the given number of frames.
-
+            int: Time in milliseconds.
+        
         Raises:
-            ValueError: If `fps` is missing or invalid.
+            ValueError: If fps is 0 or None.
         """
         if fps:
-            duration_per_frame_ms = 1000 / fps
+            duration_per_frame_ms: float = 1000 / fps
         else:
             logger.error("fps value is missing. Can't convert frames to milliseconds.")
-            raise ValueError("fps must be provided and can't be None.")
+            raise ValueError("fps must be provided and cannot be None.")
         return int(frames * duration_per_frame_ms)

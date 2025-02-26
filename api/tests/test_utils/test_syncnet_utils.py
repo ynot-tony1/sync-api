@@ -2,8 +2,8 @@ import os
 import unittest
 from unittest.mock import patch, mock_open
 
-from api.config.settings import (
-    FINAL_OUTPUT_DIR, LOGS_DIR, RUN_LOGS_DIR,
+from api.config.type_settings import (
+    FINAL_OUTPUT_DIR, LOGS_DIR, FINAL_LOGS_DIR,
 )
 from api.utils.syncnet_utils import SyncNetUtils
 
@@ -59,7 +59,7 @@ class TestSyncNetUtils(unittest.TestCase):
             provided reference string.
         """
         ref_str = DUMMY_REF
-        fake_log_file = os.path.join(RUN_LOGS_DIR, f"run_{ref_str}.log")
+        fake_log_file = os.path.join(FINAL_LOGS_DIR, f"run_{ref_str}.log")
         m = mock_open()
         with patch("builtins.open", m):
             returned_log = SyncNetUtils.run_syncnet(ref_str)
