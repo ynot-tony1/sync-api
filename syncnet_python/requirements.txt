@@ -43,8 +43,7 @@ Pillow==9.5.0
 platformdirs==4.0.0
 proglog==0.1.10
 pycparser==2.21
-pydantic==2.5.3
-pydantic_core==2.14.6
+pydantic==1.10.7
 pyparsing==3.1.4
 python-dateutil==2.9.0.post0
 python-decouple==3.8
