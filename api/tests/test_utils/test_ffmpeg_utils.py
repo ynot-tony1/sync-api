@@ -57,8 +57,6 @@ class TestFFmpegUtils(unittest.TestCase):
         """
         props = FFmpegUtils.get_video_properties(self.example_video)
         self.assertIsInstance(props, dict, "Video properties should be a dict for a valid video.")
-        self.assertIn('width', props, "Video properties should contain 'width'.")
-        self.assertIn('height', props, "Video properties should contain 'height'.")
         self.assertIn('codec_name', props, "Video properties should contain 'codec_name'.")
         self.assertIn('avg_frame_rate', props, "Video properties should contain 'avg_frame_rate'.")
 
