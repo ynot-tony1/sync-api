@@ -5,9 +5,6 @@ from api.utils.analysis_utils import AnalysisUtils
 
 class TestAnalysisUtils(unittest.TestCase):
 
-    # ------------------ aggregate_confidence unit tests ------------------ #
-
-    # testing aggregate_confidence with empty pairs
     def test_aggregate_confidence_empty_pairs(self):
         """
         Testing the aggregate_confidence with an empty list of pairs.
@@ -18,7 +15,6 @@ class TestAnalysisUtils(unittest.TestCase):
         result = AnalysisUtils.aggregate_confidence(pairs)
         self.assertEqual(result, expected, "Expects an empty dictionary for an empty input.")
         
-	# testing aggregate_confidence with a single pair
     def test_aggregate_confidence_single_pair(self):
         """
         Testing the aggregate_confidence function with a single offset and confidence pair.
@@ -28,7 +24,6 @@ class TestAnalysisUtils(unittest.TestCase):
         result = AnalysisUtils.aggregate_confidence(pairs)
         self.assertEqual(result, expected, "Expects a dictionary with a single pair in it.")
 
-    # testing aggregate_confidence with a zero confidence
     def test_aggregate_confidence_zero_confidence(self):
         """
         Testing aggregate_confidence with pairs with zero confidences.
@@ -38,7 +33,6 @@ class TestAnalysisUtils(unittest.TestCase):
         result = AnalysisUtils.aggregate_confidence(pairs)
         self.assertEqual(result, expected, "Expecting zero confidence for all of the offsets.")
 
-    # testing aggregate_confidence with negative confidence
     def test_aggregate_confidence_negative_confidence(self):
         """
         Testing aggregate_confidence with pairs that have negative confidence values in them.
@@ -49,9 +43,6 @@ class TestAnalysisUtils(unittest.TestCase):
         self.assertEqual(result, expected, "Expected correct aggregation with negative confidences.")
 
 
-    # ------------------ analyze_syncnet_log unit tests --------------------- #
-
-    # testing analyze_syncnet_log with valid contents
     def test_analyze_syncnet_log_valid_log_content(self):
         """
         Testing analyze_syncnet_log with valid log contents.
@@ -86,7 +77,7 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, expected_offset_ms, "Was expecting the correct offset in ms.")
         finally:
             os.remove(tmp_log_path)
-    # testing analyze_syncnet_log with invalid contents
+
     def test_analyze_syncnet_log_invalid_log_content(self):
         """
         Testing analyze_syncnet_log with log content that has no valid offset and confidence pairs.
@@ -106,7 +97,7 @@ class TestAnalysisUtils(unittest.TestCase):
             self.assertEqual(result, 0, "was expecting 0 ms when no valid pairs are found.")
         finally:
             os.remove(tmp_log_path)
-    # testing analyze_syncnet_log with empty log content
+
     def test_analyze_syncnet_log_empty_log_content(self):
         """
         Testing analyze_syncnet_log with no contents.
@@ -124,9 +115,6 @@ class TestAnalysisUtils(unittest.TestCase):
             os.remove(tmp_log_path)
 
 
-            # ------------------ extract_offset_confidence_pairs unit tests ------------------ #
-
-    # testing extract_offset_confidence_pairs with valid log content
     def test_extract_offset_confidence_pairs_valid_log_content(self):
         """
         Testing the extract_offset_confidence_pairs function with valid log contents.
@@ -165,7 +153,6 @@ class TestAnalysisUtils(unittest.TestCase):
         result = AnalysisUtils.extract_offset_confidence_pairs(valid_log)
         self.assertEqual(result, expected_pairs, "The function should properly extract all valid offset and confidence pairs.")
 
-    # testing extract_offset_confidence_pairs with valid log content
     def test_extract_offset_confidence_pairs_invalid_log_content(self):
         """
         Testing the extract_offset_confidence_pairs function with invalid log contents.
@@ -183,7 +170,6 @@ class TestAnalysisUtils(unittest.TestCase):
         result = AnalysisUtils.extract_offset_confidence_pairs(invalid_log)
         self.assertEqual(result, expected_pairs, "The function should return an empty list when no valid pairs are found.")
 
-    # testing extract_offset_confidence_pairs with valid log content
     def test_extract_offset_confidence_pairs_empty_log_content(self):
         """
         Testing the extract_offset_confidence_pairs function with empty log content.
@@ -198,8 +184,6 @@ class TestAnalysisUtils(unittest.TestCase):
 
 
             
-
-    
     
 if __name__ == '__main__':
     unittest.main()

@@ -4,13 +4,14 @@ Routes for processing videos.
 
 import os
 import logging
-from typing import Any, Dict
+from typing import Union
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.concurrency import run_in_threadpool
 
 from api.utils.api_utils import ApiUtils
 from api.process_video import process_video
+from api.types.props import ProcessSuccess, ProcessError
 
 logger: logging.Logger = logging.getLogger("processing_routes")
 router: APIRouter = APIRouter()
@@ -28,7 +29,7 @@ async def process_video_endpoint(file: UploadFile = File(...)) -> JSONResponse:
     """
     input_file_path: str = await run_in_threadpool(ApiUtils.save_temp_file, file)
     try:
-        result: Dict[str, Any] = await run_in_threadpool(process_video, input_file_path, file.filename)
+        result: Union[ProcessSuccess, ProcessError] = await run_in_threadpool(process_video, input_file_path, file.filename)
         
         if isinstance(result, dict):
             if result.get("status") == "success" and "final_output" in result:

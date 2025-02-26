@@ -5,11 +5,12 @@ Utility class for handling FFmpeg operations.
 import os
 import logging
 import shutil
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, List, Union
 
 import ffmpeg
 
-from api.config.type_settings import FINAL_OUTPUT_DIR
+from api.config.settings import FINAL_OUTPUT_DIR
+from api.types.props import VideoProps, AudioProps
 
 logger: logging.Logger = logging.getLogger("ffmpeg_logger")
 
@@ -27,7 +28,7 @@ class FFmpegUtils:
         Raises:
             RuntimeError: If FFmpeg fails.
         """
-        logger.info(f"Re-encoding {input_file} to {output_file} as AVI with PCM audio.")
+        logger.debug(f"Re-encoding {input_file} to {output_file} as AVI with PCM audio.")
         try:
             out, err = (
                 ffmpeg
@@ -99,7 +100,7 @@ class FFmpegUtils:
             logger.error(f"Input file not found: {input_file}")
             return
 
-        audio_props: Optional[Dict[str, Any]] = FFmpegUtils.get_audio_properties(input_file)
+        audio_props: Optional[AudioProps] = FFmpegUtils.get_audio_properties(input_file)
         if audio_props is None:
             logger.error(f"Failed to retrieve audio properties from {input_file}")
             return
@@ -174,23 +175,14 @@ class FFmpegUtils:
                 logger.debug(f"Removed temporary file {copied_file}")
 
     @staticmethod
-    def get_audio_properties(file_path: str) -> Optional[Dict[str, Any]]:
-        """
-        Retrieves audio properties from a video file.
-        
-        Args:
-            file_path (str): Path to the video file.
-        
-        Returns:
-            Optional[Dict[str, Any]]: Dictionary of audio properties or None.
-        """
+    def get_audio_properties(file_path: str) -> Optional[AudioProps]:
         logger.debug(f"Probing audio properties for {file_path}")
         try:
-            info: Dict[str, Any] = ffmpeg.probe(file_path)
-            streams: List[Dict[str, Any]] = info.get('streams', [])
+            info: Dict[str, Union[str, int, float, List]] = ffmpeg.probe(file_path)
+            streams: List[Dict[str, Union[str, int]]] = info.get('streams', [])
             for stream in streams:
                 if stream.get('codec_type') == 'audio':
-                    audio_props: Dict[str, Any] = {
+                    audio_props: AudioProps = {
                         'sample_rate': stream.get('sample_rate'),
                         'channels': stream.get('channels'),
                         'codec_name': stream.get('codec_name')
@@ -208,20 +200,11 @@ class FFmpegUtils:
             return None
 
     @staticmethod
-    def get_video_properties(file_path: str) -> Optional[Dict[str, Any]]:
-        """
-        Retrieves video properties from a video file.
-        
-        Args:
-            file_path (str): Path to the video file.
-        
-        Returns:
-            Optional[Dict[str, Any]]: Dictionary of video properties or None.
-        """
+    def get_video_properties(file_path: str) -> Optional[VideoProps]:
         logger.debug(f"Probing video properties for {file_path}")
         try:
-            info: Dict[str, Any] = ffmpeg.probe(file_path)
-            streams: List[Dict[str, Any]] = info.get('streams', [])
+            info: Dict[str, Union[str, int, float, List]] = ffmpeg.probe(file_path)
+            streams: List[Dict[str, Union[str, int]]] = info.get('streams', [])
             for stream in streams:
                 if stream.get('codec_type') == 'video':
                     avg_frame_rate: str = stream.get('avg_frame_rate', '0/0')
@@ -231,12 +214,12 @@ class FFmpegUtils:
                     except Exception as e:
                         logger.error(f"Error converting avg_frame_rate '{avg_frame_rate}' to fps: {e}")
                         fps = None
-                    video_props: Dict[str, Any] = {
+                    video_props: VideoProps = {
                         'width': stream.get('width'),
                         'height': stream.get('height'),
                         'codec_name': stream.get('codec_name'),
                         'avg_frame_rate': avg_frame_rate,
-                        'fps': fps
+                        'fps': fps if fps is not None else 0.0
                     }
                     logger.info(f"Retrieved video properties for {file_path}: {video_props}")
                     return video_props
