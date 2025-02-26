@@ -4,11 +4,9 @@ Utilities for configuring logging using YAML.
 
 import os
 import logging.config
-from typing import Any
 import yaml
-
-from api.config.type_settings import LOG_CONFIG_PATH
-
+from api.config.settings import LOG_CONFIG_PATH
+from api.types.props import LogConfig
 
 class LogUtils:
     @staticmethod
@@ -21,7 +19,7 @@ class LogUtils:
         """
         try:
             with open(LOG_CONFIG_PATH, 'r') as file:
-                config: Any = yaml.safe_load(file)
+                config: LogConfig = yaml.safe_load(file)
         except FileNotFoundError:
             logging.error(f"Couldn't find the logging configuration file at: {LOG_CONFIG_PATH}")
             raise

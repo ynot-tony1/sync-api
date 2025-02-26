@@ -4,10 +4,9 @@ Routes for file download.
 
 import os
 import logging
-from typing import Any
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
-from api.config.type_settings import FINAL_OUTPUT_DIR
+from api.config.settings import FINAL_OUTPUT_DIR
 
 logger: logging.Logger = logging.getLogger("file_routes")
 router: APIRouter = APIRouter()

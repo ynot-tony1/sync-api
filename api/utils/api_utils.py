@@ -7,8 +7,6 @@ import shutil
 import uuid
 import logging
 import asyncio
-from typing import Any
-
 from fastapi import UploadFile
 from api.connection_manager import broadcast
 from api.utils.log_utils import LogUtils

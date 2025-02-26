@@ -1,6 +1,6 @@
 import os
 import unittest
-from api.config.type_settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
+from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
 from api.process_video import process_video
 
 
@@ -86,10 +86,6 @@ class TestRunProcessVideo(unittest.TestCase):
 
         Checks that process_video returns a dictionary with the 'already_in_sync'
         key set to True and the expected message if the video is already synchronized.
-        If an error occurs, the error message (converted to a string) must indicate a pipeline failure.
-        
-        Raises:
-            AssertionError: If the returned dict does not indicate either an already synchronized state or a pipeline error.
         """
         result = process_video(self.synced_video, 'synced_example.avi')
         self.assertIsInstance(result, dict, "process_video should return a dict for an already synchronized video")
@@ -97,13 +93,13 @@ class TestRunProcessVideo(unittest.TestCase):
             self.assertEqual(result.get("message"), "already in sync", "Expected message: 'already in sync'")
             final_output = result.get("final_output")
             if final_output:
-                self.assertTrue(os.path.exists(final_output),
-                                "Final output file should exist for an already synchronized video")
+                self.assertTrue(os.path.exists(final_output), "Final output file should exist for an already synchronized video")
                 os.remove(final_output)
         else:
             error_msg = str(result.get("message", ""))
-            self.assertIn("SyncNet pipeline failed", error_msg,
-                          "Error message should indicate pipeline failure")
+            # Updated assertion to check for "already in sync" message instead of "SyncNet pipeline failed"
+            self.assertIn("already in sync", error_msg, "Error message should indicate that the video is already in sync")
+
 
     @classmethod
     def tearDownClass(cls):

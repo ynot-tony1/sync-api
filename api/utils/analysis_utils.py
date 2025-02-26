@@ -4,7 +4,7 @@ Utility class for analyzing SyncNet log output.
 
 import re
 import logging
-from typing import List, Tuple, Dict, Any, Union
+from typing import List, Tuple, Dict, Union
 
 from api.utils.file_utils import FileUtils
 

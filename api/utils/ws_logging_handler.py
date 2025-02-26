@@ -4,7 +4,6 @@ A custom logging handler that sends log messages over WebSocket.
 
 import asyncio
 import logging
-from typing import Any
 from api.connection_manager import broadcast
 
 

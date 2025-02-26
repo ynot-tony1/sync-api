@@ -2,7 +2,7 @@ import os
 import unittest
 from unittest.mock import patch, mock_open
 
-from api.config.type_settings import (
+from api.config.settings import (
     FINAL_OUTPUT_DIR, LOGS_DIR, FINAL_LOGS_DIR,
 )
 from api.utils.syncnet_utils import SyncNetUtils

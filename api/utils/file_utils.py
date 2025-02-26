@@ -7,7 +7,7 @@ import shutil
 import logging
 from typing import List, Optional
 
-from api.config.type_settings import DATA_DIR, TEMP_PROCESSING_DIR
+from api.config.settings import DATA_DIR, TEMP_PROCESSING_DIR
 
 logger: logging.Logger = logging.getLogger('file_utils_logger')
 
