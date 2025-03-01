@@ -4,7 +4,6 @@ disable_existing_loggers: False
 formatters:
   standard:
     format: '[%(asctime)s] [%(levelname)s] %(name)s.%(funcName)s: %(message)s'
-  
   console_format:
     format: '[%(asctime)s] %(funcName)s: %(message)s'
 
@@ -96,10 +95,10 @@ handlers:
     backupCount: 5
     encoding: utf8
 
-loggers:
 
+loggers:
   process_video:
-    handlers: [process_video_file_handler, console, app_file_handler]  
+    handlers: [process_video_file_handler]
     level: DEBUG
     propagate: false
 
@@ -114,7 +113,7 @@ loggers:
     propagate: false
 
   pipeline_logger:
-    handlers: [pipeline_file_handler, console, app_file_handler]
+    handlers: [pipeline_file_handler, app_file_handler]
     level: DEBUG
     propagate: false
 
@@ -163,9 +162,25 @@ loggers:
     level: DEBUG
     propagate: false
 
+  api_utils_logger:
+    handlers: [app_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  log_utils_logger:
+    handlers: [app_file_handler, console]
+    level: DEBUG
+    propagate: false
+
+  syncnet_utils_logger:
+    handlers: [pipeline_file_handler, app_file_handler]
+    level: DEBUG
+    propagate: false
+
   asyncio:
     level: WARNING
     propagate: false
+
 
 root:
   handlers: [app_file_handler, console]

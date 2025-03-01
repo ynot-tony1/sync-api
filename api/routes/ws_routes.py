@@ -1,7 +1,6 @@
 """
 WebSocket routes.
 """
-
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from api.connection_manager import connect, disconnect
 
@@ -15,13 +14,20 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
     Args:
         websocket (WebSocket): The incoming WebSocket connection.
     """
+    print("[ENTER] websocket_endpoint called")
     try:
         await connect(websocket)
-    except Exception:
+        print("[websocket_endpoint] WebSocket connected successfully.")
+    except Exception as e:
+        print(f"[websocket_endpoint] Error accepting connection: {e}")
         return
+
     try:
         while True:
             data: str = await websocket.receive_text()
+            print(f"[websocket_endpoint] Received text from client: {data}")
             await websocket.send_text(f"Echo: {data}")
     except WebSocketDisconnect:
-        disconnect(websocket)
+       print("[websocket_endpoint] Client disconnected.")
+       disconnect(websocket)
+    print("[EXIT] websocket_endpoint completed")
