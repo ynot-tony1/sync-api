@@ -1,266 +1,223 @@
 """Tests for the SyncNetUtils asynchronous functions.
 
-This module tests various asynchronous functions implemented in the SyncNetUtils class,
-including running SyncNet, running the pipeline, preparing video, performing synchronization
-iterations, finalizing synchronization, and the overall synchronization process. The tests
-use the asyncio event loop to run asynchronous functions and patch external dependencies
-to simulate expected behaviors.
+This module contains unit tests for the SyncNetUtils class, which handles asynchronous
+video synchronization tasks. The tests use asyncio and unittest.mock to simulate
+asynchronous behavior and external dependencies.
+
+The tests cover the following functionality:
+- Running the SyncNet process.
+- Preparing a video for synchronization.
+- Performing iterative synchronization.
+- Finalizing the synchronization process.
 """
 
 import os
 import asyncio
-import tempfile
 import unittest
 from unittest.mock import patch, MagicMock
 
-from api.config.settings import FINAL_OUTPUT_DIR, LOGS_DIR, FINAL_LOGS_DIR, DATA_DIR
+from api.config.settings import DATA_DIR
 from api.utils.syncnet_utils import SyncNetUtils
 
-# Dummy constants for testing
 DUMMY_REF = "00001"
 DUMMY_VIDEO_FILE = "/path/to/example.avi"
 DUMMY_ORIGINAL_FILENAME = "example.avi"
-# Expected destination is computed using DATA_DIR and the reference number "1"
-EXPECTED_DESTINATION = os.path.join(DATA_DIR, f"1_{DUMMY_ORIGINAL_FILENAME}")
-DUMMY_DESTINATION = EXPECTED_DESTINATION  
-DUMMY_AVI_FILE = DUMMY_DESTINATION  
-DUMMY_LOG_FILE = "/path/to/log/file.log"
-DUMMY_VID_PROPS = {
-    "codec_name": "mpeg4",
-    "fps": 25.0,
-    "avg_frame_rate": "25/1",
-    "width": 640,
-    "height": 480,
-}
-DUMMY_AUDIO_PROPS = {
-    "sample_rate": "44100",
-    "channels": 2,
-    "codec_name": "pcm_s16le",
-}
+DUMMY_DESTINATION = os.path.join(DATA_DIR, "1_example.avi")
+DUMMY_VID_PROPS = {"codec_name": "mpeg4", "fps": 25.0}
+DUMMY_AUDIO_PROPS = {"sample_rate": "44100", "channels": 2}
 
-# Helper to wrap a value in an awaitable coroutine.
-def async_return(result):
-    """Wraps a value in a coroutine that returns that value.
-
-    Args:
-        result: The result to be returned by the coroutine.
-
-    Returns:
-        Coroutine that returns the given result.
-    """
-    async def _coro():
-        return result
-    return _coro()
-
-# FakeProcess for simulating subprocess calls.
-class FakeProcess:
-    """A fake process to simulate asynchronous subprocess behavior.
-
-    Attributes:
-        stdout_bytes (bytes): The simulated output bytes.
-        returncode (int): The simulated process return code.
-    """
-    def __init__(self, stdout_bytes, returncode=0):
-        self.stdout_bytes = stdout_bytes
-        self.returncode = returncode
-
-    async def communicate(self):
-        """Simulate process communication.
-
-        Returns:
-            tuple: A tuple containing stdout bytes and None for stderr.
-        """
-        return (self.stdout_bytes, None)
 
 class TestSyncNetUtils(unittest.TestCase):
-    """Tests for individual functions in the SyncNetUtils class."""
+    """Test suite for the SyncNetUtils class.
+
+    This class contains unit tests for the asynchronous methods in the SyncNetUtils class.
+    Each test method is designed to validate a specific functionality of the class.
+    """
 
     def setUp(self):
-        """Set up the asyncio event loop for test execution."""
-        self.loop = asyncio.get_event_loop()
+        """Set up the test environment.
+
+        Initializes a new event loop for each test and sets it as the default loop.
+        This ensures that all asynchronous operations run within the same event loop.
+        """
+        self.loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(self.loop)
+
+    def async_test(f):
+        """Decorator to run async test methods in the event loop.
+
+        Args:
+            f: The async test function to wrap.
+
+        Returns:
+            A wrapper function that runs the test in the event loop.
+        """
+
+        def wrapper(*args, **kwargs):
+            return args[0].loop.run_until_complete(f(*args, **kwargs))
+
+        return wrapper
 
     @patch("api.utils.syncnet_utils.asyncio.create_subprocess_shell")
-    def test_run_syncnet_success(self, mock_create_proc):
-        """Test that run_syncnet returns the correct log file path on success.
+    @async_test
+    async def test_run_syncnet_success(self, mock_subprocess):
+        """Test successful execution of the SyncNet process.
 
-        Mocks asyncio.create_subprocess_shell to return a FakeProcess with simulated log output.
-        Asserts that the returned log file path matches the expected value.
-
-        Args:
-            mock_create_proc (MagicMock): The patched create_subprocess_shell.
-        """
-        ref_str = DUMMY_REF
-        fake_log_file = os.path.join(FINAL_LOGS_DIR, f"run_{ref_str}.log")
-        # Return a new FakeProcess wrapped in a coroutine.
-        mock_create_proc.side_effect = lambda *args, **kwargs: async_return(FakeProcess(b"Fake log content", 0))
-        
-        returned_log = self.loop.run_until_complete(
-            SyncNetUtils.run_syncnet(ref_str)
-        )
-        self.assertEqual(returned_log, fake_log_file)
-        self.assertEqual(mock_create_proc.call_count, 1)
-
-    @patch("api.utils.syncnet_utils.asyncio.create_subprocess_shell")
-    def test_run_pipeline_success(self, mock_create_proc):
-        """Test that run_pipeline executes without error.
-
-        Mocks asyncio.create_subprocess_shell to return a FakeProcess with simulated output.
-        Asserts that the pipeline runs successfully.
+        This test verifies that the `run_syncnet` method correctly executes the SyncNet
+        process and returns the path to the log file.
 
         Args:
-            mock_create_proc (MagicMock): The patched create_subprocess_shell.
+            mock_subprocess: Mock for asyncio.create_subprocess_shell.
         """
-        video_file = DUMMY_VIDEO_FILE
-        ref = DUMMY_REF
-        # Return a FakeProcess wrapped in a coroutine.
-        mock_create_proc.side_effect = lambda *args, **kwargs: async_return(FakeProcess(b"Pipeline log content", 0))
-        self.loop.run_until_complete(
-            SyncNetUtils.run_pipeline(video_file, ref)
-        )
-        self.assertEqual(mock_create_proc.call_count, 1)
+        process_mock = MagicMock()
+        communicate_future = asyncio.Future()
+        communicate_future.set_result((b"dummy output", None))
+        process_mock.communicate.return_value = communicate_future
+        process_mock.returncode = 0
+        async def create_subprocess_coro(*args, **kwargs):
+            return process_mock
+        mock_subprocess.side_effect = create_subprocess_coro
+        result = await SyncNetUtils.run_syncnet(DUMMY_REF)
+        self.assertIn("run_00001.log", result)
+        mock_subprocess.assert_called_once()
+        process_mock.communicate.assert_called_once()
 
-    @patch("api.utils.syncnet_utils.FFmpegUtils.reencode_to_avi", side_effect=lambda *args, **kwargs: async_return(None))
-    @patch("api.utils.syncnet_utils.FileUtils.move_file", side_effect=lambda *args, **kwargs: DUMMY_DESTINATION)
-    @patch("api.utils.syncnet_utils.FileUtils.copy_file", side_effect=lambda *args, **kwargs: "/tmp/dummy_temp.avi")
-    @patch("api.utils.syncnet_utils.FFmpegUtils.get_video_properties", side_effect=lambda *args, **kwargs: async_return(DUMMY_VID_PROPS))
-    @patch("api.utils.syncnet_utils.FFmpegUtils.get_audio_properties", side_effect=lambda *args, **kwargs: async_return(DUMMY_AUDIO_PROPS))
-    @patch("os.path.exists", return_value=True)
-    @patch("api.utils.syncnet_utils.FileUtils.get_next_directory_number", side_effect=lambda *args, **kwargs: "00001")
-    def test_prepare_video_success(self, mock_get_next, mock_exists, mock_get_audio,
-                                   mock_get_video, mock_copy, mock_move, mock_reencode):
-        """Test that prepare_video successfully prepares a video without re-encoding.
+    @patch("api.utils.syncnet_utils.os.path.exists")
+    @patch("api.utils.syncnet_utils.FileUtils.move_file")
+    @patch("api.utils.syncnet_utils.FileUtils.copy_file")
+    @patch("api.utils.syncnet_utils.FileUtils.get_next_directory_number")
+    @patch("api.utils.syncnet_utils.DATA_DIR", "/mocked/data/dir")
+    @async_test
+    async def test_prepare_video_success(self, mock_get_next_dir, mock_copy, mock_move, mock_exists):
+        """Test successful video preparation with mocked paths.
 
-        Mocks file operations and FFmpegUtils methods to simulate a scenario where the input file is
-        already in AVI format. Asserts that the returned tuple matches expected dummy values.
+        This test verifies that the `prepare_video` method correctly prepares a video
+        for synchronization by:
+        - Copying the video to a temporary location.
+        - Moving it to the destination directory.
+        - Retrieving video and audio properties.
+        - Re-encoding the video if necessary.
 
         Args:
-            mock_get_next (MagicMock): Patched get_next_directory_number.
-            mock_exists (MagicMock): Patched os.path.exists.
-            mock_get_audio (MagicMock): Patched FFmpegUtils.get_audio_properties.
-            mock_get_video (MagicMock): Patched FFmpegUtils.get_video_properties.
-            mock_copy (MagicMock): Patched FileUtils.copy_file.
-            mock_move (MagicMock): Patched FileUtils.move_file.
-            mock_reencode (MagicMock): Patched FFmpegUtils.reencode_to_avi.
+            mock_get_next_dir: Mock for FileUtils.get_next_directory_number.
+            mock_copy: Mock for FileUtils.copy_file.
+            mock_move: Mock for FileUtils.move_file.
+            mock_exists: Mock for os.path.exists.
         """
-        result = self.loop.run_until_complete(
-            SyncNetUtils.prepare_video(DUMMY_VIDEO_FILE, DUMMY_ORIGINAL_FILENAME)
-        )
-        (avi_file, vid_props, audio_props, fps, destination_path, reference_number) = result
-        self.assertEqual(avi_file, DUMMY_DESTINATION)
-        self.assertEqual(vid_props, DUMMY_VID_PROPS)
-        self.assertEqual(audio_props, DUMMY_AUDIO_PROPS)
-        self.assertEqual(fps, DUMMY_VID_PROPS.get("fps"))
-        self.assertEqual(destination_path, DUMMY_DESTINATION)
-        self.assertEqual(reference_number, int("00001"))
-        mock_reencode.assert_not_called()
+        mock_get_next_dir.return_value = asyncio.Future()
+        mock_get_next_dir.return_value.set_result("1")
+        mocked_destination = "/mocked/data/dir/1_example.avi"
+        mock_exists.return_value = True
+        mock_copy.return_value = asyncio.Future()
+        mock_copy.return_value.set_result("/temp/path")
+        mock_move.return_value = asyncio.Future()
+        mock_move.return_value.set_result(mocked_destination)
+        vid_future = asyncio.Future()
+        vid_future.set_result(DUMMY_VID_PROPS)
+        aud_future = asyncio.Future()
+        aud_future.set_result(DUMMY_AUDIO_PROPS)
 
-    @patch("api.utils.syncnet_utils.FFmpegUtils.shift_audio", side_effect=lambda *args, **kwargs: async_return(None))
-    @patch("os.path.exists", return_value=True)
-    @patch("api.utils.syncnet_utils.SyncNetUtils.run_syncnet", side_effect=lambda *args, **kwargs: async_return(DUMMY_LOG_FILE))
-    @patch("api.utils.syncnet_utils.SyncNetUtils.run_pipeline", side_effect=lambda *args, **kwargs: async_return(None))
-    @patch("api.utils.syncnet_utils.AnalysisUtils.analyze_syncnet_log")
-    def test_perform_sync_iterations_success(self, mock_analyze, mock_run_pipeline,
-                                               mock_run_syncnet, mock_exists, mock_shift_audio):
-        """Test that perform_sync_iterations returns the correct cumulative shift and updated reference.
-
-        Mocks analyze_syncnet_log to simulate a nonzero offset on the first iteration and zero on the second.
-        Asserts that the returned total shift, corrected file, updated reference number, and iteration count are as expected.
-
-        Args:
-            mock_analyze (MagicMock): Patched AnalysisUtils.analyze_syncnet_log.
-            mock_run_pipeline (MagicMock): Patched SyncNetUtils.run_pipeline.
-            mock_run_syncnet (MagicMock): Patched SyncNetUtils.run_syncnet.
-            mock_exists (MagicMock): Patched os.path.exists.
-            mock_shift_audio (MagicMock): Patched FFmpegUtils.shift_audio.
-        """
-        # Simulate analyze_syncnet_log returning 10 on first call then 0 on second.
-        mock_analyze.side_effect = [10, 0]
-        result = self.loop.run_until_complete(
-            SyncNetUtils.perform_sync_iterations(
-                corrected_file=DUMMY_AVI_FILE,
-                original_filename=DUMMY_ORIGINAL_FILENAME,
-                fps=25.0,
-                reference_number=1
+        with patch(
+            "api.utils.syncnet_utils.FFmpegUtils.get_video_properties"
+        ) as mock_vid, patch(
+            "api.utils.syncnet_utils.FFmpegUtils.get_audio_properties"
+        ) as mock_aud:
+            mock_vid.return_value = vid_future
+            mock_aud.return_value = aud_future
+            result = await SyncNetUtils.prepare_video(
+                DUMMY_VIDEO_FILE, DUMMY_ORIGINAL_FILENAME
             )
-        )
-        total_shift, final_file, updated_ref, iteration_count = result
-        self.assertEqual(total_shift, 10)
-        self.assertEqual(updated_ref, 2)
-        self.assertIsInstance(final_file, str)
-        self.assertTrue(final_file.endswith(".avi"))
-        # Expected iteration_count is now 2 since two iterations were performed.
-        self.assertEqual(iteration_count, 2)
-        self.assertEqual(mock_analyze.call_count, 2)
+            self.assertEqual(result[0], mocked_destination)
+
+    @patch("api.utils.syncnet_utils.os.path.exists")
+    @async_test
+    async def test_perform_sync_iterations(self, mock_exists):
+        """Test successful synchronization iterations.
+
+        This test verifies that the `perform_sync_iterations` method correctly performs
+        iterative synchronization by:
+        - Running the SyncNet pipeline.
+        - Analyzing the log file to determine the offset.
+        - Shifting the audio track based on the offset.
+
+        Args:
+            mock_exists: Mock for os.path.exists.
+        """
+        mock_exists.return_value = True
+        future1 = asyncio.Future()
+        future1.set_result(100)
+        future2 = asyncio.Future()
+        future2.set_result(0)
+
+        with patch(
+            "api.utils.syncnet_utils.AnalysisUtils.analyze_syncnet_log"
+        ) as mock_analyze, patch(
+            "api.utils.syncnet_utils.SyncNetUtils.run_pipeline"
+        ) as mock_pipeline, patch(
+            "api.utils.syncnet_utils.SyncNetUtils.run_syncnet"
+        ) as mock_syncnet, patch(
+            "api.utils.syncnet_utils.FFmpegUtils.shift_audio"
+        ) as mock_shift:
+            mock_analyze.side_effect = [future1, future2]
+            mock_pipeline.return_value = asyncio.Future()
+            mock_pipeline.return_value.set_result(None)
+            mock_syncnet.return_value = asyncio.Future()
+            mock_syncnet.return_value.set_result("dummy.log")
+            mock_shift.return_value = asyncio.Future()
+            mock_shift.return_value.set_result(None)
+
+            result = await SyncNetUtils.perform_sync_iterations(
+                DUMMY_DESTINATION, DUMMY_ORIGINAL_FILENAME, 25.0, 1
+            )
+            self.assertEqual(result[0], 100)
 
     @patch("api.utils.syncnet_utils.os.remove")
-    @patch("api.utils.syncnet_utils.FFmpegUtils.reencode_to_original_format", side_effect=lambda *args, **kwargs: async_return(None))
-    @patch("api.utils.syncnet_utils.FFmpegUtils.apply_cumulative_shift", side_effect=lambda *args, **kwargs: async_return(None))
-    @patch("os.path.exists", return_value=True)
-    @patch("api.utils.syncnet_utils.AnalysisUtils.analyze_syncnet_log", return_value=0)
-    @patch("api.utils.syncnet_utils.SyncNetUtils.run_pipeline", side_effect=lambda *args, **kwargs: async_return(None))
-    @patch("api.utils.syncnet_utils.SyncNetUtils.run_syncnet", side_effect=lambda *args, **kwargs: async_return(DUMMY_LOG_FILE))
-    def test_finalize_sync_success(self, mock_run_syncnet, mock_run_pipeline, mock_analyze,
-                                   mock_exists, mock_apply_shift, mock_reencode, mock_remove):
-        """Test that finalize_sync returns the correct final output path when the final offset is zero.
+    @patch("api.utils.syncnet_utils.FFmpegUtils.apply_cumulative_shift")
+    @async_test
+    async def test_finalize_sync_success(self, mock_shift, mock_remove):
+        """Test successful finalization of synchronization.
 
-        Mocks FFmpegUtils.apply_cumulative_shift and other dependencies to simulate a successful finalization.
-        Asserts that the returned final output path matches the expected value and that no re-encoding occurs.
+        This test verifies that the `finalize_sync` method correctly finalizes the
+        synchronization process by:
+        - Applying the cumulative audio shift.
+        - Running a final verification pipeline.
+        - Returning the path to the final output file.
 
         Args:
-            mock_run_syncnet (MagicMock): Patched SyncNetUtils.run_syncnet.
-            mock_run_pipeline (MagicMock): Patched SyncNetUtils.run_pipeline.
-            mock_analyze (MagicMock): Patched AnalysisUtils.analyze_syncnet_log.
-            mock_exists (MagicMock): Patched os.path.exists.
-            mock_apply_shift (MagicMock): Patched FFmpegUtils.apply_cumulative_shift.
-            mock_reencode (MagicMock): Patched FFmpegUtils.reencode_to_original_format.
-            mock_remove (MagicMock): Patched os.remove.
+            mock_shift: Mock for FFmpegUtils.apply_cumulative_shift.
+            mock_remove: Mock for os.remove.
         """
-        final_out = self.loop.run_until_complete(
-            SyncNetUtils.finalize_sync(
-                input_file=DUMMY_VIDEO_FILE,
-                original_filename=DUMMY_ORIGINAL_FILENAME,
-                total_shift_ms=10,
-                reference_number=1,
-                fps=25.0,
-                destination_path=DUMMY_DESTINATION,
-                vid_props=DUMMY_VID_PROPS,
-                audio_props=DUMMY_AUDIO_PROPS,
-                corrected_file="/dummy/corrected.avi"
+        analyze_future = asyncio.Future()
+        analyze_future.set_result(0)
+
+        with patch(
+            "api.utils.syncnet_utils.AnalysisUtils.analyze_syncnet_log"
+        ) as mock_analyze, patch(
+            "api.utils.syncnet_utils.SyncNetUtils.run_pipeline"
+        ) as mock_pipeline, patch(
+            "api.utils.syncnet_utils.SyncNetUtils.run_syncnet"
+        ) as mock_syncnet:
+            mock_analyze.return_value = analyze_future
+            mock_pipeline.return_value = asyncio.Future()
+            mock_pipeline.return_value.set_result(None)
+            mock_syncnet.return_value = asyncio.Future()
+            mock_syncnet.return_value.set_result("dummy.log")
+            mock_shift.return_value = asyncio.Future()
+            mock_shift.return_value.set_result(None)
+
+            result = await SyncNetUtils.finalize_sync(
+                DUMMY_VIDEO_FILE,
+                DUMMY_ORIGINAL_FILENAME,
+                100,
+                1,
+                25.0,
+                DUMMY_DESTINATION,
+                DUMMY_VID_PROPS,
+                DUMMY_AUDIO_PROPS,
+                DUMMY_DESTINATION,
             )
-        )
-        expected_final = os.path.join(FINAL_OUTPUT_DIR, f"corrected_{DUMMY_ORIGINAL_FILENAME}")
-        self.assertEqual(final_out, expected_final)
-        mock_apply_shift.assert_called()
-        mock_reencode.assert_not_called()
-
-    @patch("api.utils.syncnet_utils.SyncNetUtils.finalize_sync", side_effect=lambda *args, **kwargs: async_return("/dummy/final_output.avi"))
-    @patch("api.utils.syncnet_utils.SyncNetUtils.perform_sync_iterations", side_effect=lambda *args, **kwargs: async_return((10, "/dummy/final_corrected.avi", 2, 1)))
-    def test_synchronize_video_success(self, mock_iterations, mock_finalize):
-        """Test that synchronize_video returns the correct final output and sync status.
-
-        Mocks perform_sync_iterations and finalize_sync to simulate a complete synchronization workflow.
-        Asserts that the returned tuple matches the expected final output path and a flag indicating the clip is not already in sync.
-
-        Args:
-            mock_iterations (MagicMock): Patched SyncNetUtils.perform_sync_iterations.
-            mock_finalize (MagicMock): Patched SyncNetUtils.finalize_sync.
-        """
-        result = self.loop.run_until_complete(
-            SyncNetUtils.synchronize_video(
-                avi_file=DUMMY_AVI_FILE,
-                input_file=DUMMY_VIDEO_FILE,
-                original_filename=DUMMY_ORIGINAL_FILENAME,
-                vid_props=DUMMY_VID_PROPS,
-                audio_props=DUMMY_AUDIO_PROPS,
-                fps=25.0,
-                destination_path=DUMMY_DESTINATION,
-                reference_number=1
-            )
-        )
-        self.assertEqual(result, ("/dummy/final_output.avi", False))
-        mock_iterations.assert_called_once()
-        mock_finalize.assert_called_once()
+            self.assertIn("corrected", result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

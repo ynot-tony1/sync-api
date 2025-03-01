@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from api.utils.api_utils import ApiUtils
-from api.process_video import process_video  # now async
+from api.process_video import process_video 
 import os
 import logging
 from fastapi.concurrency import run_in_threadpool
@@ -11,7 +11,7 @@ router: APIRouter = APIRouter()
 
 @router.post("/process")
 async def process_video_endpoint(file: UploadFile = File(...)) -> JSONResponse:
-    input_file_path: str = await run_in_threadpool(ApiUtils.save_temp_file, file)
+    input_file_path: str = await ApiUtils.save_temp_file(file)
     try:
         result = await process_video(input_file_path, file.filename)
         if isinstance(result, dict):

@@ -14,11 +14,11 @@ from api.config.settings import TEMP_PROCESSING_DIR
 
 LogUtils.configure_logging()
 logger: logging.Logger = logging.getLogger("api_utils_logger")
-
+import aiofiles
 
 class ApiUtils:
     @staticmethod
-    def save_temp_file(uploaded_file: UploadFile) -> str:
+    async def save_temp_file(uploaded_file: UploadFile) -> str:
         """
         Saves an uploaded file to a temporary directory with a unique name.
         
@@ -31,16 +31,16 @@ class ApiUtils:
         Raises:
             IOError: If the file cannot be saved.
         """
-        file_extension: str = os.path.splitext(uploaded_file.filename)[1]
-        unique_filename: str = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
+        file_extension = os.path.splitext(uploaded_file.filename)[1]
+        unique_filename = os.path.join(TEMP_PROCESSING_DIR, f"{uuid.uuid4()}{file_extension}")
         try:
-            with open(unique_filename, "wb") as temp_file:
-                shutil.copyfileobj(uploaded_file.file, temp_file)
-            logger.info(f"Temporary file saved: {unique_filename}")
+            async with aiofiles.open(unique_filename, "wb") as temp_file:
+                content = await uploaded_file.read()
+                await temp_file.write(content)
+            return unique_filename
         except Exception as e:
-            logger.error(f"Failed to save temporary file '{unique_filename}': {e}")
-            raise IOError(f"Could not save temporary file: {e}")
-        return unique_filename
+            logger.error(f"Failed to save temp file: {e}")
+            raise
 
     @staticmethod
     def send_websocket_message(message: str) -> None:

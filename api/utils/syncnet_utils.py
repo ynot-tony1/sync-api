@@ -8,7 +8,7 @@ Attributes:
     logger (logging.Logger): Logger for the module.
 """
 
-import os, shutil, asyncio
+import os, shutil, asyncio, aiofiles
 from typing import Tuple, Union, Optional, Dict
 import logging
 
@@ -34,8 +34,19 @@ class SyncNetUtils:
     """A collection of asynchronous utility methods for running SyncNet and FFmpeg tasks.
 
     This class encapsulates methods to run the SyncNet model, SyncNet pipeline, and
-    associated video/audio processing. All blocking operations are executed using
-    asyncio's subprocess API.
+    associated video/audio processing.
+
+
+        A collection of asynchronous utility methods for running SyncNet and FFmpeg tasks
+    
+            Implements async patterns for CPU-intensive media processing using
+            Asyncio subprocess management for FFmpeg/SyncNet binaries
+            Thread pool execution for blocking I/O operations
+            Async context managers for file handling
+            Cooperative task cancellation support
+
+        All methods are designed to be non-blocking and event-loop friendly
+    
 
     Methods:
         run_syncnet(ref_str: str, log_file: Optional[str] = None) -> str:
@@ -59,10 +70,23 @@ class SyncNetUtils:
 
     @staticmethod
     async def run_syncnet(ref_str: str, log_file: Optional[str] = None) -> str:
-        """Runs the SyncNet model asynchronously using a subprocess.
+        """ Async wrapper for SyncNet model execution using subprocesses.
+            Constructs and executes the command for running SyncNet, writes the process output to a log file,
+            and returns the path to the log file. If the process returns a nonzero exit code, a RuntimeError is raised.
+        
+        Async Features:
+        - Non-blocking process execution via asyncio.subprocess
+        - Async file writing with aiofiles
+        - Cooperative cancellation through asyncio.CancelledError propagation
+        - Resource cleanup on cancellation
 
-        Constructs and executes the command for running SyncNet, writes the process output to a log file,
-        and returns the path to the log file. If the process returns a nonzero exit code, a RuntimeError is raised.
+        Subprocess Management:
+        - Uses shell execution for SyncNet's Python entry point
+        - Captures stdout/stderr streams asynchronously
+        - Implements 1 hour timeout for process completion
+        Runs the SyncNet model asynchronously using a subprocess.
+
+
 
         Args:
             ref_str (str): The reference string used as an identifier for the SyncNet run.
@@ -90,8 +114,8 @@ class SyncNetUtils:
         )
         stdout_bytes, _ = await process.communicate()
         stdout_decoded = stdout_bytes.decode()
-        with open(log_file, 'w') as f:
-            f.write(stdout_decoded)
+        async with aiofiles.open(log_file, 'w') as f:
+            await f.write(stdout_decoded)
         logger.debug(f"[run_syncnet] Written output to log file: {ref_str}")
 
         if process.returncode != 0:
@@ -134,9 +158,10 @@ class SyncNetUtils:
         )
         stdout_bytes, _ = await process.communicate()
         stdout_decoded = stdout_bytes.decode()
-
-        with open(log_file, 'w') as f:
-            f.write(stdout_decoded)
+        
+        # Async file writing
+        async with aiofiles.open(log_file, 'w') as f:
+            await f.write(stdout_decoded)
         logger.debug(f"[run_pipeline] Written output to log file: {ref}")
 
         if process.returncode != 0:
@@ -148,11 +173,20 @@ class SyncNetUtils:
 
     @staticmethod
     async def prepare_video(input_file: str, original_filename: str) -> Tuple[str, VideoProps, AudioProps, Union[int, float], str, int]:
-        """Prepares a video file for synchronization asynchronously.
+        """Async video preparation pipeline.Copies and moves the file into the working directory, 
+          retrieves video and audio properties,and if necessary, re-encodes the file to AVI format.
+        
+        Async Operations:
+        - Thread-pool executed file copy/move operations
+        - Async FFprobe property extraction
+        - Conditional async video re-encoding
+        - WebSocket message broadcasting without blocking
 
-        Copies and moves the file into the working directory, retrieves video and audio properties,
-        and if necessary, re-encodes the file to AVI format.
-
+        Concurrency Notes:
+        - Uses separate executor threads for file system operations
+        - Maintains async context during multiple I/O-bound stages
+        - Coordinates async FFmpeg calls with WebSocket updates
+        
         Args:
             input_file (str): Path to the source video file.
             original_filename (str): Original filename of the video file.
@@ -174,16 +208,16 @@ class SyncNetUtils:
         ApiUtils.send_websocket_message("Here we go...")
         ApiUtils.send_websocket_message("Setting up our filing system...")
 
-        reference_number: int = int(FileUtils.get_next_directory_number(DATA_WORK_PYAVI_DIR))
+        dir_number_str = await FileUtils.get_next_directory_number(DATA_WORK_PYAVI_DIR)
+        reference_number: int = int(dir_number_str)
         logger.debug(f"[prepare_video] Obtained reference_number: {reference_number}")
 
         ApiUtils.send_websocket_message("Copying your file to work on...")
-        temp_copy_path: str = FileUtils.copy_file(input_file, original_filename)
-        logger.debug(f"[prepare_video] Copied file to temp_copy_path: {temp_copy_path}")
-
-        destination_path: str = os.path.join(DATA_DIR, f"{reference_number}_{original_filename}")
-        FileUtils.move_file(temp_copy_path, destination_path)
+        temp_copy_path = await FileUtils.copy_file(input_file, original_filename)
+        destination_path = os.path.join(DATA_DIR, f"{reference_number}_{original_filename}")
+        await FileUtils.move_file(temp_copy_path, destination_path)
         logger.debug(f"[prepare_video] Moved file to destination_path: {destination_path}")
+        
 
         if not os.path.exists(destination_path):
             error_msg = f"Destination file {destination_path} doesn't exist. Aborting process."
@@ -278,7 +312,7 @@ class SyncNetUtils:
             logger.debug(f"[perform_sync_iterations] Obtained log_file: {log_file}")
 
             ApiUtils.send_websocket_message("Analyzing the results that came back...")
-            offset_ms: int = AnalysisUtils.analyze_syncnet_log(log_file, fps)
+            offset_ms: int = await AnalysisUtils.analyze_syncnet_log(log_file, fps)
             logger.debug(f"[perform_sync_iterations] Computed offset_ms: {offset_ms}")
 
             if offset_ms == 0:
@@ -377,7 +411,7 @@ class SyncNetUtils:
         final_log: str = os.path.join(FINAL_LOGS_DIR, f"final_output_{ref_str}.log")
         await SyncNetUtils.run_syncnet(ref_str, final_log)
 
-        final_offset: int = AnalysisUtils.analyze_syncnet_log(final_log, fps)
+        final_offset: int = await AnalysisUtils.analyze_syncnet_log(final_log, fps)
         logger.debug(f"[finalize_sync] Analyzed final_offset: {final_offset}")
 
         if final_offset != 0:
@@ -391,7 +425,7 @@ class SyncNetUtils:
             }
 
         if corrected_file != destination_path and os.path.exists(corrected_file):
-            os.remove(corrected_file)
+            await FileUtils.cleanup_file(corrected_file)
             logger.debug(f"[finalize_sync] Removed old corrected_file: '{corrected_file}'")
 
         original_ext: str = os.path.splitext(original_filename)[1].lower()
@@ -476,7 +510,7 @@ class SyncNetUtils:
             )
             final_output_path: str = os.path.join(FINAL_OUTPUT_DIR, f"corrected_{original_filename}")
             if os.path.splitext(original_filename)[1].lower() == ".avi":
-                shutil.copy(input_file, final_output_path)
+                await FileUtils.copy_file(input_file, final_output_path)
                 logger.debug(f"[synchronize_video] Copied original file to final_output_path: {final_output_path}")
             else:
                 original_ext: str = os.path.splitext(original_filename)[1].lower()
@@ -533,6 +567,6 @@ class SyncNetUtils:
         final_log: str = os.path.join(FINAL_LOGS_DIR, f"final_output_{ref_str}.log")
         await SyncNetUtils.run_syncnet(ref_str, final_log)
 
-        final_offset: int = AnalysisUtils.analyze_syncnet_log(final_log, fps)
+        final_offset: int = await AnalysisUtils.analyze_syncnet_log(final_log, fps)
         logger.info(f"[verify_synchronization] final_offset -> {final_offset} ms")
         logger.debug("[verify_synchronization][EXIT]")

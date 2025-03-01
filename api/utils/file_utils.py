@@ -2,75 +2,76 @@ import os
 import shutil
 import logging
 from typing import List, Optional
+import aiofiles, asyncio
+from asyncio import get_running_loop
 
 logger: logging.Logger = logging.getLogger('file_utils_logger')
 
+
 class FileUtils:
     @staticmethod
-    def copy_file(source: str, destination: str) -> str:
-        logger.debug(f"[ENTER] copy_file -> source='{source}', destination='{destination}'")
+    async def copy_file(source: str, destination: str) -> str:
+        """Async copy using threadpool for blocking I/O."""
+        logger.debug(f"Copying file: {source} -> {destination}")
         try:
-            shutil.copy(source, destination)
-            logger.info(f"[copy_file] Copied from '{source}' to '{destination}'")
-            logger.debug(f"[EXIT] copy_file -> returning destination='{destination}'")
+            loop = get_running_loop()
+            await loop.run_in_executor(None, shutil.copy, source, destination)
+            logger.info(f"Copied file: {source} -> {destination}")
             return destination
         except Exception as e:
-            logger.error(f"[copy_file] Exception -> {str(e)}")
+            logger.error(f"Failed to copy file: {e}")
             raise IOError(f"Could not copy file: {e}")
 
     @staticmethod
-    def move_file(source: str, destination: str) -> str:
-        logger.debug(f"[ENTER] move_file -> source='{source}', destination='{destination}'")
+    async def move_file(source: str, destination: str) -> str:
+        """Async move using threadpool for blocking I/O."""
+        logger.debug(f"Moving file: {source} -> {destination}")
         try:
-            shutil.move(source, destination)
-            logger.info(f"[move_file] Moved from '{source}' to '{destination}'")
-            logger.debug(f"[EXIT] move_file -> returning destination='{destination}'")
+            loop = get_running_loop()
+            await loop.run_in_executor(None, shutil.move, source, destination)
+            logger.info(f"Moved file: {source} -> {destination}")
             return destination
         except Exception as e:
-            logger.error(f"[move_file] Exception -> {str(e)}")
+            logger.error(f"Failed to move file: {e}")
             raise IOError(f"Could not move file: {e}")
 
     @staticmethod
-    def read_file(file_path: str) -> Optional[str]:
-        logger.debug(f"[ENTER] read_file -> file_path='{file_path}'")
+    async def read_file(file_path: str) -> str:
+        """Async file read using aiofiles."""
+        logger.debug(f"Reading file: {file_path}")
         try:
-            with open(file_path, 'r') as file:
-                content = file.read()
-            logger.debug(
-                f"[read_file] Successfully read file -> '{file_path}' (length={len(content)})"
-            )
-            logger.debug("[EXIT] read_file -> returning file content.")
+            async with aiofiles.open(file_path, "r") as f:
+                content = await f.read()
+            logger.debug(f"Successfully read file: {file_path}")
             return content
-        except FileNotFoundError:
-            logger.warning(f"[read_file] File not found -> '{file_path}'")
-            return None
         except Exception as e:
-            logger.error(f"[read_file] Exception -> {str(e)}")
-            return None
+            logger.error(f"Failed to read file: {e}")
+            raise IOError(f"Could not read file: {e}")
 
     @staticmethod
-    def cleanup_file(file_path: str) -> None:
-        logger.debug(f"[ENTER] cleanup_file -> file_path='{file_path}'")
+    async def cleanup_file(file_path: str) -> None:
+        """Async file deletion using threadpool for blocking I/O."""
+        logger.debug(f"Cleaning up file: {file_path}")
         try:
-            os.remove(file_path)
-            logger.debug(f"[cleanup_file] Removed file -> '{file_path}'")
+            loop = get_running_loop()
+            await loop.run_in_executor(None, os.remove, file_path)
+            logger.info(f"Removed file: {file_path}")
         except FileNotFoundError:
-            logger.warning(f"[cleanup_file] File not found or already removed -> '{file_path}'")
+            logger.warning(f"File not found: {file_path}")
         except Exception as e:
-            logger.error(f"[cleanup_file] Exception -> {str(e)}")
-            raise IOError(f"Could not remove file {file_path}: {e}")
-        logger.debug("[EXIT] cleanup_file")
+            logger.error(f"Failed to remove file: {e}")
+            raise IOError(f"Could not remove file: {e}")
 
     @staticmethod
-    def get_next_directory_number(data_dir: str) -> str:
-        logger.debug(f"[ENTER] get_next_directory_number -> data_dir='{data_dir}'")
-        existing_numbers: List[int] = []
-        for item in os.listdir(data_dir):
-            if item.isdigit():
-                existing_numbers.append(int(item))
-            else:
-                logger.debug(f"[get_next_directory_number] Ignoring non-numeric dir='{item}'")
-        next_number: int = (max(existing_numbers) + 1) if existing_numbers else 1
-        formatted_number: str = f"{next_number:05d}"
-        logger.debug(f"[EXIT] get_next_directory_number -> '{formatted_number}'")
-        return formatted_number
+    async def get_next_directory_number(data_dir: str) -> str:
+        """Async directory number calculation"""
+        loop = asyncio.get_running_loop()
+        try:
+            items = await loop.run_in_executor(None, os.listdir, data_dir)
+            existing_numbers = [int(item) for item in items if item.isdigit()]
+            next_number = max(existing_numbers) + 1 if existing_numbers else 1
+            return f"{next_number:05d}"
+        except FileNotFoundError:
+            await loop.run_in_executor(None, os.makedirs, data_dir, exist_ok=True)
+            return "00001"
+        

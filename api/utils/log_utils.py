@@ -8,7 +8,6 @@ from api.types.props import LogConfig
 class LogUtils:
     @staticmethod
     def configure_logging() -> None:
-        # Use a proper string name here for the logger
         logger = logging.getLogger("log_utils_logger")
         logger.debug("[ENTER] configure_logging")
         try:
