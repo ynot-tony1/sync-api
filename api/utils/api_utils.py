@@ -13,7 +13,7 @@ from api.utils.log_utils import LogUtils
 from api.config.settings import TEMP_PROCESSING_DIR
 
 LogUtils.configure_logging()
-logger: logging.Logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger("api_utils_logger")
 
 
 class ApiUtils:

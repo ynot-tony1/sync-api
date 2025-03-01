@@ -25,7 +25,7 @@ class SyncError(BaseModel):
     final_offset: int
 
 class ProcessSuccess(BaseModel):
-    status: str  # e.g. "success"
+    status: str
     final_output: str
     message: str
 
