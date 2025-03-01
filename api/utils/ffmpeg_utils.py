@@ -6,18 +6,29 @@ import asyncio
 from typing import Optional, Dict, List, Union
 from api.config.settings import FINAL_OUTPUT_DIR
 from api.types.props import VideoProps, AudioProps
+from api.utils.file_utils import FileUtils
 
 logger: logging.Logger = logging.getLogger("ffmpeg_logger")
 
 
 class FFmpegUtils:
-    """Utility class for handling various FFmpeg operations asynchronously.
+    """ Utility class for handling various FFmpeg operations asynchronously.
+        This class provides methods for re-encoding videos to AVI format, converting AVI
+        files back to their original container/codec, shifting audio tracks by a specified
+        offset, applying cumulative audio shifts, and extracting audio and video properties
+        using ffprobe. All operations are executed using asyncio subprocesses to prevent
+        blocking the event loop during CPU-intensive or long-running FFmpeg tasks.
+    
+    Implements async patterns for:
+    - Parallel video encoding/transcoding
+    - Non-blocking stream manipulation
+    - Async property analysis with FFprobe
+    - Resource-safe process cleanup
 
-    This class provides methods for re-encoding videos to AVI format, converting AVI
-    files back to their original container/codec, shifting audio tracks by a specified
-    offset, applying cumulative audio shifts, and extracting audio and video properties
-    using ffprobe. All operations are executed using asyncio subprocesses to prevent
-    blocking the event loop during CPU-intensive or long-running FFmpeg tasks.
+    Subprocess Handling:
+    - All FFmpeg/FFprobe commands use asyncio.subprocess
+    - stdin/stderr captured asynchronously
+    - Configurable timeouts for long-running encodes
     """
 
     @staticmethod
@@ -104,7 +115,18 @@ class FFmpegUtils:
 
     @staticmethod
     async def shift_audio(input_file: str, output_file: str, offset_ms: int) -> None:
-        """Shifts the audio track of a file either forwards or backwards by a given offset.
+        """Async audio shifting with FFmpeg.
+        
+        Async Implementation:
+        - Full async subprocess lifecycle management
+        - Non-blocking audio property analysis
+        - Async filter graph construction
+        - Thread-safe output file handling
+
+        Flow Control:
+        - Creates dedicated event loop for filter operations
+        - Uses async file existence checks
+        - Implements backpressure through queueingShifts the audio track of a file either forwards or backwards by a given offset.
 
         Args:
             input_file (str): Path to the source video.
@@ -177,7 +199,7 @@ class FFmpegUtils:
             f"total_shift_ms={total_shift_ms}"
         )
         copied_file = os.path.join(FINAL_OUTPUT_DIR, os.path.basename(input_file))
-        shutil.copy(input_file, copied_file)
+        await FileUtils.copy_file(input_file, copied_file)
         logger.debug(f"[apply_cumulative_shift] Copied input -> '{copied_file}'")
         try:
             await FFmpegUtils.shift_audio(copied_file, final_output, total_shift_ms)
@@ -187,7 +209,7 @@ class FFmpegUtils:
             raise RuntimeError(f"Could not apply cumulative shift: {e}")
         finally:
             if os.path.exists(copied_file):
-                os.remove(copied_file)
+                await FileUtils.cleanup_file(copied_file)
                 logger.debug(f"[apply_cumulative_shift] Removed temp file -> '{copied_file}'")
         logger.debug("[EXIT] apply_cumulative_shift")
 

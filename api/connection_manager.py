@@ -1,5 +1,6 @@
 from fastapi import WebSocket
 from typing import List
+import asyncio
 
 active_connections: List[WebSocket] = []
 
@@ -20,9 +21,12 @@ async def broadcast(message: str) -> None:
     Args:
         message (str): The message to broadcast.
     """
-    for connection in active_connections:
-        await connection.send_text(message)
-
+    if not active_connections:
+        return
+    await asyncio.gather(
+        *[conn.send_text(message) for conn in active_connections],
+        return_exceptions=True
+    )
 def disconnect(websocket: WebSocket) -> None:
     """
     Removes a WebSocket connection from the active connections list.
