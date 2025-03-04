@@ -17,6 +17,12 @@ logger: logging.Logger = logging.getLogger("api_utils_logger")
 import aiofiles
 
 class ApiUtils:
+
+    @staticmethod
+    async def run_blocking(func, *args, **kwargs):
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, func, *args, **kwargs)
+
     @staticmethod
     async def save_temp_file(uploaded_file: UploadFile) -> str:
         """
@@ -46,12 +52,20 @@ class ApiUtils:
     def send_websocket_message(message: str) -> None:
         """
         Broadcasts a message to connected WebSocket clients.
-        
+
         Args:
             message (str): The message to send.
         """
         try:
             loop = asyncio.get_running_loop()
-            loop.create_task(broadcast(message))
         except RuntimeError:
-            asyncio.run(broadcast(message))
+            loop = None
+
+        if loop and loop.is_running():
+            loop.create_task(broadcast(message))
+        else:
+            new_loop = asyncio.new_event_loop()
+            try:
+                new_loop.run_until_complete(broadcast(message))
+            finally:
+                new_loop.close()

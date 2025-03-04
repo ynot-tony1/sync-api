@@ -7,6 +7,7 @@ from typing import Optional, Dict, List, Union
 from api.config.settings import FINAL_OUTPUT_DIR
 from api.types.props import VideoProps, AudioProps
 from api.utils.file_utils import FileUtils
+from api.utils.api_utils import ApiUtils
 
 logger: logging.Logger = logging.getLogger("ffmpeg_logger")
 
@@ -139,7 +140,8 @@ class FFmpegUtils:
         logger.debug(
             f"[ENTER] shift_audio -> input_file='{input_file}', output_file='{output_file}', offset_ms={offset_ms}"
         )
-        if not os.path.exists(input_file):
+        exists = await ApiUtils.run_blocking(os.path.exists, input_file)
+        if not exists:
             logger.error(f"[shift_audio] Input file not found -> '{input_file}'")
             return
         audio_props = await FFmpegUtils.get_audio_properties(input_file)
@@ -208,7 +210,8 @@ class FFmpegUtils:
             logger.error(f"[apply_cumulative_shift] Exception -> {str(e)}")
             raise RuntimeError(f"Could not apply cumulative shift: {e}")
         finally:
-            if os.path.exists(copied_file):
+            exists = await ApiUtils.run_blocking(os.path.exists, copied_file)
+            if exists:
                 await FileUtils.cleanup_file(copied_file)
                 logger.debug(f"[apply_cumulative_shift] Removed temp file -> '{copied_file}'")
         logger.debug("[EXIT] apply_cumulative_shift")

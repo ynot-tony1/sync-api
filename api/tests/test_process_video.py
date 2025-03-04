@@ -1,26 +1,49 @@
+"""
+Module: test_process_video
+Description:
+    Integration tests for the process_video function.
+
+    This test suite validates the behavior of process_video in various scenarios:
+      - Successful processing of a valid video file.
+      - Handling of a video file with no audio stream.
+      - Handling of a non-existent (invalid) video file.
+      - Handling of an already synchronized video.
+
+    The tests use Python's built-in unittest framework and asyncio to run asynchronous code.
+"""
+
 import os
 import unittest
 import asyncio
 
 from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
 from api.process_video import process_video
+from api.types.props import ProcessSuccess, ProcessError
 
 
 class TestRunProcessVideo(unittest.TestCase):
     """Integration tests for the process_video function.
 
     This test suite validates the behavior of process_video in various scenarios:
-    - Successful processing of a valid video file.
-    - Handling of a video file with no audio stream.
-    - Handling of an invalid (non-existent) video file.
-    - Handling of an already synchronized video.
+      - Successful processing of a valid video file.
+      - Handling of a video file with no audio stream.
+      - Handling of a non-existent (invalid) video file.
+      - Handling of an already synchronized video.
+
+    Attributes:
+        loop (asyncio.AbstractEventLoop): The asyncio event loop used for running asynchronous tests.
+        test_video (str): Path to a valid test video file.
+        no_audio_video (str): Path to a test video file that lacks an audio stream.
+        nonexistent_video (str): Path to a non-existent video file.
+        synced_video (str): Path to a test video file that is already synchronized.
+        final_output_dir (str): Directory path where final output files are stored.
     """
 
     @classmethod
     def setUpClass(cls):
-        """Set up test resources for all tests in this class.
+        """Sets up test resources for all tests in this class.
 
-        Sets up the asyncio event loop, paths to test video files and the final output directory.
+        This method creates the asyncio event loop and defines file paths for various test cases.
         """
         cls.loop = asyncio.get_event_loop()
         cls.test_video = os.path.join(TEST_DATA_DIR, 'example.avi')
@@ -30,67 +53,90 @@ class TestRunProcessVideo(unittest.TestCase):
         cls.final_output_dir = FINAL_OUTPUT_DIR
 
     def test_process_video_success(self):
-        """Test processing of a valid video file.
+        """Tests processing of a valid video file.
 
-        Verifies that process_video returns a dictionary with a success status and a valid final output path.
-        Also asserts that the processed file exists, is non-empty, and that its filename starts with 'corrected_'.
-        If processing is not successful, asserts that the error message contains "SyncNet pipeline failed".
+        Verifies that process_video returns a ProcessSuccess instance with:
+          - "status" equal to "success".
+          - A non-empty "final_output" path whose basename starts with "corrected_".
+          - A message indicating successful processing.
+        Also confirms that the final output file exists and is not empty, then cleans up the file.
+
+        Raises:
+            AssertionError: If any expected condition is not met.
         """
         result = self.loop.run_until_complete(process_video(self.test_video, 'example.avi'))
-        self.assertIsInstance(result, dict, "process_video should return a dict")
-        if result.get("status") == "success":
-            final_output = result.get("final_output")
-            self.assertIsNotNone(final_output, "final_output key must be present")
-            self.assertTrue(os.path.exists(final_output), f"File does not exist at {final_output}")
-            self.assertGreater(os.path.getsize(final_output), 0, "Processed file is empty")
-            self.assertTrue(os.path.basename(final_output).startswith("corrected_"),
-                            "Final output filename should start with 'corrected_'")
-            os.remove(final_output)
+        self.assertIsInstance(result, ProcessSuccess,
+                              "process_video should return a ProcessSuccess instance for a valid video")
+        result_dict = result.dict()
+        self.assertEqual(result_dict.get("status"), "success",
+                         "The status should be 'success' for a processed video")
+        final_output = result_dict.get("final_output")
+        self.assertIsNotNone(final_output, "final_output key must be present in the success response")
+        self.assertTrue(os.path.exists(final_output), f"File does not exist at {final_output}")
+        self.assertGreater(os.path.getsize(final_output), 0, "Processed file is empty")
+        self.assertTrue(os.path.basename(final_output).startswith("corrected_"),
+                        "Final output filename should start with 'corrected_'")
+        os.remove(final_output)
 
     def test_process_video_no_audio(self):
-        """Test processing of a video file with no audio stream.
+        """Tests processing of a video file with no audio stream.
 
-        Verifies that process_video returns a dictionary indicating an error condition for a video with no audio,
-        including a 'no_audio' flag and an accompanying message.
+        Verifies that process_video returns a ProcessError instance indicating that the video has no audio stream.
+        The returned error should have the "no_audio" flag set to True and include an appropriate message.
+
+        Raises:
+            AssertionError: If any expected condition is not met.
         """
         result = self.loop.run_until_complete(process_video(self.no_audio_video, 'video_no_audio.avi'))
-        self.assertIsInstance(result, dict, "process_video should return a dict for a video with no audio")
-        self.assertTrue(result.get("no_audio"), "Result should indicate no audio stream")
-        self.assertIn("message", result)
+        self.assertIsInstance(result, ProcessError,
+                              "process_video should return a ProcessError instance for a video with no audio")
+        result_dict = result.dict()
+        self.assertTrue(result_dict.get("no_audio"), "Result should indicate no audio stream")
+        self.assertIn("message", result_dict)
 
     def test_process_video_invalid_input(self):
-        """Test processing of a non-existent video file.
+        """Tests processing of a non-existent (invalid) video file.
 
-        Verifies that process_video returns a dictionary indicating an error when an invalid input file is provided.
-        The returned dict should have an 'error' or 'no_video' flag.
+        Verifies that process_video returns a ProcessError instance when an invalid input file is provided.
+        The returned error should have the "error" flag set to True.
+
+        Raises:
+            AssertionError: If any expected condition is not met.
         """
         result = self.loop.run_until_complete(process_video(self.nonexistent_video, 'nonexistent.avi'))
-        self.assertIsInstance(result, dict, "process_video should return a dict for an invalid input")
-        self.assertTrue(result.get("error") or result.get("no_video"),
-                        "Result should indicate an error for a non-existent input file")
+        self.assertIsInstance(result, ProcessError,
+                              "process_video should return a ProcessError instance for an invalid input")
+        result_dict = result.dict()
+        self.assertTrue(result_dict.get("error"), "Result should indicate an error for a non-existent input")
 
     def test_process_video_already_synchronized(self):
-        """Test processing of an already synchronized video.
+        """Tests processing of an already synchronized video file.
 
-        Verifies that process_video returns a dictionary indicating that the clip is already in sync.
-        Expects the 'already_in_sync' flag to be True and the message to be 
-        "Your clip is already in sync." If a final output file is provided, asserts that the file exists.
+        Verifies that process_video returns a ProcessSuccess instance with:
+          - "status" equal to "already_in_sync".
+          - A message stating "Your clip is already in sync."
+        If a final output file is provided, the test asserts that the file exists.
+
+        Raises:
+            AssertionError: If any expected condition is not met.
         """
         result = self.loop.run_until_complete(process_video(self.synced_video, 'synced_example.avi'))
-        self.assertIsInstance(result, dict, "process_video should return a dict for an already synchronized video")
-        if result.get("already_in_sync"):
-            self.assertEqual(result.get("message"), "Your clip is already in sync.", "Expected message: 'Your clip was already in sync.'")
-            final_output = result.get("final_output")
-            if final_output:
-                self.assertTrue(os.path.exists(final_output), "Final output file should exist for an already synchronized video")
-                os.remove(final_output)
-        else:
-            error_msg = str(result.get("message", ""))
-            self.assertIn("already in sync", error_msg, "Error message should indicate that the video is already in sync")
+        self.assertIsInstance(result, ProcessSuccess,
+                              "process_video should return a ProcessSuccess instance for an already synchronized video")
+        result_dict = result.dict()
+        self.assertEqual(result_dict.get("status"), "already_in_sync",
+                         "The status should be 'already_in_sync' when the clip is already synchronized")
+        self.assertEqual(result_dict.get("message"), "Your clip is already in sync.",
+                         "Expected message: 'Your clip is already in sync.'")
+        final_output = result_dict.get("final_output")
+        if final_output:
+            self.assertTrue(os.path.exists(final_output),
+                            "Final output file should exist for an already synchronized video")
+            os.remove(final_output)
 
     @classmethod
     def tearDownClass(cls):
-        """Clean up test artifacts after all tests have run.
+        """Cleans up test artifacts after all tests have run.
 
         Iterates through the final output directory and removes any files that start with 'corrected_'.
         """

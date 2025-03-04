@@ -35,3 +35,8 @@ class ProcessError(BaseModel):
     no_video: Union[bool, None] = None
     no_fps: Union[bool, None] = None
     message: str
+
+class SyncAnalysisResult(BaseModel):
+    best_offset_ms: int
+    total_confidence: float
+    confidence_mapping: Dict[int, float]

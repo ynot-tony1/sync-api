@@ -2,8 +2,7 @@
 #-*- coding: utf-8 -*-
 
 import time, pdb, argparse, subprocess
-
-from SyncNetInstance import *
+from syncnet_python.SyncNetInstance import SyncNetInstance
 
 # ==================== LOAD PARAMS ====================
 
