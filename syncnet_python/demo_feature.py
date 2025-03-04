@@ -6,7 +6,7 @@ import time, pdb, argparse, subprocess
 from SyncNetInstance import *
 
 # ==================== LOAD PARAMS ====================
-
+from syncnet_python.SyncNetInstance import SyncNetInstance
 
 parser = argparse.ArgumentParser(description = "SyncNet");
 

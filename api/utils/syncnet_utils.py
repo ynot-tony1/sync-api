@@ -36,7 +36,6 @@ class SyncNetUtils:
     This class encapsulates methods to run the SyncNet model, SyncNet pipeline, and
     associated video/audio processing.
 
-
         A collection of asynchronous utility methods for running SyncNet and FFmpeg tasks
     
             Implements async patterns for CPU-intensive media processing using
@@ -45,8 +44,7 @@ class SyncNetUtils:
             Async context managers for file handling
             Cooperative task cancellation support
 
-        All methods are designed to be non-blocking and event-loop friendly
-    
+        All methods are intended to be non-blocking and event-loop friendly
 
     Methods:
         run_syncnet(ref_str: str, log_file: Optional[str] = None) -> str:
@@ -70,34 +68,6 @@ class SyncNetUtils:
 
     @staticmethod
     async def run_syncnet(ref_str: str, log_file: Optional[str] = None) -> str:
-        """ Async wrapper for SyncNet model execution using subprocesses.
-            Constructs and executes the command for running SyncNet, writes the process output to a log file,
-            and returns the path to the log file. If the process returns a nonzero exit code, a RuntimeError is raised.
-        
-        Async Features:
-        - Non-blocking process execution via asyncio.subprocess
-        - Async file writing with aiofiles
-        - Cooperative cancellation through asyncio.CancelledError propagation
-        - Resource cleanup on cancellation
-
-        Subprocess Management:
-        - Uses shell execution for SyncNet's Python entry point
-        - Captures stdout/stderr streams asynchronously
-        - Implements 1 hour timeout for process completion
-        Runs the SyncNet model asynchronously using a subprocess.
-
-
-
-        Args:
-            ref_str (str): The reference string used as an identifier for the SyncNet run.
-            log_file (Optional[str]): Path to the log file. If None, a default path is generated.
-
-        Returns:
-            str: The path to the log file containing the output of the SyncNet run.
-
-        Raises:
-            RuntimeError: If the SyncNet process fails (i.e., returns a nonzero exit code).
-        """
         logger.debug(f"[run_syncnet][ENTER] ref_str='{ref_str}', log_file='{ref_str}'")
         if log_file is None:
             log_file = os.path.join(FINAL_LOGS_DIR, f"run_{ref_str}.log")
@@ -128,21 +98,6 @@ class SyncNetUtils:
 
     @staticmethod
     async def run_pipeline(video_file: str, ref: str) -> None:
-        """Runs the SyncNet pipeline asynchronously using a subprocess.
-
-        Constructs the pipeline command with the provided video file and reference,
-        executes it, writes the output to a log file, and raises an error if the process fails.
-
-        Args:
-            video_file (str): Path to the video file to be processed.
-            ref (str): Reference string to identify the pipeline run.
-
-        Returns:
-            None
-
-        Raises:
-            RuntimeError: If the pipeline process fails.
-        """
         logger.debug(f"[run_pipeline][ENTER] video_file='{video_file}', ref='{ref}'")
         command_str = (
             "python -m syncnet_python.run_pipeline "
@@ -159,7 +114,6 @@ class SyncNetUtils:
         stdout_bytes, _ = await process.communicate()
         stdout_decoded = stdout_bytes.decode()
         
-        # Async file writing
         async with aiofiles.open(log_file, 'w') as f:
             await f.write(stdout_decoded)
         logger.debug(f"[run_pipeline] Written output to log file: {ref}")
@@ -173,37 +127,6 @@ class SyncNetUtils:
 
     @staticmethod
     async def prepare_video(input_file: str, original_filename: str) -> Tuple[str, VideoProps, AudioProps, Union[int, float], str, int]:
-        """Async video preparation pipeline.Copies and moves the file into the working directory, 
-          retrieves video and audio properties,and if necessary, re-encodes the file to AVI format.
-        
-        Async Operations:
-        - Thread-pool executed file copy/move operations
-        - Async FFprobe property extraction
-        - Conditional async video re-encoding
-        - WebSocket message broadcasting without blocking
-
-        Concurrency Notes:
-        - Uses separate executor threads for file system operations
-        - Maintains async context during multiple I/O-bound stages
-        - Coordinates async FFmpeg calls with WebSocket updates
-        
-        Args:
-            input_file (str): Path to the source video file.
-            original_filename (str): Original filename of the video file.
-
-        Returns:
-            Tuple[str, VideoProps, AudioProps, Union[int, float], str, int]:
-                A tuple containing:
-                - The path to the AVI file.
-                - Video properties.
-                - Audio properties.
-                - Frames per second (fps).
-                - The destination file path.
-                - A reference number for the processing session.
-
-        Raises:
-            RuntimeError: If the destination file does not exist, if no video stream is found, or if no audio stream is found.
-        """
         logger.debug(f"[prepare_video][ENTER] input_file='{input_file}', original_filename='{original_filename}'")
         ApiUtils.send_websocket_message("Here we go...")
         ApiUtils.send_websocket_message("Setting up our filing system...")
@@ -218,8 +141,8 @@ class SyncNetUtils:
         await FileUtils.move_file(temp_copy_path, destination_path)
         logger.debug(f"[prepare_video] Moved file to destination_path: {destination_path}")
         
-
-        if not os.path.exists(destination_path):
+        exists = await ApiUtils.run_blocking(os.path.exists, destination_path)
+        if not exists:
             error_msg = f"Destination file {destination_path} doesn't exist. Aborting process."
             logger.error(f"[prepare_video] {error_msg}")
             raise RuntimeError(error_msg)
@@ -268,23 +191,6 @@ class SyncNetUtils:
         fps: Union[int, float],
         reference_number: int
     ) -> Union[SyncError, Tuple[int, str, int, int]]:
-        """Performs iterative synchronization using SyncNet.
-
-        Executes the pipeline and model in multiple iterations until the computed offset is zero.
-        Aggregates the cumulative shift in milliseconds, updates the reference number for each iteration,
-        and returns the total shift, the final corrected file path, the updated reference number, and the iteration count.
-
-        Args:
-            corrected_file (str): The path to the initially corrected video file.
-            original_filename (str): The original filename of the video.
-            fps (Union[int, float]): The frames per second of the video.
-            reference_number (int): The current reference number for processing.
-
-        Returns:
-            Union[SyncError, Tuple[int, str, int, int]]:
-                - If successful: A tuple (total_shift_ms, corrected_file, updated_reference_number, iteration_count).
-                - If an error occurs: A SyncError instance.
-        """
         logger.debug(
             "[DATA][ENTER] perform_sync_iterations -> "
             f"corrected_file='{corrected_file}', original_filename='{original_filename}', "
@@ -302,17 +208,19 @@ class SyncNetUtils:
             ref_str: str = f"{reference_number:05d}"
             logger.debug(f"[perform_sync_iterations] Using ref_str: {ref_str}")
 
-            ApiUtils.send_websocket_message("Running the pipeline...")
             await SyncNetUtils.run_pipeline(corrected_file, ref_str)
 
-            ApiUtils.send_websocket_message("Running the model...")
+            ApiUtils.send_websocket_message("Checking how out-of-sync your file was")
 
             log_file: str = await SyncNetUtils.run_syncnet(ref_str)
 
             logger.debug(f"[perform_sync_iterations] Obtained log_file: {log_file}")
 
             ApiUtils.send_websocket_message("Analyzing the results that came back...")
-            offset_ms: int = await AnalysisUtils.analyze_syncnet_log(log_file, fps)
+            sync_result = await AnalysisUtils.analyze_syncnet_log(log_file, fps)
+            offset_ms: int = sync_result.best_offset_ms 
+            
+            ApiUtils.send_websocket_message(f"it was {offset_ms}milliseconds out of sync")
             logger.debug(f"[perform_sync_iterations] Computed offset_ms: {offset_ms}")
 
             if offset_ms == 0:
@@ -342,7 +250,8 @@ class SyncNetUtils:
             ApiUtils.send_websocket_message("Adjusting the streams in your file...")
             await FFmpegUtils.shift_audio(corrected_file, new_corrected_file, offset_ms)
 
-            if not os.path.exists(new_corrected_file):
+            exists = await ApiUtils.run_blocking(os.path.exists, new_corrected_file)
+            if not exists:
                 error_msg = f"Corrected file {new_corrected_file} was not created. Aborting process."
                 logger.error(f"[perform_sync_iterations] {error_msg}")
                 raise RuntimeError(error_msg)
@@ -368,26 +277,6 @@ class SyncNetUtils:
         audio_props: AudioProps,
         corrected_file: str
     ) -> Union[str, SyncError]:
-        """Finalizes the synchronization process.
-
-        Applies the cumulative audio shift to the input file, performs a final verification using
-        the pipeline and model, and either returns the final output path or an error dictionary if the final
-        offset is not zero. If the original file is not in AVI format, re-encoding is performed.
-
-        Args:
-            input_file (str): Path to the original video file.
-            original_filename (str): The original filename.
-            total_shift_ms (int): The cumulative shift in milliseconds.
-            reference_number (int): The reference number used for processing.
-            fps (Union[int, float]): Frames per second of the video.
-            destination_path (str): The destination path for the output file.
-            vid_props (VideoProps): Video properties.
-            audio_props (AudioProps): Audio properties.
-            corrected_file (str): Path to the corrected file from iterative synchronization.
-
-        Returns:
-            Union[str, SyncError]: The final output path if successful, or a SyncError dictionary if the final offset is nonzero.
-        """
         logger.debug(
             "[DATA][ENTER] finalize_sync -> "
             f"input_file='{input_file}', original_filename='{original_filename}', total_shift_ms={total_shift_ms}, "
@@ -411,20 +300,25 @@ class SyncNetUtils:
         final_log: str = os.path.join(FINAL_LOGS_DIR, f"final_output_{ref_str}.log")
         await SyncNetUtils.run_syncnet(ref_str, final_log)
 
-        final_offset: int = await AnalysisUtils.analyze_syncnet_log(final_log, fps)
+        analysis_result = await AnalysisUtils.analyze_syncnet_log(final_log, fps)
+        final_offset: int = analysis_result.best_offset_ms
+
         logger.debug(f"[finalize_sync] Analyzed final_offset: {final_offset}")
 
         if final_offset != 0:
             error_msg: str = "final offset incorrect"
-            ApiUtils.send_websocket_message("Something went wrong behind the scenes and your clip wasnt synced properly! Please refresh the page and give it another go there")
+            ApiUtils.send_websocket_message(
+                "Something went wrong behind the scenes and your clip wasn't synced properly! Please refresh the page and try again."
+            )
             logger.error(f"[finalize_sync] {error_msg} -> final_offset={final_offset}")
-            return {
-                "error": True,
-                "message": "Something went wrong behind the scenes. Your clip wasnt synced properly",
-                "final_offset": final_offset
-            }
+            return SyncError(
+                error=True,
+                message="Something went wrong behind the scenes. Your clip wasn't synced properly",
+                final_offset=final_offset
+            )
 
-        if corrected_file != destination_path and os.path.exists(corrected_file):
+        exists = await ApiUtils.run_blocking(os.path.exists, corrected_file)
+        if corrected_file != destination_path and exists:
             await FileUtils.cleanup_file(corrected_file)
             logger.debug(f"[finalize_sync] Removed old corrected_file: '{corrected_file}'")
 
@@ -439,8 +333,10 @@ class SyncNetUtils:
             original_audio_codec: Optional[str] = audio_props.get('codec_name')
             restored_final: str = os.path.splitext(final_output_path)[0] + "_restored" + original_ext
             logger.debug(f"[finalize_sync] Restored final path: {restored_final}")
-            await FFmpegUtils.reencode_to_original_format(final_output_path, restored_final, original_ext,
-                                                     original_video_codec, original_audio_codec)
+            await FFmpegUtils.reencode_to_original_format(
+                final_output_path, restored_final, original_ext,
+                original_video_codec, original_audio_codec
+            )
             logger.debug(f"[finalize_sync][EXIT] Returning restored_final: '{restored_final}'")
             return restored_final
 
@@ -455,28 +351,6 @@ class SyncNetUtils:
         destination_path: str,
         reference_number: int
     ) -> Union[Tuple[str, bool], SyncError]:
-        """Orchestrates the entire synchronization process.
-
-        Combines preparation, iterative synchronization, and final verification. If the clip is
-        already in sync on the first pass, the function skips final verification. Otherwise, it finalizes
-        the synchronization and returns the final output path along with a flag indicating whether the
-        clip was already synchronized.
-
-        Args:
-            avi_file (str): Path to the AVI file prepared for processing.
-            input_file (str): Path to the original input video file.
-            original_filename (str): The original filename of the video.
-            vid_props (VideoProps): Video properties.
-            audio_props (AudioProps): Audio properties.
-            fps (Union[int, float]): Frames per second of the video.
-            destination_path (str): The destination path for the final output file.
-            reference_number (int): The reference number used during processing.
-
-        Returns:
-            Union[Tuple[str, bool], SyncError]:
-                - A tuple containing the final output path and a boolean flag indicating whether the clip was already in sync.
-                - Or a SyncError dictionary if an error occurs.
-        """
         logger.debug(
             "[DATA][ENTER] synchronize_video -> "
             f"avi_file='{avi_file}', input_file='{input_file}', original_filename='{original_filename}', "
@@ -493,8 +367,8 @@ class SyncNetUtils:
         )
         logger.debug(f"[synchronize_video] perform_sync_iterations returned: {sync_iterations_result}")
 
-        if isinstance(sync_iterations_result, dict):
-            logger.debug(f"[synchronize_video][EXIT] Returning error dict: {sync_iterations_result}")
+        if isinstance(sync_iterations_result, SyncError):
+            logger.debug(f"[synchronize_video][EXIT] Returning SyncError: {sync_iterations_result}")
             return sync_iterations_result
 
         total_shift_ms, final_corrected_file, updated_reference_number, iteration_count = sync_iterations_result
@@ -518,13 +392,13 @@ class SyncNetUtils:
                 original_audio_codec: Optional[str] = audio_props.get('codec_name')
                 restored_final: str = os.path.splitext(final_output_path)[0] + "_restored" + original_ext
                 logger.debug(f"[synchronize_video] Re-encoding input file to restored_final: {restored_final}")
-                await FFmpegUtils.reencode_to_original_format(input_file, restored_final, original_ext,
-                                                        original_video_codec, original_audio_codec)
+                await FFmpegUtils.reencode_to_original_format(
+                    input_file, restored_final, original_ext,
+                    original_video_codec, original_audio_codec
+                )
                 final_output_path = restored_final
 
-            logger.debug(
-                f"[synchronize_video][EXIT] Returning (final_output_path='{final_output_path}', already_in_sync=True)"
-            )
+            logger.debug(f"[synchronize_video][EXIT] Returning (final_output_path='{final_output_path}', already_in_sync=True)")
             return (final_output_path, True)
 
         final_output_path = await SyncNetUtils.finalize_sync(
@@ -538,26 +412,16 @@ class SyncNetUtils:
             audio_props=audio_props,
             corrected_file=final_corrected_file
         )
-        logger.debug(
-            f"[synchronize_video][EXIT] Returning (final_output_path='{final_output_path}', already_in_sync=False)"
-        )
+
+        if isinstance(final_output_path, SyncError):
+            logger.debug(f"[synchronize_video][EXIT] Returning SyncError from finalize_sync: {final_output_path}")
+            return final_output_path
+
+        logger.debug(f"[synchronize_video][EXIT] Returning (final_output_path='{final_output_path}', already_in_sync=False)")
         return (final_output_path, False)
 
     @staticmethod
     async def verify_synchronization(final_path: str, ref_str: str, fps: Union[int, float]) -> None:
-        """Verifies the synchronization of the final output video.
-
-        Runs a final verification pipeline by executing the SyncNet pipeline and model,
-        and logs the computed final offset.
-
-        Args:
-            final_path (str): Path to the final output video.
-            ref_str (str): Reference string used for final verification.
-            fps (Union[int, float]): Frames per second of the video.
-
-        Returns:
-            None
-        """
         logger.debug(
             f"[verify_synchronization][ENTER] final_path='{final_path}', ref_str='{ref_str}', fps={fps}"
         )

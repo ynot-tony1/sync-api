@@ -4,6 +4,7 @@ import logging
 from typing import List, Optional
 import aiofiles, asyncio
 from asyncio import get_running_loop
+from api.utils.api_utils import ApiUtils
 
 logger: logging.Logger = logging.getLogger('file_utils_logger')
 
@@ -14,8 +15,7 @@ class FileUtils:
         """Async copy using threadpool for blocking I/O."""
         logger.debug(f"Copying file: {source} -> {destination}")
         try:
-            loop = get_running_loop()
-            await loop.run_in_executor(None, shutil.copy, source, destination)
+            await ApiUtils.run_blocking(shutil.copy, source, destination)
             logger.info(f"Copied file: {source} -> {destination}")
             return destination
         except Exception as e:
@@ -27,8 +27,7 @@ class FileUtils:
         """Async move using threadpool for blocking I/O."""
         logger.debug(f"Moving file: {source} -> {destination}")
         try:
-            loop = get_running_loop()
-            await loop.run_in_executor(None, shutil.move, source, destination)
+            await ApiUtils.run_blocking(shutil.move, source, destination)
             logger.info(f"Moved file: {source} -> {destination}")
             return destination
         except Exception as e:
@@ -53,8 +52,7 @@ class FileUtils:
         """Async file deletion using threadpool for blocking I/O."""
         logger.debug(f"Cleaning up file: {file_path}")
         try:
-            loop = get_running_loop()
-            await loop.run_in_executor(None, os.remove, file_path)
+            await ApiUtils.run_blocking(os.remove, file_path)
             logger.info(f"Removed file: {file_path}")
         except FileNotFoundError:
             logger.warning(f"File not found: {file_path}")
@@ -65,13 +63,11 @@ class FileUtils:
     @staticmethod
     async def get_next_directory_number(data_dir: str) -> str:
         """Async directory number calculation"""
-        loop = asyncio.get_running_loop()
         try:
-            items = await loop.run_in_executor(None, os.listdir, data_dir)
+            items = await ApiUtils.run_blocking(os.listdir, data_dir)
             existing_numbers = [int(item) for item in items if item.isdigit()]
             next_number = max(existing_numbers) + 1 if existing_numbers else 1
             return f"{next_number:05d}"
         except FileNotFoundError:
-            await loop.run_in_executor(None, os.makedirs, data_dir, exist_ok=True)
+            await ApiUtils.run_blocking(os.makedirs, data_dir, exist_ok=True)
             return "00001"
-        

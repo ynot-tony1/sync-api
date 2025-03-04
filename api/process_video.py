@@ -73,7 +73,7 @@ Usage Example:
         else:
             print("Error processing video:", result.get("message"))
     
-    # To run the asynchronous main function, use:
+To run the asynchronous main function, use:
     import asyncio
     asyncio.run(main())
 """
@@ -82,10 +82,12 @@ import logging
 from typing import Dict, Union
 from api.utils.api_utils import ApiUtils
 from api.utils.syncnet_utils import SyncNetUtils
+from api.types.props import SyncError, ProcessSuccess, ProcessError
+
 
 logger: logging.Logger = logging.getLogger('process_video')
 
-async def process_video(input_file: str, original_filename: str) -> Dict[str, Union[str, bool]]:
+async def process_video(input_file: str, original_filename: str) -> Union[ProcessSuccess, ProcessError]:
     """
     Processes a video file by preparing it, synchronizing its audio and video using SyncNet, and verifying 
     the synchronization.
@@ -144,34 +146,57 @@ async def process_video(input_file: str, original_filename: str) -> Dict[str, Un
         result_tuple = await SyncNetUtils.synchronize_video(
             avi_file, input_file, original_filename, vid_props, audio_props, fps, destination_path, reference_number
         )
-        if isinstance(result_tuple, dict):
-            return result_tuple
+        if isinstance(result_tuple, SyncError):
+            return ProcessError(
+                error=True,
+                message=result_tuple.message,
+                no_audio=False,
+                no_video=False,
+                no_fps=False
+            )
+        
         final_output, already_in_sync = result_tuple
         if not already_in_sync:
             ref_str: str = f"{reference_number:05d}"
             await SyncNetUtils.verify_synchronization(final_output, ref_str, fps)
-            ApiUtils.send_websocket_message("Done, click the orange box above to get your file! Thanks")
-            return {
-                "status": "success",
-                "final_output": final_output,
-                "message": "Video processed successfully."
-            }
+            ApiUtils.send_websocket_message("Click the orange circle tick below to get your file! Thanks")
+            return ProcessSuccess(
+                status="success",
+                final_output=final_output,
+                message="Video processed successfully."
+            )
         else:
             ApiUtils.send_websocket_message("Your clip was already in sync. No changes were made.")
-            return {
-                "already_in_sync": True,
-                "message": "Your clip is already in sync."
-            }
+            return ProcessSuccess(
+                status="already_in_sync",
+                final_output="",
+                message="Your clip is already in sync."
+            )
     except Exception as e:
         error_msg: str = f"An error occurred during video processing: {e}"
         logger.error(error_msg)
         ApiUtils.send_websocket_message(error_msg)
         err_text: str = str(e)
         if "No audio stream" in err_text:
-            return {"no_audio": True, "message": "The video you uploaded has no audio stream inside it"}
+            return ProcessError(
+                error=True,
+                no_audio=True,
+                message="The video you uploaded has no audio stream inside it"
+            )
         elif "Couldn't find any video stream" in err_text:
-            return {"no_video": True, "message": "Couldn't see any video stream in the file"}
+            return ProcessError(
+                error=True,
+                no_video=True,
+                message="Couldn't see any video stream in the file"
+            )
         elif "retrieve fps" in err_text:
-            return {"no_fps": True, "message": "Could not retrieve fps"}
+            return ProcessError(
+                error=True,
+                no_fps=True,
+                message="Could not retrieve fps"
+            )
         else:
-            return {"error": True, "message": err_text}
+            return ProcessError(
+                error=True,
+                message=err_text
+            )
