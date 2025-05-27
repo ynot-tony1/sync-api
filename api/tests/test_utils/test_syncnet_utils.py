@@ -11,17 +11,14 @@ The tests cover the following functionality:
 - Performing iterative synchronization.
 - Finalizing the synchronization process.
 """
-
 import os
 import asyncio
 import unittest
 from unittest.mock import patch, MagicMock
-
 from api.config.settings import DATA_DIR
 from api.utils.syncnet_utils import SyncNetUtils
 from api.types.props import SyncAnalysisResult
 
-# Dummy constants for testing
 DUMMY_REF = "00001"
 DUMMY_VIDEO_FILE = "/path/to/example.avi"
 DUMMY_ORIGINAL_FILENAME = "example.avi"
@@ -138,7 +135,6 @@ class TestSyncNetUtils(unittest.TestCase):
         """
         mock_exists.return_value = True
 
-        # Update the futures to return proper SyncAnalysisResult objects.
         future1 = asyncio.Future()
         future1.set_result(SyncAnalysisResult(best_offset_ms=100, total_confidence=100.0, confidence_mapping={}))
         future2 = asyncio.Future()
@@ -175,7 +171,6 @@ class TestSyncNetUtils(unittest.TestCase):
             mock_shift (MagicMock): Mock for FFmpegUtils.apply_cumulative_shift.
             mock_remove (MagicMock): Mock for os.remove.
         """
-        # Update the analyze_future to return a proper SyncAnalysisResult.
         analyze_future = asyncio.Future()
         analyze_future.set_result(SyncAnalysisResult(best_offset_ms=0, total_confidence=0.0, confidence_mapping={}))
 
