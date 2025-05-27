@@ -15,7 +15,6 @@ Description:
 import os
 import unittest
 import asyncio
-
 from api.config.settings import TEST_DATA_DIR, FINAL_OUTPUT_DIR
 from api.process_video import process_video
 from api.types.props import ProcessSuccess, ProcessError

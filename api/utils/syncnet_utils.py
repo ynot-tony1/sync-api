@@ -210,8 +210,6 @@ class SyncNetUtils:
 
             await SyncNetUtils.run_pipeline(corrected_file, ref_str)
 
-            ApiUtils.send_websocket_message("Checking how out-of-sync your file was")
-
             log_file: str = await SyncNetUtils.run_syncnet(ref_str)
 
             logger.debug(f"[perform_sync_iterations] Obtained log_file: {log_file}")
@@ -220,7 +218,7 @@ class SyncNetUtils:
             sync_result = await AnalysisUtils.analyze_syncnet_log(log_file, fps)
             offset_ms: int = sync_result.best_offset_ms 
             
-            ApiUtils.send_websocket_message(f"it was {offset_ms}milliseconds out of sync")
+            ApiUtils.send_websocket_message(f"it is {offset_ms} milliseconds out of sync")
             logger.debug(f"[perform_sync_iterations] Computed offset_ms: {offset_ms}")
 
             if offset_ms == 0:
@@ -357,7 +355,7 @@ class SyncNetUtils:
             f"vid_props={vid_props}, audio_props={audio_props}, fps={fps}, "
             f"destination_path='{destination_path}', reference_number={reference_number}"
         )
-        ApiUtils.send_websocket_message("Ok, had a look; let's begin to sync...")
+        ApiUtils.send_websocket_message("Ok, had a look, let's begin to sync...")
 
         sync_iterations_result = await SyncNetUtils.perform_sync_iterations(
             corrected_file=avi_file,

@@ -1,3 +1,10 @@
+import logging
+from typing import Dict, Union
+from api.utils.api_utils import ApiUtils
+from api.utils.syncnet_utils import SyncNetUtils
+from api.types.props import SyncError, ProcessSuccess, ProcessError
+logger: logging.Logger = logging.getLogger('process_video')
+
 """
 Module: process_video
 Description:
@@ -77,15 +84,6 @@ To run the asynchronous main function, use:
     import asyncio
     asyncio.run(main())
 """
-
-import logging
-from typing import Dict, Union
-from api.utils.api_utils import ApiUtils
-from api.utils.syncnet_utils import SyncNetUtils
-from api.types.props import SyncError, ProcessSuccess, ProcessError
-
-
-logger: logging.Logger = logging.getLogger('process_video')
 
 async def process_video(input_file: str, original_filename: str) -> Union[ProcessSuccess, ProcessError]:
     """

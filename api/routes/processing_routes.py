@@ -1,4 +1,3 @@
-# api/routes/processing_routes.py
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from fastapi.responses import JSONResponse
 import os
@@ -7,12 +6,58 @@ from fastapi.concurrency import run_in_threadpool
 from api.implementations.default_video_processor import DefaultVideoProcessor
 from api.interfaces.video_processor import VideoProcessorInterface
 from api.utils.api_utils import ApiUtils
-from api.types.props import ProcessSuccess, ProcessError
 
 router = APIRouter()
 logger = logging.getLogger("processing_routes")
+"""
 
-# Dependency function to provide an instance of the video processor
+FastAPI route definitions for handling media-file upload, synchronisation, and
+download-link generation.
+
+This module exposes a single **POST** endpoint, **`/process`**, that accepts a
+multipart-encoded video file, forwards it to the core processing pipeline, and
+returns a JSON payload describing either the corrected video’s download
+location or a structured error.  It acts as the glue between the HTTP layer
+and the asynchronous `process_video` orchestration implemented deeper in the
+service.
+
+--------------------------------------
+1.  **Persist upload** – Streams the incoming `UploadFile` to a temporary
+    location using `ApiUtils.save_temp_file`, ensuring no blocking I/O on the
+    event loop.
+2.  **Delegate processing** – Instantiates a `VideoProcessorInterface`
+    (currently `DefaultVideoProcessor`) via FastAPI’s dependency-injection
+    system and awaits `process_video(...)`, which performs:
+        • format/codec inspection & optional AVI re-encode  
+        • SyncNet pipeline + iterative audio-shift passes  
+        • cumulative shift and final verification  
+        • optional re-encode back to the original container
+3.  **Interpret result models** – Consumes either `ProcessSuccess` or
+    `ProcessError` Pydantic models and shapes the appropriate `JSONResponse`.
+4.  **Housekeeping** – Deletes the temporary upload file in a thread-pool to
+    avoid blocking, regardless of success or failure.
+
+Module-level variables
+----------------------
+`router`  
+    FastAPI `APIRouter` instance whose prefix is defined by the parent package.
+
+`logger`  
+    `logging.Logger` scoped to “processing_routes”; mirrors log-level settings
+    from the shared logging configuration.
+
+Examples
+--------
+Typical successful call/response cycle:
+
+```bash
+$ curl -F "file=@example.mp4" http://localhost:8000/process
+{
+  "filename": "corrected_example.mp4",
+  "url": "/download/corrected_example.mp4"
+}
+"""
+
 def get_video_processor() -> VideoProcessorInterface:
     return DefaultVideoProcessor()
 
